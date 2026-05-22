@@ -110,29 +110,6 @@ clear       — clear screen
 
 ---
 
-## 🗺 Roadmap
-
-### v1.0 — Foundation *(current)*
-- [x] Desktop environment shell
-- [x] Window management
-- [x] Dock + Menu Bar
-- [x] Finder, Terminal, Notes
-
-### v1.5 — Power User
-- [ ] Spotlight search
-- [ ] Safari with iframe browsing
-- [ ] Resizable windows
-- [ ] Window snap / tiling
-
-### v2.0 — Full OS
-- [ ] Multi-user login screen
-- [ ] App Store with installable widgets
-- [ ] File system persistence (localStorage)
-- [ ] Mission Control
-- [ ] AirDrop simulator
-
----
-
 ## 🤝 Contributing
 
 PRs are welcome! If you want to add a new app or improve an existing one:
@@ -151,6 +128,31 @@ MIT © [gaminghackintosh](https://github.com/gaminghackintosh)
 
 ---
 
-<p align="center">
-  Made with ☕ and too many hours by <a href="https://github.com/gaminghackintosh">gaminghackintosh</a>
-</p>
+**Made with ☕ and too many hours by [@ghost](https://github.com/gaminghackintosh)**
+
+<pre>
+                                     , 
+                                    ;o\ 
+                                    ;Ob`. 
+                                   ;OOOOb`. 
+                                  ;OOOOOY" ) 
+                                 ;OOOO' ,%%) 
+                             \  /OOO ,%%%%,%\ 
+                              |:  ,%%%%%%;%%/ 
+                              ||,%%%%%%%%%%/ 
+                              ;|%%%%%%%%%'/`-'"`. 
+                             /: %%%%%%%%'/ c$$$$.`. 
+                `.______     \ \%%%%%%%'/.$$YF"Y$: ) 
+              _________ "`.\`\o \`%%' ,',$F,.   $F ) 
+     ___,--""'dOOO;,:%%`-._ o_,O_   ,',"',d88)  '  ) 
+  -"'. YOOOOOOO';%%%%%%%%%;`-O   )_     ,X888F   _/ 
+      \ YOOOO',%%%%%%%%%%Y    \__;`),-.  `""F  ,' 
+       \ `" ,%%%%%%%%%%,' _,-   \-' \_ `------' 
+        \_ %%%%',%%%%%_,-' ,;    ( _,-\ 
+          `-.__`%%',-' .c$$'     |\-_,-\ 
+               `""; ,$$$',md8oY  : `\_,') 
+                 ( ,$$$F `88888  ;   `--' 
+                  \`$$(    `""' / 
+                   \`"$$c'   _,' 
+                    `.____,-' 
+</pre>
