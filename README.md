@@ -126,11 +126,6 @@ PRs are welcome! If you want to add a new app or improve an existing one:
 
 ---
 
-## 📄 License
-
-MIT © [gaminghackintosh](https://github.com/gaminghackintosh)
-
----
 
 **Made with ☕ and too many hours by [@ghost](https://github.com/gaminghackintosh)**
 
