@@ -1,9 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 
+
+
 // ═══════════════════════════════════════════════════════════
 //  hackintosh.web — macOS-like React Desktop
 //  github.com/gaminghackintosh
 // ═══════════════════════════════════════════════════════════
+
+
+
+
+
+
+// ===== IMPORTS ===== //
+import FinderIcon from "./assets/icons/finder/finder.svg";
+import FolderIcon from "./assets/icons/finder/Folder.png";
+import FileIcon from "./assets/icons/finder/File.png";
+
+import SafariIcon from "./assets/icons/apps/safari.webp";
+import NotesIcon from "./assets/icons/apps/notes.webp";
+import TerminalIcon from "./assets/icons/apps/terminal.webp";
+import MusicIcon from "./assets/icons/apps/music.webp";
+import SettingsIcon from "./assets/icons/apps/settings.webp";
+
+import DesktopIcon from "./assets/icons/menu/desktop.png";
+import DownloadsIcon from "./assets/icons/menu/downloads.png";
+import ProjectsIcon from "./assets/icons/menu/projects.png";
+import NetworkIcon from "./assets/icons/menu/network.png";
+import MacintoshHDIcon from "./assets/icons/apps/macintosh_HD.ico";
+
 
 const WALLPAPER = `
   radial-gradient(ellipse at 25% 35%, rgba(120, 40, 220, 0.75) 0%, transparent 55%),
@@ -14,12 +39,12 @@ const WALLPAPER = `
 `;
 
 const APPS = [
-  { id: "finder",   name: "Finder",          icon: "./src/assets/icons/finder/finder.svg",  color: "#4B9EF0" },
-  { id: "safari",   name: "Safari",          icon: "./src/assets/icons/apps/safari.webp",  color: "#0A84FF" },
-  { id: "notes",    name: "Notes",           icon: "./src/assets/icons/apps/notes.webp",  color: "#FFD60A" },
-  { id: "terminal", name: "Terminal",        icon: "./src/assets/icons/apps/terminal.webp",  color: "#1C1C1E" },
-  { id: "music",    name: "Music",           icon: "./src/assets/icons/apps/music.webp",  color: "#FF375F" },
-  { id: "settings", name: "System Settings", icon: "./src/assets/icons/apps/settings.webp", color: "#636366" },
+  { id: "finder",   name: "Finder",          icon: FinderIcon,    color: "#4B9EF0" },
+  { id: "safari",   name: "Safari",          icon: SafariIcon,    color: "#0A84FF" },
+  { id: "notes",    name: "Notes",           icon: NotesIcon,     color: "#FFD60A" },
+  { id: "terminal", name: "Terminal",        icon: TerminalIcon,  color: "#1C1C1E" },
+  { id: "music",    name: "Music",           icon: MusicIcon,     color: "#FF375F" },
+  { id: "settings", name: "System Settings", icon: SettingsIcon,  color: "#636366" },
 ];
 
 const INITIAL_POSITIONS = {
@@ -166,18 +191,30 @@ function Dock({ onOpen, openApps }) {
 
             <div
               style={{
-                width: 54, height: 54, borderRadius: 14,
+                width: 54,
+                height: 54,
+                borderRadius: 14,
                 background:
                   app.id === "terminal"
                     ? "linear-gradient(145deg, #2c2c2e, #1c1c1e)"
                     : `linear-gradient(145deg, ${app.color}dd, ${app.color}99)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 28, cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)",
                 border: "1px solid rgba(255,255,255,0.12)",
               }}
             >
-              {app.icon}
+              <img
+                src={app.icon}
+                alt={app.name}
+                style={{
+                  width: 42,
+                  height: 42,
+                  objectFit: "contain",
+                }}
+              />
             </div>
 
             <div style={{ height: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -312,11 +349,11 @@ function FinderContent() {
     {
       label: "FAVOURITES",
       items: [
-        { name: "Home", icon: "./src/assets/icons/menu/finder/finder.svg" }, 
-        { name: "Desktop", icon: "./src/assets/icons/menu/desktop.png" },
-        { name: "Documents", icon: "./src/assets/icons/menu/documents.png" }, 
-        { name: "Downloads", icon: "./src/assets/icons/menu/downloads.png" },
-        { name: "Projects", icon: "./src/assets/icons/menu/projects.png" },
+        { name: "Home", icon: FinderIcon },
+        { name: "Desktop", icon: DesktopIcon },
+        { name: "Documents", icon: DocumentsIcon },
+        { name: "Downloads", icon: DownloadsIcon },
+        { name: "Projects", icon: ProjectsIcon },
       ],
     },
     {
@@ -329,31 +366,31 @@ function FinderContent() {
 
   const files = {
     Home: [
-      { name: "Documents", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Downloads", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Desktop", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Projects", type: "folder", icon: "💻", size: "—", modified: "Today" },
-      { name: "readme.md", type: "file", icon: "📄", size: "4 KB", modified: "Today" },
+      { name: "Documents", type: "folder", icon: DocumentsIcon, size: "—", modified: "Today" },
+      { name: "Downloads", type: "folder", icon: DownloadsIcon, size: "—", modified: "Today" },
+      { name: "Desktop", icon: DesktopIcon },
+      { name: "Projects", type: "folder", icon: ProjectsIcon, size: "—", modified: "Today" },
+      { name: "readme.md", type: "file", icon: FileIcon, size: "4 KB", modified: "Today" },
     ],
     Documents: [
-      { name: "Projects", type: "folder", icon: "📁", size: "—", modified: "2 days ago" },
-      { name: "resume.pdf", type: "file", icon: "📑", size: "128 KB", modified: "Last week" },
-      { name: "notes.txt", type: "file", icon: "📝", size: "2 KB", modified: "Yesterday" },
+      { name: "Projects", type: "folder", icon: DocumentsIcon, size: "—", modified: "2 days ago" },
+      { name: "resume.pdf", type: "file", icon: FileIcon, size: "128 KB", modified: "Last week" },
+      { name: "notes.txt", type: "file", icon: FileIcon, size: "2 KB", modified: "Yesterday" },
     ],
     Downloads: [
-      { name: "hackintosh-web-v1.zip", type: "file", icon: "📦", size: "8.2 MB", modified: "Today" },
-      { name: "wallpaper.png", type: "file", icon: "🖼", size: "3.1 MB", modified: "Yesterday" },
+      { name: "hackintosh-web-v1.zip", type: "file", icon: FileIcon, size: "8.2 MB", modified: "Today" },
+      { name: "wallpaper.png", type: "file", icon: FileIcon, size: "3.1 MB", modified: "Yesterday" },
     ],
     Desktop: [],
     Projects: [
-      { name: "hackintosh.web", type: "folder", icon: "📁", size: "—", modified: "Just now" },
-      { name: "portfolio", type: "folder", icon: "📁", size: "—", modified: "3 days ago" },
+      { name: "hackintosh.web", type: "folder", icon: ProjectsIcon, size: "—", modified: "Just now" },
+      { name: "portfolio", type: "folder", icon: ProjectsIcon, size: "—", modified: "3 days ago" },
     ],
     "Macintosh HD": [
-      { name: "Applications", type: "folder", icon: "📱", size: "—", modified: "Today" },
-      { name: "Library", type: "folder", icon: "📚", size: "—", modified: "Today" },
-      { name: "System", type: "folder", icon: "⚙️", size: "—", modified: "Today" },
-      { name: "Users", type: "folder", icon: "👤", size: "—", modified: "Today" },
+      { name: "Applications", type: "folder", icon: DocumentsIcon, size: "—", modified: "Today" },
+      { name: "Library", type: "folder", icon: DocumentsIcon, size: "—", modified: "Today" },
+      { name: "System", type: "folder", icon: DocumentsIcon, size: "—", modified: "Today" },
+      { name: "Users", type: "folder", icon: ProjectsIcon, size: "—", modified: "Today" },
     ],
     Network: [],
   };
@@ -396,7 +433,15 @@ function FinderContent() {
                 onMouseEnter={(e) => { if (currentFolder !== item.name) e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
                 onMouseLeave={(e) => { if (currentFolder !== item.name) e.currentTarget.style.background = "transparent"; }}
               >
-                <span>{item.icon}</span>
+                <img
+                  src={item.icon}
+                  alt={item.name}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    objectFit: "contain",
+                  }}
+                />
                 <span>{item.name}</span>
               </div>
             ))}
@@ -459,7 +504,16 @@ function FinderContent() {
                 onMouseLeave={(e) => { if (selectedFile !== f.name) e.currentTarget.style.background = "transparent"; }}
               >
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span>{f.icon}</span>
+                  <img
+                    src={f.icon}
+                    alt={f.name}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      objectFit: "contain",
+                    }}
+                  />
+
                   <span>{f.name}</span>
                 </span>
                 <span style={{ color: "rgba(255,255,255,0.35)" }}>{f.size}</span>
@@ -521,13 +575,18 @@ function TerminalContent() {
         "  open      – open an app",
         "  git log   – fake git history",
       ],
+      
       ls: [
         "Desktop/    Documents/    Downloads/    Movies/    Music/",
         "Pictures/   Projects/     Public/       readme.md",
       ],
+      
       pwd: ["/Users/gaminghackintosh"],
+      
       whoami: ["gaminghackintosh"],
+      
       uname: ["Darwin hackintosh.web 24.0.0 Darwin Kernel Version 24.0.0; root:xnu/RELEASE_ARM64"],
+      
       date: [new Date().toString()],
       "git log": [
         "\x1b[33mcommit a3f9d21\x1b[0m (HEAD -> main, origin/main)",
@@ -542,6 +601,7 @@ function TerminalContent() {
         "",
         "    init: project scaffold with React",
       ],
+      
       neofetch: [
         "",
         " \x1b[38;5;39m                                     ,\x1b[0m                          \x1b[32mGamingHackintosh\x1b[0m@\x1b[36mhackintosh.web\x1b[0m",
@@ -578,7 +638,7 @@ function TerminalContent() {
     if (cmd === "echo") return [args || ""];
     if (cmd === "") return [""];
     if (cmd === "open") return [`Opening ${args || "application"}...`];
-    if (cmd === "cat" && args === "readme.md")
+    cat: if (cmd === "cat" && args === "readme.md")
       return [
         "# hackintosh.web",
         "",
@@ -812,7 +872,15 @@ function PlaceholderContent({ appId }) {
       color: "rgba(255,255,255,0.35)",
       fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
     }}>
-      <span style={{ fontSize: 68 }}>{app?.icon}</span>
+      <img
+        src={app?.icon}
+        alt={app?.name}
+        style={{
+          width: 72,
+          height: 72,
+          objectFit: "contain",
+        }}
+      />
       <span style={{ fontSize: 20, fontWeight: 300 }}>{app?.name}</span>
       <span style={{
         fontSize: 12, opacity: 0.5,

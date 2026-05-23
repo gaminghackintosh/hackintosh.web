@@ -4,12 +4,16 @@ import {
   MENU_ICON_FALLBACK,
   DESKTOP_ICONS,
   DESKTOP_ICON_FALLBACK,
+  FINDER_ICONS,
+  FINDER_ICON_FALLBACK,
 } from "./assets/paths";
 import { AssetIcon } from "./components/AssetIcon";
 import Dock from "./components/Dock";
 import MobileNotSupported from "./components/MNS/MobileNotSupported";
+import SafariContent from "./apps/Safari/SafariContent";
 import { APPS } from "./constants/apps";
 import wallpaperDefault from "./assets/wallpapers/wallpaper_default.png";
+import DocumentsIcon from "./assets/icons/finder/Folder.png";
 
 const WALLPAPER_CSS = {
   backgroundImage: `url(${wallpaperDefault})`,
@@ -32,21 +36,43 @@ let zCounter = 100;
 
 function MenuBar({ activeApp }) {
   const [time, setTime] = useState(new Date());
+  const [activeMenu, setActiveMenu] = useState(null);
+  const barRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    if (!activeMenu) return;
+    const handleClickOutside = (event) => {
+      if (barRef.current && !barRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeMenu]);
+
   const fmtTime = (d) =>
     d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const fmtDate = (d) =>
     d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
+  const menuOptions = {
+    File: ["New Folder", "New Window", "Open...", "Close Window"],
+    Edit: ["Undo", "Redo", "Cut", "Copy", "Paste", "Select All"],
+    View: ["Show Sidebar", "Show Path Bar", "Sort By", "Clean Up"],
+    Window: ["Minimize", "Zoom", "Bring All to Front"],
+    Help: ["Search", "About This Mac"],
+  };
+
   const leftItems = [" ", activeApp || "Finder", "File", "Edit", "View", "Window", "Help"];
 
   return (
     <div
+      ref={barRef}
       style={{
         position: "fixed",
         top: 0,
@@ -67,24 +93,71 @@ function MenuBar({ activeApp }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-        {leftItems.map((item, i) => (
-          <span
-            key={i}
-            style={{
-              padding: "2px 9px",
-              borderRadius: 5,
-              cursor: "default",
-              fontSize: i === 0 ? 18 : 13,
-              fontWeight: i <= 1 ? 600 : 400,
-              color: i === 0 ? "white" : "rgba(255,255,255,0.88)",
-              transition: "background 0.1s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-          >
-            {item === " " ? "🍎" : item}
-          </span>
-        ))}
+        {leftItems.map((item, i) => {
+          const isClickable = i > 1;
+          return (
+            <div key={i} style={{ position: "relative" }}>
+              <span
+                style={{
+                  padding: "2px 9px",
+                  borderRadius: 5,
+                  cursor: isClickable ? "pointer" : "default",
+                  fontSize: i === 0 ? 18 : 13,
+                  fontWeight: i <= 1 ? 600 : 400,
+                  color: i === 0 ? "white" : "rgba(255,255,255,0.88)",
+                  background: activeMenu === item ? "rgba(255,255,255,0.18)" : "transparent",
+                  transition: "background 0.1s",
+                }}
+                onClick={() => {
+                  if (!isClickable) return;
+                  setActiveMenu(activeMenu === item ? null : item);
+                }}
+                onMouseEnter={(e) => {
+                  if (isClickable) e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  if (isClickable && activeMenu !== item) e.currentTarget.style.background = "transparent";
+                }}
+              >
+                {item === " " ? "🍎" : item}
+              </span>
+              {activeMenu === item && menuOptions[item] && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 28,
+                    left: 0,
+                    minWidth: 160,
+                    background: "rgba(12,12,14,0.98)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 12,
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+                    padding: "6px 0",
+                    zIndex: 10000,
+                  }}
+                >
+                  {menuOptions[item].map((option, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "9px 14px",
+                        color: "rgba(255,255,255,0.9)",
+                        fontSize: 12,
+                        whiteSpace: "nowrap",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                      onClick={() => setActiveMenu(null)}
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 13 }}>
@@ -345,36 +418,56 @@ function FinderContent() {
 
   const files = {
     Home: [
-      { name: "Documents", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Downloads", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Desktop", type: "folder", icon: "📁", size: "—", modified: "Today" },
-      { name: "Projects", type: "folder", icon: "💻", size: "—", modified: "Today" },
-      { name: "readme.md", type: "file", icon: "📄", size: "4 KB", modified: "Today" },
+      { name: "Documents", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "Downloads", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "Desktop", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "Projects", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "readme.md", type: "file", iconType: "file", size: "4 KB", modified: "Today", preview: "# hackintosh.web\n\nA web-native macOS experience built with React." },
     ],
     Documents: [
-      { name: "Projects", type: "folder", icon: "📁", size: "—", modified: "2 days ago" },
-      { name: "resume.pdf", type: "file", icon: "📑", size: "128 KB", modified: "Last week" },
-      { name: "notes.txt", type: "file", icon: "📝", size: "2 KB", modified: "Yesterday" },
+      { name: "Projects", type: "folder", iconType: "folder", size: "—", modified: "2 days ago" },
+      { name: "resume.pdf", type: "file", iconType: "pdf", size: "128 KB", modified: "Last week" },
+      { name: "notes.txt", type: "file", iconType: "file", size: "2 KB", modified: "Yesterday", preview: "- Coffee ☕\n- Matcha 🍵\n- Energy drinks 🔋\n- More RAM" },
     ],
     Downloads: [
-      { name: "hackintosh-web-v1.zip", type: "file", icon: "📦", size: "8.2 MB", modified: "Today" },
-      { name: "wallpaper.png", type: "file", icon: "🖼", size: "3.1 MB", modified: "Yesterday" },
+      { name: "hackintosh-web-v1.zip", type: "file", iconType: "archive", size: "8.2 MB", modified: "Today" },
+      { name: "wallpaper.png", type: "file", iconType: "image", size: "3.1 MB", modified: "Yesterday" },
     ],
-    Desktop: [],
+    Desktop: [
+      { name: "hackintosh.web", type: "application", iconType: "application", size: "2 MB", modified: "Today" },
+      { name: "Macintosh HD", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+    ],
     Projects: [
-      { name: "hackintosh.web", type: "folder", icon: "📁", size: "—", modified: "Just now" },
-      { name: "portfolio", type: "folder", icon: "📁", size: "—", modified: "3 days ago" },
+      { name: "hackintosh.web", type: "folder", iconType: "folder", size: "—", modified: "Just now" },
+      { name: "portfolio", type: "folder", iconType: "folder", size: "—", modified: "3 days ago" },
+    ],
+    "hackintosh.web": [
+      { name: "index.html", type: "file", iconType: "file", size: "9 KB", modified: "Just now" },
+      { name: "package.json", type: "file", iconType: "file", size: "1 KB", modified: "Just now" },
+      { name: "src", type: "folder", iconType: "folder", size: "—", modified: "Just now" },
     ],
     "Macintosh HD": [
-      { name: "Applications", type: "folder", icon: "📱", size: "—", modified: "Today" },
-      { name: "Library", type: "folder", icon: "📚", size: "—", modified: "Today" },
-      { name: "System", type: "folder", icon: "⚙️", size: "—", modified: "Today" },
-      { name: "Users", type: "folder", icon: "👤", size: "—", modified: "Today" },
+      { name: "Applications", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "Library", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "System", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+      { name: "Users", type: "folder", iconType: "folder", size: "—", modified: "Today" },
+    ],
+    Applications: [
+      { name: "Finder", type: "application", iconType: "application", size: "4 MB", modified: "Today" },
+      { name: "Safari", type: "application", iconType: "application", size: "15 MB", modified: "Today" },
+      { name: "Notes", type: "application", iconType: "application", size: "6 MB", modified: "Today" },
+      { name: "Terminal", type: "application", iconType: "application", size: "3 MB", modified: "Today" },
+    ],
+    Library: [],
+    System: [],
+    Users: [
+      { name: "gaminghackintosh", type: "folder", iconType: "folder", size: "—", modified: "Today" },
     ],
     Network: [],
   };
 
   const currentFiles = files[currentFolder] || [];
+  const selectedItem = currentFiles.find((file) => file.name === selectedFile);
 
   return (
     <div
@@ -386,11 +479,11 @@ function FinderContent() {
     >
       <div
         style={{
-          width: 185,
+          width: 200,
           flexShrink: 0,
           background: "rgba(36,36,40,0.95)",
           borderRight: "1px solid rgba(255,255,255,0.07)",
-          padding: "10px 0",
+          padding: "12px 0",
           overflowY: "auto",
         }}
       >
@@ -417,15 +510,15 @@ function FinderContent() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "5px 10px",
-                  borderRadius: 7,
-                  margin: "1px 6px",
+                  gap: 10,
+                  padding: "8px 14px",
+                  borderRadius: 10,
+                  margin: "2px 10px",
                   background: currentFolder === item.name ? "rgba(255,255,255,0.12)" : "transparent",
-                  color: currentFolder === item.name ? "white" : "rgba(255,255,255,0.6)",
+                  color: currentFolder === item.name ? "white" : "rgba(255,255,255,0.72)",
                   fontSize: 13,
                   cursor: "pointer",
-                  transition: "background 0.1s",
+                  transition: "background 0.12s",
                 }}
                 onMouseEnter={(e) => {
                   if (currentFolder !== item.name) e.currentTarget.style.background = "rgba(255,255,255,0.06)";
@@ -434,7 +527,7 @@ function FinderContent() {
                   if (currentFolder !== item.name) e.currentTarget.style.background = "transparent";
                 }}
               >
-                <AssetIcon path={item.iconPath} fallback={item.icon} size={16} alt={item.name} />
+                <AssetIcon path={item.iconPath} fallback={item.icon} size={18} alt={item.name} />
                 <span>{item.name}</span>
               </div>
             ))}
@@ -442,103 +535,179 @@ function FinderContent() {
         ))}
       </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div
-          style={{
-            padding: "6px 14px",
-            background: "rgba(40,40,44,0.85)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 20, lineHeight: 1 }}>‹</span>
-          <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 20, lineHeight: 1 }}>›</span>
-          <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginLeft: 6 }}>{currentFolder}</span>
-        </div>
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: selectedItem ? "1.6fr 0.9fr" : "1fr", overflow: "hidden" }}>
+        <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div
+            style={{
+              padding: "10px 16px",
+              background: "rgba(40,40,44,0.88)",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 13 }}>Finder</span>
+            <span style={{ color: "rgba(255,255,255,0.18)" }}>•</span>
+            <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 13 }}>{currentFolder}</span>
+          </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 90px 130px",
-            padding: "5px 14px",
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
-            color: "rgba(255,255,255,0.3)",
-            fontSize: 11,
-            userSelect: "none",
-          }}
-        >
-          <span>Name</span>
-          <span>Size</span>
-          <span>Date Modified</span>
-        </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 16px",
+              borderBottom: "1px solid rgba(255,255,255,0.05)",
+              background: "rgba(28,28,30,0.95)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Path:</span>
+              <span style={{ color: "rgba(255,255,255,0.75)", fontSize: 12 }}>{currentFolder}</span>
+            </div>
+          </div>
 
-        <div style={{ flex: 1, overflowY: "auto", padding: "4px 6px" }}>
-          {currentFiles.length === 0 ? (
+          <div style={{ flex: 1, overflowY: "auto", padding: "8px 10px" }}>
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-                color: "rgba(255,255,255,0.2)",
-                gap: 10,
+                display: "grid",
+                gridTemplateColumns: "1fr 90px 130px",
+                padding: "10px 14px",
+                borderBottom: "1px solid rgba(255,255,255,0.05)",
+                color: "rgba(255,255,255,0.35)",
+                fontSize: 11,
+                userSelect: "none",
               }}
             >
-              <span style={{ fontSize: 44 }}>📭</span>
-              <span style={{ fontSize: 13 }}>Folder is empty</span>
+              <span>Name</span>
+              <span>Size</span>
+              <span>Date Modified</span>
             </div>
-          ) : (
-            currentFiles.map((f) => (
+
+            {currentFiles.length === 0 ? (
               <div
-                key={f.name}
-                onClick={() =>
-                  f.type === "folder" ? setCurrentFolder(f.name) : setSelectedFile(f.name)
-                }
-                onDoubleClick={() => f.type === "folder" && setCurrentFolder(f.name)}
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 90px 130px",
+                  display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  padding: "5px 8px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  background: selectedFile === f.name ? "rgba(10,132,255,0.38)" : "transparent",
-                  color: "rgba(255,255,255,0.82)",
-                  fontSize: 13,
-                  transition: "background 0.1s",
-                }}
-                onMouseEnter={(e) => {
-                  if (selectedFile !== f.name) e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedFile !== f.name) e.currentTarget.style.background = "transparent";
+                  justifyContent: "center",
+                  minHeight: 260,
+                  color: "rgba(255,255,255,0.28)",
+                  gap: 12,
                 }}
               >
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span>{f.icon}</span>
-                  <span>{f.name}</span>
-                </span>
-                <span style={{ color: "rgba(255,255,255,0.35)" }}>{f.size}</span>
-                <span style={{ color: "rgba(255,255,255,0.35)" }}>{f.modified}</span>
+                <span style={{ fontSize: 42 }}>📭</span>
+                <span style={{ fontSize: 13 }}>This folder is empty.</span>
               </div>
-            ))
-          )}
+            ) : (
+              currentFiles.map((file) => (
+                <div
+                  key={file.name}
+                  onClick={() => setSelectedFile(file.name)}
+                  onDoubleClick={() => {
+                    if (file.type === "folder") {
+                      setCurrentFolder(file.name);
+                      setSelectedFile(null);
+                    }
+                  }}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 90px 130px",
+                    alignItems: "center",
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                    background: selectedFile === file.name ? "rgba(10,132,255,0.2)" : "transparent",
+                    color: "rgba(255,255,255,0.9)",
+                    fontSize: 13,
+                    transition: "background 0.12s",
+                    marginBottom: 4,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedFile !== file.name) e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedFile !== file.name) e.currentTarget.style.background = selectedFile === file.name ? "rgba(10,132,255,0.2)" : "transparent";
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <AssetIcon
+                      path={FINDER_ICONS[file.iconType || file.type]}
+                      fallback={FINDER_ICON_FALLBACK[file.iconType || file.type]}
+                      size={18}
+                      alt={file.name}
+                    />
+                    <span>{file.name}</span>
+                  </div>
+                  <span style={{ color: "rgba(255,255,255,0.45)" }}>{file.size}</span>
+                  <span style={{ color: "rgba(255,255,255,0.45)" }}>{file.modified}</span>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div
+            style={{
+              padding: "10px 16px",
+              background: "rgba(36,36,40,0.9)",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+              color: "rgba(255,255,255,0.3)",
+              fontSize: 11,
+            }}
+          >
+            {currentFiles.length} item{currentFiles.length === 1 ? "" : "s"}
+            {selectedFile ? ` • Selected: ${selectedFile}` : ""}
+          </div>
         </div>
 
-        <div
-          style={{
-            padding: "5px 14px",
-            background: "rgba(36,36,40,0.85)",
-            borderTop: "1px solid rgba(255,255,255,0.05)",
-            color: "rgba(255,255,255,0.3)",
-            fontSize: 11,
-          }}
-        >
-          {currentFiles.length} items
-        </div>
+        {selectedItem && (
+          <div
+            style={{
+              padding: "18px",
+              background: "rgba(24,24,26,0.94)",
+              borderLeft: "1px solid rgba(255,255,255,0.08)",
+              overflowY: "auto",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
+              <AssetIcon
+                path={FINDER_ICONS[selectedItem.iconType || selectedItem.type]}
+                fallback={FINDER_ICON_FALLBACK[selectedItem.iconType || selectedItem.type]}
+                size={42}
+                alt={selectedItem.name}
+              />
+              <div>
+                <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 18, fontWeight: 600 }}>{selectedItem.name}</div>
+                <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{selectedItem.type.toUpperCase()}</div>
+              </div>
+            </div>
+
+            <div style={{ color: "rgba(255,255,255,0.72)", fontSize: 13, marginBottom: 14 }}>
+              <div style={{ marginBottom: 8 }}><strong>Size:</strong> {selectedItem.size}</div>
+              <div style={{ marginBottom: 8 }}><strong>Modified:</strong> {selectedItem.modified}</div>
+              <div><strong>Kind:</strong> {selectedItem.type === "folder" ? "Folder" : selectedItem.iconType === "application" ? "Application" : "File"}</div>
+            </div>
+
+            {selectedItem.preview ? (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  borderRadius: 12,
+                  padding: "14px",
+                  whiteSpace: "pre-wrap",
+                  fontSize: 12,
+                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,0.85)",
+                }}
+              >
+                {selectedItem.preview}
+              </div>
+            ) : (
+              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>No preview available for this item.</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -554,12 +723,59 @@ function TerminalContent() {
   const [input, setInput] = useState("");
   const [cmdHistory, setCmdHistory] = useState([]);
   const [cmdIdx, setCmdIdx] = useState(-1);
+  const [gitLogLines, setGitLogLines] = useState([]);
+  const [gitLogLoading, setGitLogLoading] = useState(true);
+  const [gitLogError, setGitLogError] = useState(null);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchGitLog() {
+      try {
+        const response = await fetch(
+          "https://api.github.com/repos/gaminghackintosh/hackintosh.web/commits?sha=code-root&per_page=10",
+          { signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          throw new Error(`GitHub API returned ${response.status}`);
+        }
+
+        const commits = await response.json();
+        const lines = commits.flatMap((commit) => {
+          const author = commit.commit.author || {};
+          const date = author.date ? new Date(author.date) : new Date();
+          const message = commit.commit.message?.split("\n")[0] || "(no commit message)";
+          return [
+            `\x1b[33mcommit ${commit.sha.slice(0, 7)}\x1b[0m`,
+            `Author: ${author.name || "Unknown"} <${author.email || "noreply@github.com"}>`,
+            `Date:   ${date.toUTCString()}`,
+            "",
+            `    ${message}`,
+            "",
+          ];
+        });
+
+        setGitLogLines(lines.length ? lines : ["No commits found."]);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setGitLogError(error.message);
+          setGitLogLines([]);
+        }
+      } finally {
+        setGitLogLoading(false);
+      }
+    }
+
+    fetchGitLog();
+    return () => controller.abort();
+  }, []);
 
   const runCommand = (raw) => {
     const parts = raw.trim().split(/\s+/);
@@ -579,7 +795,7 @@ function TerminalContent() {
         "  neofetch  – system info with ASCII art",
         "  clear     – clear the terminal",
         "  open      – open an app",
-        "  git log   – fake git history",
+        "  git log   – repository commit history",
       ],
       ls: [
         "Desktop/    Documents/    Downloads/    Movies/    Music/",
@@ -656,7 +872,16 @@ function TerminalContent() {
         "## Stack",
         "React 18 · CSS-in-JS · Vite",
       ];
-    if (cmd === "git" && parts[1] === "log") return cmds["git log"];
+    if (cmd === "git" && parts[1] === "log") {
+      if (gitLogLoading) {
+        return ["Fetching commit history from GitHub..."];
+      }
+      if (gitLogError) {
+        return [`\x1b[31merror:\x1b[0m ${gitLogError}`];
+      }
+      return gitLogLines.length ? gitLogLines : ["No commit history available."];
+    }
+
     if (cmds[cmd]) return cmds[cmd];
     return [
       `\x1b[31m${cmd}: command not found\x1b[0m. Type 'help' for available commands.`,
@@ -997,6 +1222,8 @@ export default function App() {
     switch (appId) {
       case "finder":
         return <FinderContent />;
+      case "safari":
+        return <SafariContent />;
       case "terminal":
         return <TerminalContent />;
       case "notes":

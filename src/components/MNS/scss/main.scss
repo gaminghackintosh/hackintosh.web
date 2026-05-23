@@ -2,7 +2,7 @@
 //  MobileNotSupported — OS X Aqua / Brushed Metal (10.4–10.6)
 //  Faithfully recreates the classic macOS window chrome
 // ════════════════════════════════════════════════════════
-
+@use "sass:color";
 // ── Tokens ──────────────────────────────────────────────
 
 $win-w           : 480px;
@@ -209,19 +209,19 @@ $btn-text        : #fff;
 }
 
 .tl-close {
-  background   : radial-gradient(circle at 40% 35%, #ff8a86, $tl-r 55%, darken($tl-r, 10%));
+  background   : radial-gradient(circle at 40% 35%, #ff8a86, $tl-r 55%, color.adjust($tl-r, $lightness: -10%));
   box-shadow   : 0 0 0 0.5px $tl-r-border, 0 1px 2px rgba(0,0,0,0.3);
   &::before    { content: "×"; color: #7a0d0a; }
 }
 
 .tl-min {
-  background   : radial-gradient(circle at 40% 35%, #ffd97a, $tl-y 55%, darken($tl-y, 10%));
+  background   : radial-gradient(circle at 40% 35%, #ffd97a, $tl-y 55%, color.adjust($tl-y, $lightness: -10%));
   box-shadow   : 0 0 0 0.5px $tl-y-border, 0 1px 2px rgba(0,0,0,0.3);
   &::before    { content: "–"; color: #7a5000; line-height: 0; }
 }
 
 .tl-max {
-  background   : radial-gradient(circle at 40% 35%, #72e87e, $tl-g 55%, darken($tl-g, 10%));
+  background   : radial-gradient(circle at 40% 35%, #72e87e, $tl-g 55%, color.adjust($tl-g, $lightness: -10%));
   box-shadow   : 0 0 0 0.5px $tl-g-border, 0 1px 2px rgba(0,0,0,0.3);
   &::before    { content: "+"; color: #0a4a0a; }
 }
@@ -425,7 +425,7 @@ $btn-text        : #fff;
 
 // Primary (OK) — classic Aqua blue
 .mns-btn--primary {
-  background   : linear-gradient(to bottom, $btn-from 0%, darken($btn-from, 6%) 45%, $btn-to 51%, darken($btn-to, 5%) 100%);
+  background   : linear-gradient(to bottom, $btn-from 0%, color.adjust($btn-from, $lightness: -6%) 45%, $btn-to 51%, color.adjust($btn-to, $lightness: -5%) 100%);
   border-color : $btn-border;
   color        : $btn-text;
   text-shadow  : 0 -1px 0 rgba(0,0,50,0.3);
