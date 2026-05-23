@@ -1,23 +1,454 @@
-.mobile-not-supported {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0d0718 0%, #1a0833 35%, #0d1a3a 65%, #0d1f18 100%);
-    z-index: 10000;
-    overflow: hidden;
+// ════════════════════════════════════════════════════════
+//  MobileNotSupported — OS X Aqua / Brushed Metal (10.4–10.6)
+//  Faithfully recreates the classic macOS window chrome
+// ════════════════════════════════════════════════════════
+
+// ── Tokens ──────────────────────────────────────────────
+
+$win-w           : 480px;
+$titlebar-h      : 28px;
+$radius          : 8px;         // Classic OS X window corner radius
+$font-ui         : "Lucida Grande", "Lucida Sans Unicode", -apple-system, sans-serif;
+
+// Classic OS X window body color
+$body-bg         : #ececec;
+$body-bg-alt     : #f5f5f5;
+
+// Separator lines
+$separator       : #c8c8c8;
+$separator-top   : #ffffff;     // light edge for embossed look
+
+// Traffic-light colors (exact OS X values)
+$tl-r            : #ff5f57;
+$tl-r-border     : #e0443e;
+$tl-y            : #ffbd2e;
+$tl-y-border     : #dfa123;
+$tl-g            : #28c840;
+$tl-g-border     : #1aab29;
+
+// Aqua blue button
+$btn-from        : #6ab3f8;
+$btn-to          : #1c72d8;
+$btn-border      : #1261b3;
+$btn-text        : #fff;
+
+
+// ── Backdrop ────────────────────────────────────────────
+.mns-backdrop {
+  position         : fixed;
+  inset            : 0;
+  z-index          : 10000;
+  display          : flex;
+  align-items      : center;
+  justify-content  : center;
+  overflow         : hidden;
+
+  // Classic OS X Aqua desktop gradient (Tiger/Leopard era blue)
+  background:
+    radial-gradient(ellipse at 35% 30%, rgba(100,160,255,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 70%, rgba(60,100,200,0.2)   0%, transparent 50%),
+    linear-gradient(165deg, #0f3460 0%, #1a4a8a 35%, #0d2d5e 65%, #081e42 100%);
+}
+
+// Subtle dot-grid texture overlay (classic macOS desktop feel)
+.mns-desktop-bg {
+  position   : absolute;
+  inset      : 0;
+  pointer-events: none;
+  opacity    : 0.06;
+  background-image : radial-gradient(circle, #fff 1px, transparent 1px);
+  background-size  : 22px 22px;
+}
+
+
+// ── Window shell ─────────────────────────────────────────
+.mns-window {
+  position      : relative;
+  width         : $win-w;
+  border-radius : $radius;
+  overflow      : hidden;
+  background    : $body-bg;
+
+  // Classic OS X multi-layer shadow
+  box-shadow:
+    0 1px  0   rgba(255,255,255,0.55) inset,     // top inner highlight
+    0 0    0 1px #888,                             // frame border
+    0 1px  3px rgba(0,0,0,0.25),
+    0 8px  24px rgba(0,0,0,0.35),
+    0 24px 60px rgba(0,0,0,0.45);
+
+  // Window open animation
+  animation: mns-open 0.28s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+@keyframes mns-open {
+  from { opacity: 0; transform: scale(0.90); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+
+// ── Brushed-metal title bar ──────────────────────────────
+.mns-titlebar {
+  height          : $titlebar-h;
+  display         : flex;
+  align-items     : center;
+  padding         : 0 8px;
+  position        : relative;
+  user-select     : none;
+
+  // The iconic OS X brushed-metal gradient
+  background      : linear-gradient(
+    to bottom,
+    #d8d8d8 0%,
+    #c8c8c8 20%,
+    #bbbbbb 50%,
+    #b0b0b0 51%,
+    #c2c2c2 100%
+  );
+
+  // Subtle horizontal scan-lines (brushed texture)
+  &::before {
+    content      : "";
+    position     : absolute;
+    inset        : 0;
+    background   : repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.05)  0px,
+      rgba(255,255,255,0.05)  1px,
+      rgba(0,0,0,0.03)        1px,
+      rgba(0,0,0,0.03)        2px
+    );
+    pointer-events: none;
+  }
+
+  // Top highlight edge
+  &::after {
+    content      : "";
+    position     : absolute;
+    top          : 0;
+    left         : 0;
+    right        : 0;
+    height       : 1px;
+    background   : rgba(255,255,255,0.85);
+  }
+}
+
+.mns-titlebar-label {
+  position    : absolute;
+  left        : 50%;
+  transform   : translateX(-50%);
+  font-family : $font-ui;
+  font-size   : 12px;
+  font-weight : 700;
+  color       : #333;
+  text-shadow : 0 1px 0 rgba(255,255,255,0.7);
+  letter-spacing: 0.1px;
+  white-space : nowrap;
+}
+
+.mns-titlebar-spacer {
+  // Mirrors the traffic-light cluster width to keep title centred
+  width  : 60px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+
+// ── Traffic lights ───────────────────────────────────────
+.mns-traffic {
+  display    : flex;
+  align-items: center;
+  gap        : 6px;
+  position   : relative;
+  z-index    : 1;
+}
+
+.tl {
+  width        : 13px;
+  height       : 13px;
+  border-radius: 50%;
+  border       : none;
+  cursor       : pointer;
+  padding      : 0;
+  position     : relative;
+  flex-shrink  : 0;
+
+  // Glossy top-half highlight (the classic Aqua bubble)
+  &::after {
+    content      : "";
+    position     : absolute;
+    top          : 1.5px;
+    left         : 2px;
+    width        : 9px;
+    height       : 5px;
+    border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+    background   : rgba(255,255,255,0.55);
+    pointer-events: none;
+  }
+
+  // Symbol glyphs on hover
+  &::before {
+    content    : "";
+    position   : absolute;
+    inset      : 0;
+    display    : flex;
+    align-items: center;
     justify-content: center;
-
-
-  h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
+    font-size  : 8px;
+    font-weight: 900;
+    opacity    : 0;
+    transition : opacity .1s;
   }
 
-  p {
-    font-size: 1.2em;
-    max-width: 400px;
+  &:hover::before { opacity: 1; }
+
+  &:focus-visible {
+    outline: 2px solid #0a84ff;
+    outline-offset: 2px;
   }
+}
+
+.tl-close {
+  background   : radial-gradient(circle at 40% 35%, #ff8a86, $tl-r 55%, darken($tl-r, 10%));
+  box-shadow   : 0 0 0 0.5px $tl-r-border, 0 1px 2px rgba(0,0,0,0.3);
+  &::before    { content: "×"; color: #7a0d0a; }
+}
+
+.tl-min {
+  background   : radial-gradient(circle at 40% 35%, #ffd97a, $tl-y 55%, darken($tl-y, 10%));
+  box-shadow   : 0 0 0 0.5px $tl-y-border, 0 1px 2px rgba(0,0,0,0.3);
+  &::before    { content: "–"; color: #7a5000; line-height: 0; }
+}
+
+.tl-max {
+  background   : radial-gradient(circle at 40% 35%, #72e87e, $tl-g 55%, darken($tl-g, 10%));
+  box-shadow   : 0 0 0 0.5px $tl-g-border, 0 1px 2px rgba(0,0,0,0.3);
+  &::before    { content: "+"; color: #0a4a0a; }
+}
+
+
+// ── Dividers ─────────────────────────────────────────────
+.mns-divider {
+  height       : 1px;
+  background   : $separator;
+  box-shadow   : 0 1px 0 $separator-top;
+  margin       : 0;
+
+  &--inset {
+    margin: 0 16px;
+  }
+}
+
+
+// ── Body ─────────────────────────────────────────────────
+.mns-body {
+  padding     : 0;
+  background  : $body-bg;
+  font-family : $font-ui;
+}
+
+
+// ── Hero row (icon + headline) ───────────────────────────
+.mns-hero {
+  display    : flex;
+  align-items: flex-start;
+  gap        : 16px;
+  padding    : 20px 20px 18px;
+}
+
+.mns-app-icon {
+  width        : 72px;
+  height       : 72px;
+  flex-shrink  : 0;
+  border-radius: 16px;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+
+  // Classic OS X icon with inner glow & reflection
+  background   : linear-gradient(145deg, #e8f4ff 0%, #c0d8f5 40%, #a0c0e8 100%);
+  box-shadow   :
+    0 0 0 1px rgba(60,100,180,0.3),
+    0 4px 12px rgba(0,0,0,0.2),
+    inset 0 2px 3px rgba(255,255,255,0.8),
+    inset 0 -2px 3px rgba(60,100,180,0.15);
+
+  animation: mns-float 3.5s ease-in-out infinite;
+}
+
+.mns-app-icon-inner {
+  font-size   : 36px;
+  line-height : 1;
+  filter      : drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+}
+
+@keyframes mns-float {
+  0%,100% { transform: translateY(0);   }
+  50%     { transform: translateY(-5px);}
+}
+
+.mns-hero-text {
+  flex    : 1;
+  padding-top: 2px;
+}
+
+.mns-title {
+  font-size   : 17px;
+  font-weight : 700;
+  color       : #1a1a1a;
+  letter-spacing: -0.2px;
+  margin-bottom: 2px;
+}
+
+.mns-subtitle {
+  font-size   : 12px;
+  font-weight : 600;
+  color       : #888;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.mns-description {
+  font-size   : 13px;
+  line-height : 1.55;
+  color       : #444;
+}
+
+
+// ── Feature rows (like classic System Preferences panel) ─
+.mns-features {
+  padding    : 6px 0;
+  background : $body-bg;
+}
+
+.mns-feature-row {
+  display    : flex;
+  align-items: center;
+  gap        : 12px;
+  padding    : 9px 20px;
+  transition : background .12s;
+
+  &:hover {
+    background: rgba(0,90,230,0.07);
+  }
+
+  // Classic macOS row separator
+  & + & {
+    border-top: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 -1px 0 rgba(255,255,255,0.7);
+  }
+}
+
+.mns-feature-icon {
+  width        : 32px;
+  height       : 32px;
+  border-radius: 8px;
+  flex-shrink  : 0;
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  font-size    : 16px;
+
+  // Classic Aqua blue icon badge
+  background   : linear-gradient(145deg, #6ab3f8, #2575d0);
+  box-shadow   :
+    0 0 0 0.5px rgba(30,80,160,0.4),
+    0 2px 6px rgba(0,0,0,0.2),
+    inset 0 1px 1px rgba(255,255,255,0.45);
+}
+
+.mns-feature-text {
+  display       : flex;
+  flex-direction: column;
+  gap           : 1px;
+}
+
+.mns-feature-title {
+  font-size  : 13px;
+  font-weight: 600;
+  color      : #1a1a1a;
+}
+
+.mns-feature-desc {
+  font-size  : 11px;
+  color      : #777;
+  line-height: 1.4;
+}
+
+
+// ── Action buttons ───────────────────────────────────────
+.mns-actions {
+  display        : flex;
+  justify-content: flex-end;
+  align-items    : center;
+  gap            : 8px;
+  padding        : 14px 20px 10px;
+}
+
+.mns-btn {
+  height        : 22px;
+  padding       : 0 14px;
+  border-radius : 4px;
+  font-family   : $font-ui;
+  font-size     : 12px;
+  font-weight   : 600;
+  cursor        : pointer;
+  border        : 1px solid;
+  position      : relative;
+  transition    : filter .1s, transform .08s;
+  letter-spacing: 0.1px;
+  white-space   : nowrap;
+
+  // Subtle pressed state
+  &:active {
+    filter   : brightness(0.9);
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline       : 2px solid rgba(0,100,255,0.6);
+    outline-offset: 2px;
+  }
+}
+
+// Secondary (Cancel) — classic graphite
+.mns-btn--secondary {
+  background  : linear-gradient(to bottom, #f6f6f6 0%, #e0e0e0 50%, #d0d0d0 51%, #e0e0e0 100%);
+  border-color: #aaa;
+  color       : #333;
+  text-shadow : 0 1px 0 rgba(255,255,255,0.85);
+  box-shadow  :
+    0 1px 0 rgba(255,255,255,0.8) inset,
+    0 1px 2px rgba(0,0,0,0.15);
+}
+
+// Primary (OK) — classic Aqua blue
+.mns-btn--primary {
+  background   : linear-gradient(to bottom, $btn-from 0%, darken($btn-from, 6%) 45%, $btn-to 51%, darken($btn-to, 5%) 100%);
+  border-color : $btn-border;
+  color        : $btn-text;
+  text-shadow  : 0 -1px 0 rgba(0,0,50,0.3);
+  box-shadow   :
+    0 1px 0 rgba(255,255,255,0.35) inset,
+    0 1px 3px rgba(0,0,0,0.25);
+  min-width    : 52px;
+
+  // Classic pulsing ring on default button
+  animation: mns-btn-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes mns-btn-pulse {
+  0%,100% { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 1px 3px rgba(0,0,0,0.25), 0 0 0 0   rgba(28,114,216,0.0); }
+  50%     { box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 1px 3px rgba(0,0,0,0.25), 0 0 0 3px rgba(28,114,216,0.35); }
+}
+
+
+// ── Footer ───────────────────────────────────────────────
+.mns-footer {
+  text-align : center;
+  font-size  : 10px;
+  color      : #aaa;
+  padding    : 0 20px 12px;
+  font-family: $font-ui;
 }

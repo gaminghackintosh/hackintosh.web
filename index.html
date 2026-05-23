@@ -1,12 +1,337 @@
 <!DOCTYPE html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hackintosh.web</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- ═══════════════════════════════════════════
+       PRIMARY META
+  ════════════════════════════════════════════ -->
+  <title>hackintosh.web — macOS в браузере</title>
+  <meta name="title"       content="hackintosh.web — macOS в браузере" />
+  <meta name="description" content="Веб-версия macOS: окна, Dock, Terminal, Finder, Notes и многое другое. Полностью в браузере на React." />
+  <meta name="author"      content="gaminghackintosh" />
+  <meta name="keywords"    content="macos web, macos browser, react desktop, hackintosh, web os, macos clone, react macos, gaminghackintosh" />
+  <meta name="robots"      content="index, follow" />
+  <meta name="theme-color" content="#0d0718" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- ═══════════════════════════════════════════
+       FAVICON — все форматы
+  ════════════════════════════════════════════ -->
+  <!-- SVG (современные браузеры — масштабируется идеально) -->
+  <link rel="icon" type="image/svg+xml" href="./src/assets/icons/favicons/favicon.svg" />
+
+  <!-- ICO (фоллбэк для IE / старых браузеров) -->
+  <link rel="shortcut icon" type="image/x-icon" href="./src/assets/icons/favicons/favicon.ico" />
+
+  <!-- PNG в разных размерах -->
+  <link rel="icon" type="image/png" sizes="16x16"   href="./src/assets/icons/favicons/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32"   href="./src/assets/icons/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="48x48"   href="./src/assets/icons/favicons/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="96x96"   href="./src/assets/icons/favicons/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./src/assets/icons/favicons/favicon-192x192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./src/assets/icons/favicons/favicon-512x512.png" />
+
+
+  <!-- ═══════════════════════════════════════════
+       PWA — Progressive Web App
+  ════════════════════════════════════════════ -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="mobile-web-app-capable"          content="yes" />
+  <meta name="apple-mobile-web-app-capable"    content="yes" />
+  <meta name="apple-mobile-web-app-title"      content="hackintosh.web" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="application-name"               content="hackintosh.web" />
+
+  <!-- ═══════════════════════════════════════════
+       OPEN GRAPH (Facebook / Discord / VK / Telegram)
+  ════════════════════════════════════════════ -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://hackintosh.web/" />
+  <meta property="og:title"       content="hackintosh.web — macOS в браузере" />
+  <meta property="og:description" content="Веб-версия macOS: окна, Dock, Terminal, Finder, Notes и многое другое. Полностью в браузере на React." />
+  <meta property="og:image"       content="https://hackintosh.web/og-image.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"    content="hackintosh.web desktop preview" />
+  <meta property="og:site_name"   content="hackintosh.web" />
+  <meta property="og:locale"      content="ru_RU" />
+
+  <!-- ═══════════════════════════════════════════
+       TWITTER / X CARD
+  ════════════════════════════════════════════ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content="@gaminghackintosh" />
+  <meta name="twitter:creator"     content="@gaminghackintosh" />
+  <meta name="twitter:url"         content="https://hackintosh.web/" />
+  <meta name="twitter:title"       content="hackintosh.web — macOS в браузере" />
+  <meta name="twitter:description" content="Веб-версия macOS: окна, Dock, Terminal, Finder, Notes и многое другое. Полностью в браузере на React." />
+  <meta name="twitter:image"       content="https://hackintosh.web/og-image.png" />
+  <meta name="twitter:image:alt"   content="hackintosh.web desktop preview" />
+
+  <!-- ═══════════════════════════════════════════
+       PRECONNECT / DNS PREFETCH
+  ════════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+  <!-- ═══════════════════════════════════════════
+       GLOBAL RESET
+  ════════════════════════════════════════════ -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body, #root {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0d0718;
+    }
+
+    /* Убираем синее выделение на мобильных */
+    * { -webkit-tap-highlight-color: transparent; }
+
+    /* Кастомный скроллбар в духе macOS */
+    ::-webkit-scrollbar             { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track       { background: transparent; }
+    ::-webkit-scrollbar-thumb       { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
+
+    /* Запрещаем выделение текста по всему desktop-UI */
+    .no-select { user-select: none; -webkit-user-select: none; }
+
+    /* Плавная загрузка */
+    #root { opacity: 0; animation: fadeIn 0.4s ease 0.1s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Noscript fallback -->
+  <noscript>
+    <style>
+      #root {
+        display: none;
+      }
+
+      .noscript-screen {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background:
+          radial-gradient(circle at top, rgba(88, 28, 135, 0.35), transparent 40%),
+          radial-gradient(circle at bottom, rgba(37, 99, 235, 0.25), transparent 45%),
+          linear-gradient(180deg, #0b0713 0%, #120d1f 100%);
+
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Display",
+          sans-serif;
+
+        color: white;
+      }
+
+      .noscript-blur {
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+      }
+
+      .noscript-window {
+        position: relative;
+        z-index: 2;
+
+        width: min(520px, calc(100% - 32px));
+
+        border-radius: 22px;
+
+        background: rgba(30, 30, 40, 0.55);
+
+        border: 1px solid rgba(255,255,255,0.08);
+
+        box-shadow:
+          0 30px 80px rgba(0,0,0,0.55),
+          inset 0 1px 0 rgba(255,255,255,0.05);
+
+        overflow: hidden;
+
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+      }
+
+      .noscript-toolbar {
+        height: 42px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 0 16px;
+
+        background: rgba(255,255,255,0.03);
+
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+
+      .traffic-lights {
+        display: flex;
+        gap: 8px;
+      }
+
+      .traffic-lights span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: block;
+      }
+
+      .traffic-lights span:nth-child(1) {
+        background: #ff5f57;
+      }
+
+      .traffic-lights span:nth-child(2) {
+        background: #febc2e;
+      }
+
+      .traffic-lights span:nth-child(3) {
+        background: #28c840;
+      }
+
+      .noscript-content {
+        padding: 42px 34px 38px;
+        text-align: center;
+      }
+
+      .noscript-logo {
+        font-size: 64px;
+        line-height: 1;
+        margin-bottom: 18px;
+
+        filter: drop-shadow(0 0 18px rgba(255,255,255,0.08));
+      }
+
+      .noscript-title {
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+
+        margin-bottom: 12px;
+      }
+
+      .noscript-subtitle {
+        font-size: 15px;
+        line-height: 1.7;
+
+        color: rgba(255,255,255,0.72);
+
+        margin-bottom: 28px;
+      }
+
+      .noscript-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+
+        padding: 12px 18px;
+
+        border-radius: 14px;
+
+        background: rgba(255,255,255,0.05);
+
+        border: 1px solid rgba(255,255,255,0.06);
+
+        font-size: 14px;
+        color: rgba(255,255,255,0.88);
+      }
+
+      .noscript-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        background: #ff453a;
+
+        box-shadow:
+          0 0 10px rgba(255,69,58,0.8),
+          0 0 24px rgba(255,69,58,0.45);
+      }
+
+      .noscript-footer {
+        margin-top: 30px;
+
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+
+        color: rgba(255,255,255,0.32);
+      }
+
+      @media (max-width: 640px) {
+        .noscript-content {
+          padding: 34px 24px 30px;
+        }
+
+        .noscript-title {
+          font-size: 26px;
+        }
+
+        .noscript-subtitle {
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    <div class="noscript-screen">
+      <div class="noscript-blur"></div>
+
+      <div class="noscript-window">
+        <div class="noscript-toolbar">
+          <div class="traffic-lights">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="noscript-content">
+          <div class="noscript-logo">🍎</div>
+
+          <div class="noscript-title">
+            JavaScript Required
+          </div>
+
+          <div class="noscript-subtitle">
+            hackintosh.web simulates an entire macOS-like desktop environment
+            directly inside your browser.<br /><br />
+
+            Unfortunately, your browser currently has JavaScript disabled,
+            so the operating system failed to boot.
+          </div>
+
+          <div class="noscript-badge">
+            <div class="noscript-dot"></div>
+            System halted — JavaScript unavailable
+          </div>
+
+          <div class="noscript-footer">
+            hackintosh.web
+          </div>
+        </div>
+      </div>
+    </div>
+  </noscript>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
 </html>

@@ -9,14 +9,15 @@ import { AssetIcon } from "./components/AssetIcon";
 import Dock from "./components/Dock";
 import MobileNotSupported from "./components/MNS/MobileNotSupported";
 import { APPS } from "./constants/apps";
+import wallpaperDefault from "./assets/wallpapers/wallpaper_default.png";
 
-const WALLPAPER = `
-  radial-gradient(ellipse at 25% 35%, rgba(120, 40, 220, 0.75) 0%, transparent 55%),
-  radial-gradient(ellipse at 78% 20%, rgba(255, 110, 40, 0.65) 0%, transparent 45%),
-  radial-gradient(ellipse at 55% 78%, rgba(20, 90, 220, 0.55) 0%, transparent 48%),
-  radial-gradient(ellipse at 85% 80%, rgba(200, 40, 120, 0.45) 0%, transparent 40%),
-  linear-gradient(145deg, #0d0718 0%, #1a0833 35%, #0d1a3a 65%, #0d1f18 100%)
-`;
+const WALLPAPER_CSS = {
+  backgroundImage: `url(${wallpaperDefault})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  backgroundColor: "#0b0b0c",
+};
 
 const INITIAL_POSITIONS = {
   finder:   { x: 80,  y: 56,  w: 740, h: 500 },  // эталон
@@ -605,7 +606,7 @@ function TerminalContent() {
       ],
       neofetch: [
         "",
-        " \x1b[38;5;39m                                     ,\x1b[0m                          \x1b[32mGamingHackintosh\x1b[0m@\x1b[36mhackintosh.web\x1b[0m",
+        " \x1b[38;5;39m                                     ,\x1b[0m                          \x1b[32mgaminghackintosh\x1b[0m@\x1b[36mhackintosh.web\x1b[0m",
         " \x1b[38;5;39m                                    ;o\\\\\x1b[0m                         ─────────────────────────────",
         " \x1b[38;5;45m                                    ;Ob`.\x1b[0m                       OS:          \x1b[37mhackintosh.web 1.0.0\x1b[0m",
         " \x1b[38;5;45m                                   ;OOOOb`.\x1b[0m                     Kernel:      \x1b[37mhackintosh-core\x1b[0m",
@@ -1012,7 +1013,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative", background: WALLPAPER }}>
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative", ...WALLPAPER_CSS }}>
       <div
         style={{
           position: "absolute",

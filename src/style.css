@@ -30,7 +30,6 @@ select {
 
 /* Mobile Not Supported Page */
 .mobile-not-supported {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;

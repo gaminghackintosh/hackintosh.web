@@ -1,7 +1,10 @@
-// SCSS Main Entry Point
-// Import order matters: variables -> globals -> components
+@use "./variables" as vars;
+@use "./globals";
+@use "./icons";
 
-@import "./variables";
-@import "./globals";
-@import "./icons";
-@import "./mobile";
+/* ONLY GLOBAL BACKDROP OVERRIDE SAFE ZONE */
+body {
+  margin: 0;
+  background: #05070f;
+  font-family: system-ui, -apple-system, sans-serif;
+}

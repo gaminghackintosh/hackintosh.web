@@ -1,12 +1,6 @@
-@import "./variables";
+@use "./variables" as vars;
 
-/* Icon Assets */
-.icon-asset {
-  width: 58px;
-  height: 58px;
-}
-
-.icon-app {
-  width: 58px;
-  height: 58px;
+/* пример, если используешь */
+.icon {
+  color: vars.$color-text-secondary;
 }
