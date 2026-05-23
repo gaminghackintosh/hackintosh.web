@@ -6,13 +6,13 @@
 
 **[https://gaminghackintosh.github.io/hackintosh.web/](https://gaminghackintosh.github.io/hackintosh.web/)**
 
-## 🌿 Ветки репозитория
+## 🌿 Repository Branches
 
-| Ветка | Назначение |
+| Branch | Purpose |
 |---|---|
-| `main` | Описание проекта, документация |
-| `code-root` | Исходный код (разработка и коммиты) |
-| `gh-pages` | Собранный сайт (деплой через GitHub Actions) |
+| `main` | Project overview & documentation |
+| `code-root` | Main development branch |
+| `gh-pages` | Production build deployed via GitHub Actions |
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat&logo=vite)](https://vitejs.dev)
