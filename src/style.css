@@ -145,3 +145,16 @@ select {
   margin: 0;
   letter-spacing: -0.1px;
 }
+
+
+#divider.s-se3xyb {
+background-color: rgba(0, 0, 0, 0.3);
+    width: 1px;
+    margin: 0 6px 0 6px;
+    display: flex;
+    justify-items: center;
+    align-self: center;
+    transform: translateY(-4px);
+    align-self: stretch;
+    align-items: center;
+}
