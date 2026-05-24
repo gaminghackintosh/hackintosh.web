@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { resolveAssetUrl } from "../assets/resolveIcon";
 
-/**
- * Показывает картинку из src/assets или emoji-fallback.
- */
+
 export function AssetIcon({ path, fallback = "", size = 24, alt = "", style, imgStyle, className }) {
   const url = resolveAssetUrl(path);
   const [broken, setBroken] = useState(false);

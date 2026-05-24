@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { APPS } from "../constants/apps";
 import { AssetIcon } from "./AssetIcon";
 
-// Создаем отдельный объект для ссылки на GitHub
 const GITHUB_APP = {
   id: "github",
   name: "View Source by GitHub",

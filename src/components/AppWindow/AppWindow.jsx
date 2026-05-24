@@ -22,7 +22,6 @@ export function AppWindow({ win, onClose, onMinimize, onFocus, isActive, childre
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // Don't allow resize in titlebar area
     if (y < TITLE_BAR_HEIGHT) return null;
     
     const edges = [];

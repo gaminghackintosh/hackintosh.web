@@ -19,6 +19,7 @@ import { AppWindow } from "./components/AppWindow/AppWindow";
 import { MenuBar } from "./components/apps/MenuBar/MenuBar";
 import { TerminalContent } from "./components/apps/Terminal/Terminal";
 import { NotesContent } from "./components/apps/Notes/NotesContent";
+import { SettingsContent } from "./components/apps/Settings/SettingsContent";
 
 // Import assets
 import wallpaperDefault from "./assets/images/wallpapers/wallpaper_default.png";
@@ -37,10 +38,10 @@ const WALLPAPER_CSS = {
 const INITIAL_POSITIONS = {
   finder:   { x: 80,  y: 56,  w: 740, h: 500 },  // эталон
   safari:   { x: 100, y: 60,  w: 780, h: 520 },  // эталон
-  notes:    { x: 200, y: 90,  w: 620, h: 440 },  // без изменений
-  terminal: { x: 140, y: 70,  w: 780, h: 520 },  // ← было 660×420, теперь = Safari
-  settings: { x: 80,  y: 56,  w: 740, h: 500 },  // ← было 260/100, теперь = Finder
-  music:    { x: 180, y: 80,  w: 740, h: 500 },  // ← было 500×420, теперь ≈ Finder
+  notes:    { x: 200, y: 90,  w: 620, h: 440 },
+  terminal: { x: 140, y: 70,  w: 780, h: 520 },  
+  settings: { x: 80,  y: 56,  w: 740, h: 500 },  
+  music:    { x: 180, y: 80,  w: 740, h: 500 },  
 };
 
 
@@ -408,10 +409,21 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [bootComplete, setBootComplete] = useState(false);
 
+  const [wallpaperState, setWallpaperState] = useState({
+    id: "default",
+    type: "image",
+    value: wallpaperDefault
+  });
+
+  const handleWallpaperChange = (newWallpaper) => {
+    setWallpaperState(newWallpaper);
+  };
+
+  
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
-      // Просто проверяем ширину экрана - более надежно для мобильных
+      // Проверка ширины на mobile
       setIsMobile(width <= 1024);
     };
 
@@ -448,6 +460,7 @@ export default function App() {
     setActiveWin(appId);
   };
 
+  // ─── Рендер приложений ────────────────────────────────────────────────
   const renderContent = (appId) => {
     switch (appId) {
       case "finder":
@@ -456,6 +469,8 @@ export default function App() {
         return <TerminalContent />;
       case "notes":
         return <NotesContent />;
+      case "settings":
+        return <SettingsContent />;
       default:
         return <PlaceholderContent appId={appId} />;
     }

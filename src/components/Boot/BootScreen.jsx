@@ -11,13 +11,10 @@ export default function BootScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Logo appears after 200ms
     const logoTimer = setTimeout(() => setShowLogo(true), 200);
 
-    // Progress bar starts after 600ms
     const progressTimer = setTimeout(() => setShowProgress(true), 600);
 
-    // Simulate progress
     let progressInterval;
     progressInterval = setInterval(() => {
       setProgress((p) => {
@@ -29,7 +26,7 @@ export default function BootScreen({ onComplete }) {
       });
     }, 400);
 
-    // Timing for the complete animation
+    // Время для завершения анимации
     const completeTimer = setTimeout(() => {
       setProgress(100);
       setTimeout(onComplete, 300);

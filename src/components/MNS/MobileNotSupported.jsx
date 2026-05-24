@@ -23,11 +23,9 @@ export default function MobileNotSupported() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
-    // Копируем текущий URL сайта в буфер обмена
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     
-    // Возвращаем текст кнопки обратно через 2.5 секунды
     setTimeout(() => {
       setCopied(false);
     }, 2500);
@@ -35,13 +33,13 @@ export default function MobileNotSupported() {
 
   return (
     <div className="mns-backdrop">
-      {/* Современный абстрактный фон macOS */}
+      {/* фон macOS */}
       <div className="mns-desktop-bg" />
 
-      {/* Окно теперь полностью заблокировано, его нельзя случайно закрыть */}
+      {/* Блок окна */}
       <div className="mns-window" role="dialog" aria-modal="true">
 
-        {/* ── Единая панель заголовка (Кнопки теперь просто декорация) ── */}
+        {/* ── Единая панель заголовка ── */}
         <div className="mns-titlebar">
           <div className="mns-traffic">
             <div className="tl tl-close" title="Доступно только на ПК" />
@@ -87,7 +85,6 @@ export default function MobileNotSupported() {
             </div>
           </div>
 
-          {/* Новая умная панель действий */}
           <div className="mns-actions">
             <button
               className={`mns-btn ${copied ? "mns-btn--success" : "mns-btn--primary"}`}

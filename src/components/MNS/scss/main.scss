@@ -18,7 +18,7 @@ $inner-stroke    : rgba(0, 0, 0, 0.06);
 $btn-radius      : 8px;
 $apple-blue      : #007aff;
 $apple-blue-hover: #0063ce;
-$apple-green     : #34c759; // Зеленый цвет успешного копирования Apple
+$apple-green     : #34c759;
 
 // Traffic Lights 
 $tl-r            : #ff5f56;
@@ -101,7 +101,7 @@ $tl-g            : #27c93f;
   margin-left    : auto;
 }
 
-// ── Декоративные цветные точки (Нажимать нельзя) ────────
+// ── Декоративные цветные точки ────────
 .mns-traffic {
   display        : flex;
   align-items    : center;
@@ -117,11 +117,10 @@ $tl-g            : #27c93f;
   position       : relative;
 }
 
-.tl-close { background: rgba(0, 0, 0, 0.15); } // Сделаем их серыми, показывая деактивацию
+.tl-close { background: rgba(0, 0, 0, 0.15); }
 .tl-min   { background: rgba(0, 0, 0, 0.15); }
 .tl-max   { background: rgba(0, 0, 0, 0.15); }
 
-// Показываем системные цвета только если войти на ПК, на мобилках они "выключены"
 .mns-window:hover .tl-close { background: $tl-r; }
 .mns-window:hover .tl-min   { background: $tl-y; }
 .mns-window:hover .tl-max   { background: $tl-g; }
@@ -226,7 +225,7 @@ $tl-g            : #27c93f;
 
 .mns-btn {
   width          : 100%;
-  height         : 38px; // Чуть выше и удобнее для тапа с телефона
+  height         : 38px;
   border-radius  : $btn-radius;
   font-family    : $font-ui;
   font-size      : 13px;
