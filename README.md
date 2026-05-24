@@ -108,7 +108,7 @@ date        — current date & time
 echo [text] — print text
 cat readme.md — print this file
 neofetch    — system info with ASCII art
-git log     — fake commit history
+git log     — real commit history
 clear       — clear screen
 ```
 
