@@ -15,7 +15,7 @@ export const APP_ICONS = {
   notes: `${ASSET_DIRS.apps}/notes.svg`,
   terminal: `${ASSET_DIRS.apps}/Terminal.ico`,
   music: `${ASSET_DIRS.apps}/apple_music.ico`,
-  settings: `${ASSET_DIRS.apps}/System_Preferences.ico`,
+  settings: `${ASSET_DIRS.apps}/settings.png`,
 };
 /* Emoji, пока нет картинки */
 export const APP_ICON_FALLBACK = {
