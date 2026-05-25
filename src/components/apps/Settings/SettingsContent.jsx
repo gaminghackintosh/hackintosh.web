@@ -5,14 +5,82 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const [activeTab, setActiveTab] = useState("wallpaper");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Только рабочие разделы
-  const tabs = [
-    { id: "wallpaper", label: "Wallpaper", icon: "🖼️" },
-    { id: "about", label: "About This Mac", icon: "🍎" },
-  ].filter(tab =>
-    tab.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tab.id.includes(searchQuery.toLowerCase())
-  );
+  // Полная структура меню как в macOS System Settings
+  const menuSections = [
+    {
+      id: "network",
+      items: [
+        { id: "wifi", label: "Wi-Fi", icon: "📶", badge: null },
+        { id: "bluetooth", label: "Bluetooth", icon: "🔄", badge: null },
+        { id: "network", label: "Network", icon: "🌐", badge: null },
+        { id: "vpn", label: "VPN", icon: "🔒", badge: null }
+      ]
+    },
+    {
+      id: "system",
+      items: [
+        { id: "notifications", label: "Notifications", icon: "🔔", badge: null },
+        { id: "sound", label: "Sound", icon: "🔊", badge: null },
+        { id: "focus", label: "Focus", icon: "🧘", badge: null },
+        { id: "screentime", label: "Screen Time", icon: "⏱️", badge: null }
+      ]
+    },
+    {
+      id: "general",
+      items: [
+        { id: "general", label: "General", icon: "⚙️", badge: null },
+        { id: "appearance", label: "Appearance", icon: "🎨", badge: null },
+        { id: "accessibility", label: "Accessibility", icon: "♿", badge: null },
+        { id: "controlcenter", label: "Control Center", icon: "🎮", badge: null },
+        { id: "siri", label: "Siri & Spotlight", icon: "🔍", badge: null },
+        { id: "privacy", label: "Privacy & Security", icon: "🔐", badge: null }
+      ]
+    },
+    {
+      id: "desktop",
+      items: [
+        { id: "desktopdock", label: "Desktop & Dock", icon: "🖥️", badge: null },
+        { id: "displays", label: "Displays", icon: "🖥️", badge: null },
+        { id: "wallpaper", label: "Wallpaper", icon: "🖼️", badge: null },
+        { id: "screensaver", label: "Screen Saver", icon: "✨", badge: null },
+        { id: "energysaver", label: "Energy Saver", icon: "🔋", badge: null }
+      ]
+    },
+    {
+      id: "security",
+      items: [
+        { id: "lockscreen", label: "Lock Screen", icon: "🔒", badge: null },
+        { id: "loginpassword", label: "Login Password", icon: "🔑", badge: null },
+        { id: "usersgroups", label: "Users & Groups", icon: "👥", badge: null }
+      ]
+    },
+    {
+      id: "accounts",
+      items: [
+        { id: "passwords", label: "Passwords", icon: "🔐", badge: null },
+        { id: "internetaccounts", label: "Internet Accounts", icon: "🌍", badge: null },
+        { id: "gamecenter", label: "Game Center", icon: "🎮", badge: null }
+      ]
+    }
+  ];
+
+  // Фильтрация по поиску
+  const filteredSections = menuSections
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item =>
+        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.id.includes(searchQuery.toLowerCase())
+      )
+    }))
+    .filter(section => section.items.length > 0);
+
+  const handleItemClick = (itemId) => {
+    if (itemId === "wallpaper") setActiveTab(itemId);
+    else if (itemId === "appleid") setActiveTab("about");
+    // Здесь можно добавить обработку других пунктов меню
+    else console.log(`Clicked: ${itemId} (not implemented yet)`);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -80,7 +148,14 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
         );
 
       default:
-        return null;
+        return (
+          <div className="settings-panel">
+            <div className="panel-header">
+              <h2 className="panel-title">Settings</h2>
+              <p className="panel-description">This section is not yet implemented.</p>
+            </div>
+          </div>
+        );
     }
   };
 
@@ -99,14 +174,24 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
           />
         </div>
         <div className="tabs-list">
-          {tabs.map(tab => (
-            <div
-              key={tab.id}
-              className={`tab-item ${activeTab === tab.id ? "active" : ""}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <span className="tab-icon">{tab.icon}</span>
-              <span className="tab-label">{tab.label}</span>
+          {filteredSections.map((section, idx) => (
+            <div key={section.id} className="menu-section">
+              {idx > 0 && <div className="section-divider" />}
+              {section.items.map(item => (
+                <div
+                  key={item.id}
+                  className={`tab-item ${activeTab === item.id ? "active" : ""} ${item.isAppleId ? "apple-id" : ""}`}
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  <span className="tab-icon">{item.icon}</span>
+                  <span className="tab-label">{item.label}</span>
+                  {item.badge && (
+                    <span className="tab-badge" style={{ backgroundColor: item.badgeColor || "#ff3b30" }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>

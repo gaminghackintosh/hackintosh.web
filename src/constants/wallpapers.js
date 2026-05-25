@@ -1,3 +1,4 @@
+// macOS Sequoia
 import Sequoia_1 from "./../assets/images/wallpapers/Sequoia/wallpaper_default.png";
 import Sequoia_2 from "./../assets/images/wallpapers/Sequoia/wallpaper_2.png";
 import Sequoia_3 from "./../assets/images/wallpapers/Sequoia/wallpaper_3.png";
@@ -9,6 +10,10 @@ import Sequoia_8 from "./../assets/images/wallpapers/Sequoia/wallpaper_8.png";
 import Sequoia_9 from "./../assets/images/wallpapers/Sequoia/wallpaper_9.png";
 import Sequoia_10 from "./../assets/images/wallpapers/Sequoia/wallpaper_10.png";
 import Sequoia_11 from "./../assets/images/wallpapers/Sequoia/wallpaper_11.png";
+
+// macOS Tahoe
+import Tahoe_1 from "./../assets/images/wallpapers/Tahoe/Tahoe Light.png";
+import Tahoe_2 from "./../assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 
 export const WALLPAPER_GROUPS = [
   {
@@ -25,7 +30,16 @@ export const WALLPAPER_GROUPS = [
       { id: "sequoia_8", name: "Sequoia Waves", image: Sequoia_8, thumbnail: Sequoia_8 },
       { id: "sequoia_9", name: "Sequoia Desert", image: Sequoia_9, thumbnail: Sequoia_9 },
       { id: "sequoia_10", name: "Sequoia City", image: Sequoia_10, thumbnail: Sequoia_10 },
-      { id: "sequoia_11", name: "Sequoia Vintage", image: Sequoia_11, thumbnail: Sequoia_11 },
+      { id: "sequoia_11", name: "Sequoia Vintage", image: Sequoia_11, thumbnail: Sequoia_11 }
+    ]
+  },
+
+  {
+    id: "Tahoe",
+    title: "macOS Tahoe",
+    wallpapers: [
+      { id: "Tahoe_1", name: "Tahoe Default", image: Tahoe_1, thumbnail: Tahoe_1 },
+      { id: "Tahoe_2", name: "Tahoe Dark", image: Tahoe_2, thumbnail: Tahoe_2 }
     ]
   }
 ];
