@@ -24,18 +24,7 @@ import { TerminalContent } from "./components/apps/Terminal/Terminal";
 import { NotesContent } from "./components/apps/Notes/NotesContent";
 import { SettingsContent } from "./components/apps/Settings/SettingsContent";
 
-// Import assets
-import wallpaperDefault from "./assets/images/wallpapers/wallpaper_default.png";
-
-
-
-const WALLPAPER_CSS = {
-  backgroundImage: `url(${wallpaperDefault})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundColor: "#0b0b0c",
-};
+import { DEFAULT_WALLPAPER } from "./constants/wallpapers";
 
 const INITIAL_POSITIONS = {
   finder:   { x: 80,  y: 56,  w: 740, h: 500 },  // эталон
@@ -89,9 +78,9 @@ export default function App() {
   const [bootComplete, setBootComplete] = useState(false);
 
   const [wallpaperState, setWallpaperState] = useState({
-    id: "default",
+    id: DEFAULT_WALLPAPER.id,
     type: "image",
-    value: wallpaperDefault
+    value: DEFAULT_WALLPAPER.image,
   });
 
   const handleWallpaperChange = (newWallpaper) => {
@@ -166,7 +155,12 @@ export default function App() {
       case "notes":
         return <NotesContent />;
       case "settings":
-        return <SettingsContent />;
+        return (
+          <SettingsContent
+            currentWallpaper={wallpaperState.id}
+            onWallpaperChange={handleWallpaperChange}
+          />
+        );
       default:
         return <PlaceholderContent appId={appId} />;
     }
@@ -180,10 +174,18 @@ export default function App() {
 
     if (isMobile) {
       return <MobileNotSupported />;
-    } 
+    }
+    
+  const wallpaperStyle = {
+    backgroundImage: `url(${wallpaperState.value})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundColor: "#0b0b0c",
+  };
 
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative", ...WALLPAPER_CSS }}>
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative", ...wallpaperStyle }}>
       <div
         style={{
           position: "absolute",

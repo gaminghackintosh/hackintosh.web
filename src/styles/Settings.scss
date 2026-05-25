@@ -1,7 +1,3 @@
-// ════════════════════════════════════════════════════════════
-//  SettingsContent.scss — macOS System Settings
-// ════════════════════════════════════════════════════════════
-
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -10,690 +6,229 @@
 .settings-container {
   display: flex;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(30px);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: rgba(255, 255, 255, 0.9);
+  color: #f5f5f7;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SIDEBAR
-// ─────────────────────────────────────────────────────────────
+/* ========== SIDEBAR (как в оригинале) ========== */
 .settings-sidebar {
-  width: 290px;
+  width: 280px;
   flex-shrink: 0;
-  background: rgba(40, 40, 44, 0.4);
+  background: rgba(30, 30, 34, 0.85);
+  backdrop-filter: blur(20px);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 16px 0;
+  padding: 24px 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 
 .sidebar-header {
-  padding: 0 16px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
+  padding: 0 20px 20px 20px;
   h1 {
     margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    letter-spacing: -0.6px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.5px;
   }
 }
 
 .sidebar-search {
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
+  padding: 8px 16px 20px;
   input {
     width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    border-radius: 10px;
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #fff;
     font-size: 13px;
     outline: none;
-    transition: all 0.2s;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    &:focus {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
+    transition: 0.2s;
+    &::placeholder { color: rgba(255, 255, 255, 0.45); }
+    &:focus { background: rgba(255, 255, 255, 0.18); }
   }
 }
 
 .tabs-list {
   flex: 1;
-  overflow-y: auto;
-  padding: 8px 8px;
+  padding: 0 12px;
 }
 
 .tab-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   margin: 2px 0;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.15s;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-
   &:hover:not(.active) {
     background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
   }
-
   &.active {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.95);
-
-    .tab-icon {
-      transform: scale(1.1);
-    }
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    .tab-icon { transform: scale(1.05); }
   }
 }
+.tab-icon { font-size: 20px; width: 24px; text-align: center; transition: transform 0.15s; }
+.tab-label { flex: 1; }
 
-.tab-icon {
-  font-size: 18px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s;
-}
-
-.tab-label {
-  flex: 1;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  CONTENT AREA
-// ─────────────────────────────────────────────────────────────
+/* ========== CONTENT ========== */
 .settings-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0;
-  background: rgba(10, 10, 12, 0.3);
+  background: rgba(10, 10, 12, 0.4);
 }
-
 .settings-panel {
-  max-width: 800px;
+  max-width: 840px;
+  margin: 0 auto;
   padding: 40px 48px;
 }
-
 .panel-title {
-  margin: 0 0 8px 0;
   font-size: 32px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 6px;
   letter-spacing: -0.6px;
 }
-
 .panel-description {
-  margin: 0 0 32px 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
-  line-height: 1.5;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 32px;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SECTIONS
-// ─────────────────────────────────────────────────────────────
-.settings-section {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
-  &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+/* ========== WALLPAPER GROUP ========== */
+.wallpaper-group {
+  margin-bottom: 48px;
+  &:last-child { margin-bottom: 0; }
+}
+.wallpaper-group-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.wallpaper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+}
+.wallpaper-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  &:hover { transform: translateY(-4px); }
+  &.selected .wallpaper-thumbnail {
+    box-shadow: 0 0 0 2px #0a84ff, 0 0 0 5px rgba(10, 132, 255, 0.3);
   }
 }
-
-.section-title {
-  margin: 0 0 16px 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  INFO SECTIONS
-// ─────────────────────────────────────────────────────────────
-.info-section {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.wallpaper-thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 10;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 24px;
+  background: #1c1c1e;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  &:hover img { transform: scale(1.02); }
 }
-
-.info-row {
+.check-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  background: #0a84ff;
+  border-radius: 50%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  font-size: 13px;
-
-  &:last-child {
-    border-bottom: none;
-  }
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-
-.info-label {
-  color: rgba(255, 255, 255, 0.55);
-  font-weight: 500;
-}
-
-.info-value {
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
-  text-align: right;
-}
-
-.info-footer {
-  margin-top: 16px;
+.wallpaper-title {
+  display: block;
   text-align: center;
-
-  p {
-    margin: 0;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.3);
-    letter-spacing: 0.2px;
-  }
+  font-size: 13px;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SYSTEM INFO CARD
-// ─────────────────────────────────────────────────────────────
+/* ========== ABOUT SECTION (как в настоящем Mac) ========== */
 .system-info-card {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 28px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 32px;
 }
-
 .info-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+  gap: 20px;
+  .apple-logo {
+    font-size: 56px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  p {
-    margin: 4px 0 0 0;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.55);
-  }
+  h3 { font-size: 20px; font-weight: 600; margin: 0; }
+  p { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin: 4px 0 0; }
 }
-
-.apple-logo {
-  font-size: 48px;
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  APPEARANCE OPTIONS
-// ─────────────────────────────────────────────────────────────
-.appearance-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.appearance-option {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-
-  &:hover .appearance-preview {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  &.selected .appearance-preview {
-    border: 2px solid #0a84ff;
-    box-shadow: 0 0 0 1px #0a84ff;
-  }
-
-  &.selected .appearance-label {
-    color: #0a84ff;
-    font-weight: 600;
-  }
-}
-
-.appearance-preview {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  overflow: hidden;
-  transition: all 0.15s;
-}
-
-.appearance-label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-  font-weight: 500;
-  transition: all 0.15s;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  COLOR GRID
-// ─────────────────────────────────────────────────────────────
-.color-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.color-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.color-dot {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-
-  .color-option:hover & {
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.08);
-  }
-
-  .color-option.selected & {
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
-}
-
-.checkmark {
-  font-size: 20px;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.color-label {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  RADIO & CHECKBOX OPTIONS
-// ─────────────────────────────────────────────────────────────
-.radio-group,
-.size-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.radio-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  cursor: pointer;
-  user-select: none;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
-
-  input[type="radio"],
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #0a84ff;
-  }
-
-  span {
-    flex: 1;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  TOGGLE SWITCH
-// ─────────────────────────────────────────────────────────────
-.toggle-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  h4 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-  }
-}
-
-.option-description {
-  margin: 4px 0 0 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-flex;
-  width: 48px;
-  height: 28px;
-  cursor: pointer;
-
-  input {
-    display: none;
-
-    &:checked + .toggle-slider {
-      background: #34c759;
-
-      &::before {
-        transform: translateX(20px);
-      }
-    }
-  }
-}
-
-.toggle-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  transition: all 0.3s ease;
-
-  &::before {
-    content: "";
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    left: 2px;
-    top: 2px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  SLIDER OPTIONS
-// ─────────────────────────────────────────────────────────────
-.slider-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-
-  h4 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .slider {
-    width: 120px;
-    height: 4px;
-    cursor: pointer;
-    accent-color: #0a84ff;
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-//  WALLPAPER GRID
-// ─────────────────────────────────────────────────────────────
-.wallpaper-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.wallpaper-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-
-  &:hover .wallpaper-thumbnail {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  &.selected .wallpaper-thumbnail {
-    border: 2px solid #0a84ff;
-    box-shadow: 0 0 0 1px #0a84ff;
-  }
-
-  &.selected .wallpaper-title {
-    color: #0a84ff;
-    font-weight: 600;
-  }
-}
-
-.wallpaper-thumbnail {
-  width: 100%;
-  aspect-ratio: 2 / 1.4;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  transition: all 0.15s;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.08));
-  }
-}
-
-.wallpaper-check {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  color: white;
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(4px);
-}
-
-.wallpaper-title {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-  font-weight: 500;
-  transition: all 0.15s;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  DISPLAY PREVIEW
-// ─────────────────────────────────────────────────────────────
-.display-preview {
-  display: flex;
-  justify-content: center;
-  padding: 24px 0;
-  margin-bottom: 24px;
-}
-
-.monitor-bezel {
-  width: 200px;
-  height: 140px;
-  border: 12px solid #3a3a3f;
-  border-radius: 20px;
-  background: #3a3a3f;
-  padding: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-.monitor-screen {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.05));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  BATTERY CARD
-// ─────────────────────────────────────────────────────────────
-.battery-card {
+.info-section {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px 16px;
-  margin-bottom: 24px;
-}
-
-.battery-status {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-
-  h3 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  p {
-    margin: 4px 0 0 0;
-    font-size: 12px;
-    color: #34c759;
-    font-weight: 500;
-  }
-}
-
-.battery-emoji {
-  font-size: 42px;
-}
-
-// ─────────────────────────────────────────────────────────────
-//  NETWORK LIST
-// ─────────────────────────────────────────────────────────────
-.network-list {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
-
-.network-item {
+.info-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  h4 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  p {
-    margin: 4px 0 0 0;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.45);
-  }
-}
-
-.network-status {
-  color: #0a84ff;
-  font-weight: 600;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 13px;
+  &:last-child { border-bottom: none; }
+  .info-label { color: rgba(255, 255, 255, 0.55); }
+  .info-value { color: #fff; font-weight: 500; }
+}
+.info-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SCROLLBAR
-// ─────────────────────────────────────────────────────────────
+/* ========== SCROLLBAR (macOS‑style) ========== */
 .settings-sidebar::-webkit-scrollbar,
 .settings-content::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
 }
-
 .settings-sidebar::-webkit-scrollbar-track,
 .settings-content::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .settings-sidebar::-webkit-scrollbar-thumb,
 .settings-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  &:hover { background: rgba(255, 255, 255, 0.3); }
 }
