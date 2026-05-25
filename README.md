@@ -40,13 +40,13 @@
 | Terminal — working shell emulator | ✅ Done |
 | Notes — editable markdown-ish notes | ✅ Done |
 | Desktop icons | ✅ Done |
-| Safari browser (iframe) | Do you seriously think that’s even possible? 😉 |
+| Safari browser | ❌ Do you seriously think that’s even possible? 😉 |
+| App Store | ❌ Stop thinking that it’s possible 🫢 |
 | Spotlight search (⌘ Space) | 🔲 Planned |
 | Mission Control | 🔲 Planned |
 | Notifications Center | 🔲 Planned |
 | Calendar | 🔲 Planned |
 | Dark / Light wallpaper toggle | 🔲 Planned |
-| App Store (installable widgets) | 🔲 Planned |
 
 ---
 
