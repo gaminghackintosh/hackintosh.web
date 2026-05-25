@@ -5,7 +5,7 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const [activeTab, setActiveTab] = useState("wallpaper");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Полная структура меню как в macOS System Settings
+  // Структура меню в настройках
   const menuSections = [
     {
       id: "network",
@@ -78,7 +78,6 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const handleItemClick = (itemId) => {
     if (itemId === "wallpaper") setActiveTab(itemId);
     else if (itemId === "appleid") setActiveTab("about");
-    // Здесь можно добавить обработку других пунктов меню
     else console.log(`Clicked: ${itemId} (not implemented yet)`);
   };
 
