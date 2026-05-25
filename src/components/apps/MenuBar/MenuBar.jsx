@@ -72,9 +72,18 @@ export function MenuBar({ activeApp }) {
   }, [darkMode]);
 
   const fmtTime = (date) =>
-    date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+    date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
   const fmtDate = (date) =>
-    date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    date.toLocaleDateString("en-US", { 
+      weekday: "short", 
+      month: "short", 
+      day: "numeric" 
+    });
 
   const toggleControlCenter = () => setShowControlCenter(!showControlCenter);
 

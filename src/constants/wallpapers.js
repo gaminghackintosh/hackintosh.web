@@ -15,6 +15,8 @@ import Sequoia_11 from "./../assets/images/wallpapers/Sequoia/wallpaper_11.png";
 import Tahoe_1 from "./../assets/images/wallpapers/Tahoe/Tahoe Light.png";
 import Tahoe_2 from "./../assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 
+// My
+
 export const WALLPAPER_GROUPS = [
   {
     id: "sequoia",
@@ -41,10 +43,18 @@ export const WALLPAPER_GROUPS = [
       { id: "Tahoe_1", name: "Tahoe Default", image: Tahoe_1, thumbnail: Tahoe_1 },
       { id: "Tahoe_2", name: "Tahoe Dark", image: Tahoe_2, thumbnail: Tahoe_2 }
     ]
+  },
+
+  {
+    id: "Other",
+    title: "Other",
+    wallpapers: [
+
+    ]
   }
 ];
 
-export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[0].wallpapers[0];
+export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[1].wallpapers[1];
 export const WALLPAPERS = WALLPAPER_GROUPS.flatMap(g => g.wallpapers);
 export function getWallpaperById(id) {
   return WALLPAPERS.find(w => w.id === id) || DEFAULT_WALLPAPER;
