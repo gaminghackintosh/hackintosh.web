@@ -15,10 +15,9 @@ export const APP_ICONS = {
   notes: `${ASSET_DIRS.apps}/notes.svg`,
   terminal: `${ASSET_DIRS.apps}/Terminal.ico`,
   music: `${ASSET_DIRS.apps}/apple_music.ico`,
-  settings: `${ASSET_DIRS.apps}/settings.png`,
+  settings: `${ASSET_DIRS.apps}/System_Preferences.ico`,
 };
-
-/**===== Emoji, пока нет картинки =====**/
+/* Emoji, пока нет картинки */
 export const APP_ICON_FALLBACK = {
   finder: "🗂",
   safari: "🧭",
@@ -38,7 +37,7 @@ export const MENU_ICONS = {
   macintoshHd: `${ASSET_DIRS.apps}/macintosh_HD.ico`,
   network: `${ASSET_DIRS.menu}/network.png`,
 };
-
+/* Emoji, пока нет картинки */
 export const MENU_ICON_FALLBACK = {
   home: "🏠",
   desktop: "🖥",
@@ -53,21 +52,21 @@ export const MENU_ICON_FALLBACK = {
 export const DESKTOP_ICONS = {
   hackintoshWeb: `${ASSET_DIRS.apps}/macintosh_HD.ico`,
 };
-
+/* Emoji, пока нет картинки */
 export const DESKTOP_ICON_FALLBACK = {
   hackintoshWeb: "💿",
 };
 
 /**===== Типы файлов/папок в Finder (список файлов) =====**/
 export const FINDER_ICONS = {
-  folder: `${ASSET_DIRS.finder}/folder.png`,
+  folder: `${ASSET_DIRS.finder}/folder_icon.png`,
   file: `${ASSET_DIRS.finder}/file.png`,
   image: `${ASSET_DIRS.finder}/image.png`,
   archive: `${ASSET_DIRS.finder}/archive.png`,
   pdf: `${ASSET_DIRS.finder}/pdf.png`,
   application: `${ASSET_DIRS.finder}/application.png`,
 };
-
+/* Emoji, пока нет картинки */
 export const FINDER_ICON_FALLBACK = {
   folder: "📁",
   file: "📄",

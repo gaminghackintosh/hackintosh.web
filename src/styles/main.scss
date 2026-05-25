@@ -1,9 +1,12 @@
 @use "./variables" as vars;
 @use "./globals";
 @use "./icons";
+
+// Components
 @use "./MenuBar";
 @use "./Settings";
 @use "./BootScreen";
+@use "./Finder";
 
 body {
   margin: 0;

@@ -40,7 +40,7 @@ export const APPS = [
   },
   {
     id: "settings",
-    name: "System Settings",
+    name: "Settings",
     iconPath: APP_ICONS.settings,
     icon: APP_ICON_FALLBACK.settings,
     color: "#636366",
