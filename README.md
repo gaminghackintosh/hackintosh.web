@@ -28,6 +28,8 @@
 
 ---
 
+![hackintosh.web preview](assets/img/desktop.png)
+
 ## ✨ Features
 
 | Feature | Status |
