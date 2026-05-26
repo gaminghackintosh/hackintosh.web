@@ -14,7 +14,7 @@
 | `code-root` | Main development branch |
 | `gh-pages` | Production build deployed via GitHub Actions |
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react)](https://react.dev)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat&logo=vite)](https://vitejs.dev)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat)](LICENSE)
 [![Author](https://img.shields.io/badge/author-gaminghackintosh-purple?style=flat&logo=github)](https://github.com/gaminghackintosh)
@@ -23,7 +23,7 @@
 
 ## What is this?
 
-**hackintosh.web** is an open-source macOS desktop environment that runs entirely in the browser. Built with React 18, it recreates the look, feel, and behavior of macOS — draggable windows, a magnifying Dock, a live Menu Bar, and real working apps — without touching a single line of Swift.
+**hackintosh.web** is an open-source macOS desktop environment that runs entirely in the browser. Built with **React 19**, it recreates the look, feel, and behavior of macOS — draggable windows, a magnifying Dock, a live Menu Bar, and real working apps — without touching a single line of Swift.
 
 
 ---
@@ -53,7 +53,7 @@
 
 ## 🛠 Tech Stack
 
-- **React 18** — component model & hooks
+- **React 19** — component model & hooks
 - **Vite 5** — lightning-fast dev server
 - **CSS-in-JS (inline styles)** — zero external CSS dependencies
 - **No UI libraries** — 100% custom components
