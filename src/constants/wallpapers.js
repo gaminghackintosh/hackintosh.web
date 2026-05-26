@@ -15,7 +15,6 @@ import Sequoia_11 from "./../assets/images/wallpapers/Sequoia/wallpaper_11.png";
 import Tahoe_1 from "./../assets/images/wallpapers/Tahoe/Tahoe Light.png";
 import Tahoe_2 from "./../assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 
-// My
 
 export const WALLPAPER_GROUPS = [
   {
@@ -42,14 +41,6 @@ export const WALLPAPER_GROUPS = [
     wallpapers: [
       { id: "Tahoe_1", name: "Tahoe Default", image: Tahoe_1, thumbnail: Tahoe_1 },
       { id: "Tahoe_2", name: "Tahoe Dark", image: Tahoe_2, thumbnail: Tahoe_2 }
-    ]
-  },
-
-  {
-    id: "Other",
-    title: "Other",
-    wallpapers: [
-
     ]
   }
 ];

@@ -1,0 +1,166 @@
+@use "./_variables" as vars;
+
+.controlCenter {
+  position: absolute;
+  top: 38px;
+  right: 12px;
+
+  width: 360px;
+  padding: 14px;
+
+  border-radius: 28px;
+
+  background: linear-gradient(
+    180deg,
+    vars.$color-cc-bg-gradient-start 0%,
+    vars.$color-cc-bg-gradient-end 100%
+  );
+
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+
+  border: 1px solid vars.$color-cc-border;
+
+  box-shadow:
+    0 20px 60px vars.$color-cc-shadow,
+    inset 0 1px 0 vars.$color-cc-inset-shadow;
+
+  z-index: 10001;
+
+  animation: controlCenterFadeIn 0.18s ease-out;
+
+  overflow: hidden;
+}
+
+.controlCenter__networkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 10px;
+
+  border-radius: 22px;
+
+  background: linear-gradient(
+    180deg,
+    vars.$color-cc-network-group-bg-start,
+    vars.$color-cc-network-group-bg-end
+  );
+
+  border: 1px solid vars.$color-cc-network-group-border;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.controlCenter__networkItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  transition: background 0.15s, transform 0.12s;
+  cursor: default;
+
+  &:hover {
+    background: vars.$color-cc-network-item-hover;
+    transform: scale(1.01);
+  }
+}
+
+.controlCenter__networkIcon {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border-radius: 12px;
+  background: vars.$color-cc-network-icon-bg;
+  color: vars.$color-white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px vars.$color-cc-network-icon-shadow;
+}
+
+.controlCenter__networkLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: vars.$color-text-primary;
+  letter-spacing: -0.1px;
+}
+
+.controlCenter__networkStatus {
+  margin-top: 2px;
+  font-size: 11px;
+  color: vars.$color-text-tertiary; // rgba(255,255,255,0.5)
+}
+
+// Переключатель
+.controlCenter__toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-left: auto;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.controlCenter__toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: vars.$color-cc-toggle-off-bg;
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  transition: 0.2s;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  &::before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background: vars.$color-cc-toggle-slider-knob;
+    border-radius: 50%;
+    transition: 0.2s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  }
+}
+
+// Состояние включено
+input:checked + .controlCenter__toggleSlider {
+  background: linear-gradient(
+    180deg,
+    vars.$color-cc-toggle-on-gradient-start,
+    vars.$color-cc-toggle-on-gradient-end
+  );
+
+  &::before {
+    transform: translateX(20px);
+  }
+}
+
+// Фокус
+.controlCenter__toggle input:focus + .controlCenter__toggleSlider {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+// Анимация появления
+@keyframes controlCenterFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

@@ -7,7 +7,7 @@
 @use "./Settings";
 @use "./BootScreen";
 @use "./Finder";
-@use "./control_center";
+@use "./_ControlCenter";
 
 body {
   margin: 0;

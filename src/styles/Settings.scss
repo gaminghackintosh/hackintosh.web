@@ -1,24 +1,21 @@
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@use "./variables" as vars;
 
 .settings-container {
   display: flex;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: vars.$color-bg-settings-container;
   backdrop-filter: blur(30px);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: #f5f5f7;
+  color: vars.$color-settings-text;
 }
 
-/* ========== SIDEBAR (macOS System Settings style) ========== */
+/* ========== SIDEBAR ========== */
 .settings-sidebar {
   width: 280px;
   flex-shrink: 0;
-  background: rgba(30, 30, 34, 0.85);
+  background: vars.$color-bg-sidebar;
   backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid vars.$color-border-light;
   padding: 20px 0;
   overflow-y: auto;
   display: flex;
@@ -31,7 +28,7 @@
     margin: 0;
     font-size: 24px;
     font-weight: 600;
-    color: #fff;
+    color: vars.$color-white;
     letter-spacing: -0.5px;
   }
 }
@@ -40,16 +37,20 @@
   padding: 0 16px 20px;
   input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.12);
+    background: vars.$color-bg-input;
     border: none;
     border-radius: 10px;
     padding: 8px 12px;
-    color: #fff;
+    color: vars.$color-white;
     font-size: 13px;
     outline: none;
-    transition: 0.2s;
-    &::placeholder { color: rgba(255, 255, 255, 0.45); }
-    &:focus { background: rgba(255, 255, 255, 0.18); }
+    transition: vars.$transition-smooth;
+    &::placeholder {
+      color: vars.$color-placeholder;
+    }
+    &:focus {
+      background: vars.$color-bg-input-focus;
+    }
   }
 }
 
@@ -64,7 +65,7 @@
 
 .section-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: vars.$color-divider;
   margin: 12px 0;
 }
 
@@ -77,27 +78,31 @@
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.15s;
-  color: rgba(255, 255, 255, 0.75);
+  color: vars.$color-text-secondary;
   font-size: 14px;
   font-weight: 500;
   position: relative;
 
   &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.08);
+    background: vars.$color-bg-sidebar-hover;
     color: rgba(255, 255, 255, 0.95);
   }
 
   &.active {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    .tab-icon { transform: scale(1.05); }
+    background: vars.$color-bg-sidebar-active;
+    color: vars.$color-white;
+    .tab-icon {
+      transform: scale(1.05);
+    }
   }
 
   &.apple-id {
     font-weight: 600;
-    color: #fff;
+    color: vars.$color-white;
     margin-bottom: 8px;
-    .tab-icon { font-size: 24px; }
+    .tab-icon {
+      font-size: 24px;
+    }
   }
 }
 
@@ -116,8 +121,8 @@
 }
 
 .tab-badge {
-  background: #ff3b30;
-  color: white;
+  background: vars.$color-badge;
+  color: vars.$color-white;
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
@@ -131,7 +136,7 @@
 .settings-content {
   flex: 1;
   overflow-y: auto;
-  background: rgba(10, 10, 12, 0.4);
+  background: vars.$color-bg-content;
 }
 .settings-panel {
   max-width: 840px;
@@ -146,10 +151,11 @@
   font-weight: 700;
   margin: 0 0 6px;
   letter-spacing: -0.6px;
+  color: vars.$color-white;
 }
 .panel-description {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: vars.$color-text-tertiary;
 }
 
 /* ========== WALLPAPER GROUP ========== */
@@ -161,7 +167,8 @@
   font-weight: 600;
   margin: 0 0 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid vars.$color-divider;
+  color: vars.$color-white;
 }
 .wallpaper-grid {
   display: grid;
@@ -171,9 +178,12 @@
 .wallpaper-card {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  &:hover { transform: translateY(-4px); }
+  &:hover {
+    transform: translateY(-4px);
+  }
   &.selected .wallpaper-thumbnail {
-    box-shadow: 0 0 0 2px #0a84ff, 0 0 0 5px rgba(10, 132, 255, 0.3);
+    box-shadow: 0 0 0 2px vars.$color-accent,
+                0 0 0 5px vars.$color-accent-shadow;
   }
 }
 .wallpaper-thumbnail {
@@ -181,14 +191,16 @@
   aspect-ratio: 16 / 10;
   border-radius: 12px;
   overflow: hidden;
-  background: #1c1c1e;
+  background: vars.$color-bg-thumbnail;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s;
   }
-  &:hover img { transform: scale(1.02); }
+  &:hover img {
+    transform: scale(1.02);
+  }
 }
 .check-badge {
   position: absolute;
@@ -196,70 +208,22 @@
   right: 8px;
   width: 26px;
   height: 26px;
-  background: #0a84ff;
+  background: vars.$color-accent;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
   font-weight: bold;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  color: vars.$color-white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 .wallpaper-title {
   display: block;
   text-align: center;
   font-size: 13px;
   margin-top: 10px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* ========== ABOUT SECTION ========== */
-.system-info-card {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-.info-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  .apple-logo {
-    font-size: 56px;
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  h3 { font-size: 20px; font-weight: 600; margin: 0; }
-  p { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin: 4px 0 0; }
-}
-.info-section {
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 13px;
-  &:last-child { border-bottom: none; }
-  .info-label { color: rgba(255, 255, 255, 0.55); }
-  .info-value { color: #fff; font-weight: 500; }
-}
-.info-footer {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
+  color: vars.$color-text-wallpaper;
 }
 
 /* ========== SCROLLBAR ========== */
@@ -273,7 +237,9 @@
 }
 .settings-sidebar::-webkit-scrollbar-thumb,
 .settings-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: vars.$color-scrollbar-thumb;
   border-radius: 10px;
-  &:hover { background: rgba(255, 255, 255, 0.3); }
+  &:hover {
+    background: vars.$color-scrollbar-thumb-hover;
+  }
 }

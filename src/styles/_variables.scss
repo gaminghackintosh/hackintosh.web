@@ -1,17 +1,96 @@
-$gradient-main: linear-gradient(135deg, #0f172a, #1e293b);
-
+// ===== Основные цвета =====
 $color-white: #ffffff;
-$color-text-primary: rgba(255, 255, 255, 0.95);
-$color-text-secondary: rgba(255, 255, 255, 0.75);
-$color-text-tertiary: rgba(255, 255, 255, 0.55);
-$color-text-muted: rgba(255, 255, 255, 0.35);
+$color-text-primary: #fffffff2;   // 95%
+$color-text-secondary: #ffffffbf; // ~75%
+$color-text-tertiary: #ffffff8c;  // ~55%
+$color-text-muted: #ffffff59;     // ~35%
 
-$z-mobile: 9999;
+// ===== Семантические цвета интерфейса =====
+$color-bg-body: #05070f;        
+$color-bg-settings-container: rgba(0, 0, 0, 0.7);
+$color-settings-text: #f5f5f7;
 
+// Боковая панель
+$color-bg-sidebar: rgba(30, 30, 34, 0.85);
+$color-bg-sidebar-hover: rgba(255, 255, 255, 0.08);
+$color-bg-sidebar-active: rgba(255, 255, 255, 0.15);
+
+// Поля ввода и плэйсхолдеры
+$color-bg-input: rgba(255, 255, 255, 0.12);
+$color-bg-input-focus: rgba(255, 255, 255, 0.18);
+$color-placeholder: rgba(255, 255, 255, 0.45);
+
+// Акценты и бейджи
+$color-accent: #0a84ff;
+$color-accent-shadow: rgba(10, 132, 255, 0.3);
+$color-badge: #ff3b30;
+
+// Границы и разделители
+$color-border-light: rgba(255, 255, 255, 0.08);
+$color-border-lighter: rgba(255, 255, 255, 0.1);
+$color-divider: rgba(255, 255, 255, 0.1);
+
+// Обои и контент
+$color-bg-content: rgba(10, 10, 12, 0.4);
+$color-bg-thumbnail: #1c1c1e;
+$color-text-wallpaper: rgba(255, 255, 255, 0.8);
+
+// Скроллбар
+$color-scrollbar-thumb: rgba(255, 255, 255, 0.2);
+$color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+
+// ===== MenuBar =====
+$color-menubar-bg: rgba(0, 0, 0, 0.2);
+$color-menubar-border: rgba(255, 255, 255, 0.07);
+$color-menubar-item: rgba(255, 255, 255, 0.88);
+$color-menubar-item-hover: rgba(255, 255, 255, 0.15);
+$color-menubar-item-active: rgba(255, 255, 255, 0.18);
+$color-dropdown-bg: rgba(12, 12, 14, 0.98);
+$color-dropdown-border: rgba(255, 255, 255, 0.1);
+$color-dropdown-item-hover: rgba(255, 255, 255, 0.08);
+
+// ===== Finder =====
+$color-finder-bg: rgba(30, 30, 34, 0.92);
+$color-finder-toolbar-bg: rgba(36, 36, 40, 0.95);
+$color-finder-sidebar-bg: rgba(28, 28, 30, 0.95);
+$color-finder-sidebar-item-hover: rgba(255, 255, 255, 0.08);
+$color-finder-sidebar-item-active: rgba(10, 132, 255, 0.25);
+$color-finder-pathbar-bg: rgba(32, 32, 36, 0.9);
+$color-finder-column-headers-bg: rgba(28, 28, 30, 0.9);
+$color-finder-list-item-hover: rgba(255, 255, 255, 0.06);
+$color-finder-list-item-selected: rgba(10, 132, 255, 0.25);
+$color-finder-grid-item-hover: rgba(255, 255, 255, 0.08);
+$color-finder-grid-item-selected: rgba(10, 132, 255, 0.2);
+$color-finder-preview-bg: rgba(24, 24, 26, 0.95);
+$color-finder-statusbar-bg: rgba(36, 36, 40, 0.95);
+$color-finder-input-bg: rgba(255, 255, 255, 0.1);
+$color-finder-input-focus: rgba(255, 255, 255, 0.15);
+
+// ===== Общие тени и переходы =====
+$gradient-main: linear-gradient(135deg, #0f172a, #1e293b);
 $radius-md: 12px;
-
 $transition-slow: 0.4s;
 $transition-smooth: 0.25s;
-
 $easing-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 $easing-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$z-mobile: 9999;
+
+// ===== Control Center =====
+$color-cc-bg-gradient-start: rgba(42, 42, 46, 0.72);
+$color-cc-bg-gradient-end: rgba(26, 26, 30, 0.82);
+$color-cc-border: rgba(255, 255, 255, 0.08);
+$color-cc-shadow: rgba(0, 0, 0, 0.55);
+$color-cc-inset-shadow: rgba(255, 255, 255, 0.08);
+
+$color-cc-network-group-bg-start: rgba(255, 255, 255, 0.09);
+$color-cc-network-group-bg-end: rgba(255, 255, 255, 0.04);
+$color-cc-network-group-border: rgba(255, 255, 255, 0.06);
+$color-cc-network-item-hover: rgba(255, 255, 255, 0.08);
+
+$color-cc-network-icon-bg: $color-accent;
+$color-cc-network-icon-shadow: $color-accent-shadow;  
+
+$color-cc-toggle-off-bg: transparent; 
+$color-cc-toggle-on-gradient-start: #0a84ff;
+$color-cc-toggle-on-gradient-end: #0066ff;
+$color-cc-toggle-slider-knob: #ffffff;
