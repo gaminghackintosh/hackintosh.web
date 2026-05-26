@@ -168,7 +168,6 @@ export function TerminalContent() {
     }
 
     if (cmd === "neofetch") {
-      // Получаем динамические значения
       const resolution = `${window.innerWidth}x${window.innerHeight}`;
       const uptime = Math.floor(performance.now() / 1000);
       const memory = (performance?.memory?.usedJSHeapSize 
@@ -183,7 +182,7 @@ export function TerminalContent() {
         " \x1b[38;5;45m                                   ;OOOOb`.\x1b[0m                     Kernel:      \x1b[37mhackintosh-core\x1b[0m",
         " \x1b[38;5;51m                                  ;OOOOOY\" )\x1b[0m                    Host:        \x1b[37mMacBook Pro (Simulated)\x1b[0m",
         " \x1b[38;5;51m                                 ;OOOO' ,%%)\x1b[0m                    Shell:       \x1b[37mhacksh 1.0.0\x1b[0m",
-        " \x1b[38;5;87m                             \\\\  /OOO ,%%%%,%\\\\\x1b[0m                 Runtime:     \x1b[37mReact 18 / V8\x1b[0m",
+        " \x1b[38;5;87m                             \\\\  /OOO ,%%%%,%\\\\\x1b[0m                 Runtime:     \x1b[37mReact 19 / V8\x1b[0m",
         " \x1b[38;5;87m                              |:  ,%%%%%%;%%/\x1b[0m                  Resolution:  \x1b[37m" + resolution + "\x1b[0m",
         " \x1b[38;5;123m                              ||,%%%%%%%%%%/\x1b[0m                   Theme:       \x1b[35mhackintosh Dark\x1b[0m",
         " \x1b[38;5;123m                              ;|%%%%%%%%%'/`-\"\"`.\x1b[0m             Engine:      \x1b[37mChromium Terminal\x1b[0m",
@@ -243,7 +242,7 @@ export function TerminalContent() {
     setInput("");
   };
 
-// Безопасный парсинг ANSI-цветов без dangerouslySetInnerHTML
+// парсинг ANSI-цветов
 const renderLine = (text) => {
   // Карта ANSI-кодов → цвет CSS
   const ansiColorMap = {
@@ -264,10 +263,8 @@ const renderLine = (text) => {
 
   for (let i = 0; i < text.length; i++) {
     if (text[i] === ansiEscape && text[i + 1] === '[') {
-      // Нашли начало ANSI-последовательности
       const endIdx = text.indexOf('m', i + 2);
       if (endIdx === -1) {
-        // Некорректная последовательность – добавим как текст
         buffer += text[i];
         continue;
       }
@@ -278,10 +275,10 @@ const renderLine = (text) => {
         buffer = '';
       }
 
-      const code = text.slice(i + 2, endIdx); // например, '31'
+      const code = text.slice(i + 2, endIdx); 
       currentColor = ansiColorMap[code] !== undefined ? ansiColorMap[code] : currentColor;
 
-      i = endIdx; // перемещаемся к 'm'
+      i = endIdx;
       continue;
     }
 
