@@ -12,11 +12,17 @@ import LogoType from "./../../../assets/images/logo/logo_butterfly.png";
 export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const [activeTab, setActiveTab] = useState("wallpaper");
   const [searchQuery, setSearchQuery] = useState("");
+  const [theme, setTheme] = useState("dark");
 
   // Получаем функции управления окном из контекста
   const { onClose, onMinimize, onFocus, onTitleMouseDown } = useContext(WindowContext);
 
-  // Структура меню (оставьте свою, здесь пример)
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
+
+  // Структура меню 
   const menuSections = [
     {
       id: "network",

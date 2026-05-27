@@ -21,6 +21,7 @@ const FEATURES = [
 
 export default function MobileNotSupported() {
   const [copied, setCopied] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -81,10 +82,20 @@ export default function MobileNotSupported() {
             <button
               className={`mns-btn ${copied ? "mns-btn--success" : "mns-btn--primary"}`}
               onClick={handleCopyLink}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
-              {copied
-                ? "Ссылка скопирована! Отправьте её на компьютер"
-                : "Скопировать ссылку"}
+              {copied ? (
+                <>
+                  <span className="mns-btn-icon">✅</span>
+                  <span>Ссылка скопирована!</span>
+                </>
+              ) : (
+                <>
+                  <span className="mns-btn-icon">📋</span>
+                  <span>Скопировать ссылку</span>
+                </>
+              )}
             </button>
           </div>
 

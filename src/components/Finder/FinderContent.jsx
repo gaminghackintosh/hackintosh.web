@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { APPS } from "../../constants/apps";
+import { APPS } from "./../../constants/apps";
 import { AssetIcon } from "../AssetIcon";
 
 /* ===== НОВЫЙ Finder — как в настоящем macOS ===== */

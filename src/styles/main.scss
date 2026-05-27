@@ -10,29 +10,11 @@
 @use "./Finder";
 @use "./_ControlCenter";
 @use "./AppWindow/AppWindows";
+@use "./AboutThisMac/ATM";
 
 body {
   margin: 0;
   background: #05070f;
   font-family: system-ui, -apple-system, sans-serif;
-}
-
-/* Глобальный скроллбар */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: vars.$color-scrollbar-thumb;
-  border-radius: 4px;
-
-  &:hover {
-    background: vars.$color-scrollbar-thumb-hover;
-  }
 }
 

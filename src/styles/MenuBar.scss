@@ -1,36 +1,62 @@
 @use "./variables" as vars;
 
+/* =========================================================
+   MENU BAR
+========================================================= */
+
 .menuBar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 28px;
+  inset: 0 0 auto 0;
 
-  background: vars.$color-menubar-bg;
-  backdrop-filter: blur(40px) saturate(1.8);
+  height: 28px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   padding: 0 6px;
+
   z-index: 9999;
 
-  color: vars.$color-white;
   user-select: none;
 
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  font-weight: 500;
+  color: vars.$color-white;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    sans-serif;
+
+  background: vars.$color-menubar-bg;
+
+  backdrop-filter: blur(40px) saturate(1.8);
 
   border-bottom: 1px solid vars.$color-menubar-border;
 }
 
-.menuBar__left {
+/* =========================================================
+   LEFT / RIGHT
+========================================================= */
+
+.menuBar__left,
+.menuBar__right {
   display: flex;
   align-items: center;
+}
+
+.menuBar__left {
   gap: 2px;
 }
+
+.menuBar__right {
+  gap: 14px;
+  font-size: 13px;
+}
+
+/* =========================================================
+   MENU ITEMS
+========================================================= */
 
 .menuBar__itemWrapper {
   position: relative;
@@ -39,78 +65,264 @@
 .menuBar__item {
   display: inline-flex;
   align-items: center;
-  padding: 2px 9px;
+  justify-content: center;
+
+  height: 22px;
+
+  padding: 0 9px;
+
   border-radius: 5px;
+
   font-size: 13px;
   font-weight: 400;
-  color: vars.$color-menubar-item;
-  transition: background 0.12s ease;
 
-  &.isApple {
-    font-size: 18px;
-    color: vars.$color-white;
+  color: vars.$color-menubar-item;
+
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
+
+  &.isClickable {
+    cursor: default;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  &.isActive {
+    background: rgba(255, 255, 255, 0.18);
   }
 
   &.isBold {
     font-weight: 600;
   }
 
-  &.isClickable {
-    cursor: pointer;
-    &:hover {
-      background: vars.$color-menubar-item-hover;
-    }
-  }
-
-  &.isActive {
-    background: vars.$color-menubar-item-active;
+  &.isApple {
+    font-size: 18px;
+    color: white;
   }
 }
+
+/* =========================================================
+   DROPDOWN MENU
+========================================================= */
 
 .menuBar__dropdown {
   position: absolute;
-  top: 28px;
+
+  top: 32px;
   left: 0;
 
-  min-width: 160px;
+  min-width: 240px;
 
-  background: vars.$color-dropdown-bg;
-  border: 1px solid vars.$color-dropdown-border;
+  padding: 4px 0;
+
   border-radius: 12px;
 
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-
-  padding: 6px 0;
   z-index: 10000;
+
+  overflow: hidden;
+
+  background: rgba(248, 248, 248, 0.92);
+
+  backdrop-filter: blur(40px) saturate(1.8);
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.28),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1);
+
+  animation: menuFade 0.12s ease-out;
 }
 
+/* =========================================================
+   DROPDOWN ITEMS
+========================================================= */
+
 .menuBar__dropdownItem {
-  padding: 9px 14px;
-  font-size: 12px;
-  color: vars.$color-text-primary; // почти белый
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 28px;
+
+  padding: 6px 16px;
+
+  font-size: 13px;
+  font-weight: 400;
+
+  color: #1c1c1e;
+
   white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.12s ease;
+
+  cursor: default;
+
+  transition:
+    background-color 0.08s ease,
+    color 0.08s ease;
 
   &:hover {
-    background: vars.$color-dropdown-item-hover;
+    background: #007aff;
+    color: white;
+
+    .menuBar__dropdownShortcut,
+    .menuBar__dropdownIcon {
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .menuBar__dropdownBadge {
+      background: rgba(255, 255, 255, 0.22);
+      color: white;
+    }
   }
 }
 
-.menuBar__right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 13px;
+/* =========================================================
+   DROPDOWN INNER ELEMENTS
+========================================================= */
+
+.menuBar__dropdownLabel {
+  flex: 1;
 }
+
+.menuBar__dropdownShortcut {
+  margin-left: 18px;
+
+  font-size: 11px;
+
+  color: #8e8e93;
+
+  letter-spacing: 0.2px;
+
+  transition: color 0.08s ease;
+}
+
+.menuBar__dropdownIcon {
+  margin-left: 10px;
+
+  font-size: 10px;
+
+  color: #8e8e93;
+
+  transition: color 0.08s ease;
+}
+
+.menuBar__dropdownBadge {
+  margin-left: 8px;
+
+  padding: 1px 8px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  background: rgba(0, 0, 0, 0.06);
+
+  color: #1c1c1e;
+
+  transition:
+    background-color 0.08s ease,
+    color 0.08s ease;
+}
+
+.menuBar__dropdownDivider {
+  height: 1px;
+
+  margin: 4px 8px;
+
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================================
+   MENU ICONS
+========================================================= */
 
 .menuBar__iconImg {
   width: 18px;
   height: 18px;
+
   object-fit: contain;
-  opacity: 0.9;
+
+  opacity: 0.92;
+
   filter: brightness(1.1) invert(1);
-  display: flex;
-  align-items: center;
 }
 
+/* =========================================================
+   CONTROL CENTER BUTTON
+========================================================= */
+
+.menuBar__controlCenterBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 22px;
+
+  padding: 0 6px;
+
+  border-radius: 6px;
+
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark-mode {
+  .menuBar__dropdown {
+    background: rgba(42, 42, 42, 0.92);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.5),
+      0 0 0 0.5px rgba(255, 255, 255, 0.04);
+  }
+
+  .menuBar__dropdownItem {
+    color: #ffffff;
+  }
+
+  .menuBar__dropdownLabel {
+    color: #ffffff;
+  }
+
+  .menuBar__dropdownShortcut,
+  .menuBar__dropdownIcon {
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .menuBar__dropdownBadge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .menuBar__dropdownDivider {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes menuFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { APPS } from "../constants/apps";
+import { APPS } from "./../constants/apps";
 import { AssetIcon } from "./AssetIcon";
 
 const GITHUB_APP = {

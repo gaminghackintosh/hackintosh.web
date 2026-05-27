@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════
-//  MobileNotSupported — macOS Sierra / Yosemite Style
+//  MobileNotSupported — улучшенный дизайн кнопки
 // ════════════════════════════════════════════════════════
 
 $win-w           : 92%;
@@ -12,10 +12,15 @@ $font-ui         : -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Dis
 $window-bg       : rgba(255, 255, 255, 0.82);
 $window-border   : rgba(255, 255, 255, 0.5);
 $inner-stroke    : rgba(0, 0, 0, 0.04);
-$btn-radius      : 10px;
+$btn-radius      : 12px;
 $apple-blue      : #007aff;
-$apple-blue-hover: #0063ce;
+$apple-blue-hover: #0055d4;
+$apple-blue-active: #0040a0;
+$apple-blue-shadow: rgba(0, 122, 255, 0.35);
 $apple-green     : #34c759;
+$apple-green-hover: #28a745;
+$apple-green-active: #1e7e34;
+$apple-green-shadow: rgba(52, 199, 89, 0.35);
 
 // Traffic Lights
 $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
@@ -34,7 +39,6 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   background:
     linear-gradient(to bottom, #1b2c4c 0%, #3b5b8c 30%, #a1c4e5 70%, #d4e3f5 100%);
 }
-
 
 .mns-desktop-bg {
   position       : absolute;
@@ -56,8 +60,8 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   border         : 1px solid $window-border;
   box-shadow:
     0 0 0 1px $inner-stroke,
-    0 8px 32px rgba(0,0,0,0.08),
-    0 2px 8px rgba(0,0,0,0.05);
+    0 8px 32px rgba(0,0,0,0.12),
+    0 2px 8px rgba(0,0,0,0.06);
   animation: mns-sierra-open 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -168,13 +172,33 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   max-width      : 320px;
 }
 
-// ── Блок с характеристиками (как в About This Mac) ─────
+// ── Блок с характеристиками ──────────────────────────
+.mns-features-box {
+  background     : rgba(255,255,255,0.5);
+  border-radius  : 10px;
+  backdrop-filter: blur(10px);
+  border         : 0.5px solid rgba(255,255,255,0.6);
+  margin-bottom  : 18px;
+  overflow       : hidden;
+}
+
 .mns-feature-row {
   display        : flex;
   align-items    : flex-start;  
   gap            : 12px;
   padding        : 10px 14px;
+  transition     : background 0.2s;
+  
+  &:hover {
+    background: rgba(255,255,255,0.3);
+  }
+  
   & + & { border-top: 1px solid rgba(0,0,0,0.04); }
+}
+
+.mns-feature-icon {
+  font-size: 20px;
+  margin-top: 1px;
 }
 
 .mns-feature-text {
@@ -199,39 +223,77 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   line-height    : 1.4;
 }
 
-// ── Кнопка ──────────────────────────────────────────────
+// ── Улучшенная кнопка ──────────────────────────────────
+.mns-actions {
+  margin-bottom: 12px;
+}
+
 .mns-btn {
+  position       : relative;
   width          : 100%;
-  height         : 38px;
+  height         : 44px;
   border-radius  : $btn-radius;
   font-family    : $font-ui;
-  font-size      : 13px;
+  font-size      : 14px;
+  font-weight    : 500;
   cursor         : pointer;
   border         : none;
   display        : flex;
   align-items    : center;
   justify-content: center;
-  transition     : background 0.2s, transform 0.1s;
-
+  gap            : 8px;
+  transition     : all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding        : 0 20px;
+  letter-spacing : -0.2px;
+  
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
 }
 
+.mns-btn-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+// ── Primary кнопка ──────────────────────────────────────
 .mns-btn--primary {
   background     : $apple-blue;
   color          : white;
-  font-weight    : 600;
-  box-shadow     : 0 2px 8px rgba(0, 122, 255, 0.25);
-
-  &:hover { background: $apple-blue-hover; }
+  box-shadow     : 0 2px 12px rgba(0, 122, 255, 0.25);
+  border         : 0.5px solid rgba(255, 255, 255, 0.15);
+  
+  &:hover {
+    background: $apple-blue-hover;
+    box-shadow: 0 4px 20px rgba(0, 122, 255, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    background: $apple-blue-active;
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+  }
 }
 
+// ── Success кнопка ──────────────────────────────────────
 .mns-btn--success {
   background     : $apple-green;
   color          : white;
-  font-weight    : 600;
-  box-shadow     : 0 2px 8px rgba(52, 199, 89, 0.25);
+  box-shadow     : 0 2px 12px rgba(52, 199, 89, 0.25);
+  border         : 0.5px solid rgba(255, 255, 255, 0.15);
+  
+  &:hover {
+    background: $apple-green-hover;
+    box-shadow: 0 4px 20px rgba(52, 199, 89, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    background: $apple-green-active;
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.2);
+  }
 }
 
 // ── Подвал ───────────────────────────────────────────────
@@ -240,4 +302,5 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   font-size      : 10px;
   color          : rgba(0,0,0,0.25);
   margin-top     : 12px;
+  letter-spacing : 0.3px;
 }
