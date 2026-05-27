@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
-import { APPS } from "./../../constants/apps";
+// FinderContent.jsx
+import React, { useState, useEffect } from "react";
 import { AssetIcon } from "../AssetIcon";
+import { APPS } from "../../constants/apps";
+import { SidebarIcon } from "./SidebarIcon"; // Компонент с SVG-иконками
 
-/* ===== НОВЫЙ Finder — как в настоящем macOS ===== */
-function FinderContent() {
+function FinderContent({ openApp }) {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [currentFolder, setCurrentFolder] = useState("macOS");
+  const [currentFolder, setCurrentFolder] = useState("macos");
   const [viewMode, setViewMode] = useState("list");
   const [searchQuery, setSearchQuery] = useState("");
-  const [columnWidths, setColumnWidths] = useState({ name: 300, size: 100, modified: 150 });
+  const [columnWidths, setColumnWidths] = useState({
+    name: 300,
+    size: 100,
+    modified: 150
+  });
 
   // Получение иконки приложения из APPS
   const getAppIcon = (appName) => {
     const app = APPS.find(a => a.name.toLowerCase() === appName.toLowerCase().replace('.app', ''));
     if (app) {
-      const isValidIcon = app.iconPath && 
-                        (app.iconPath.endsWith('.svg') || 
-                          app.iconPath.endsWith('.png') || 
-                          app.iconPath.endsWith('.ico'));
-      
       return {
         type: "image",
         path: app.iconPath,
@@ -41,19 +41,19 @@ function FinderContent() {
     return fallbacks[appId] || "📱";
   };
 
-  // Sidebar данные
+  // Данные сайдбара (чистые экшены без эмодзи)
   const sidebar = {
     favourites: [
-      { name: "AirDrop", icon: "📡", action: "airdrop" },
-      { name: "Recents", icon: "⏱", action: "recents" },
-      { name: "Applications", icon: "📱", action: "applications" },
-      { name: "Desktop", icon: "🖥", action: "desktop" },
-      { name: "Documents", icon: "📄", action: "documents" },
-      { name: "Downloads", icon: "⬇️", action: "downloads" },
+      { name: "AirDrop", action: "airdrop" },
+      { name: "Recents", action: "recents" },
+      { name: "Applications", action: "applications" },
+      { name: "Desktop", action: "desktop" },
+      { name: "Documents", action: "documents" },
+      { name: "Downloads", action: "downloads" },
     ],
     locations: [
-      { name: "macOS", icon: "🍎", action: "macos" },
-      { name: "Network", icon: "🌐", action: "network" },
+      { name: "macOS", action: "macos" },
+      { name: "Network", action: "network" },
     ],
     tags: [
       { name: "Red", color: "#ff5a5a", action: "red" },
@@ -76,64 +76,18 @@ function FinderContent() {
       { name: "LICENSE", type: "file", icon: "📄", size: "1.2 KB", modified: "Yesterday", preview: "MIT License\n\nCopyright (c) 2024 hackintosh.web\n\nPermission is hereby granted..." },
     ],
     applications: [
-      { 
-        name: "Finder.app", 
-        type: "app", 
-        icon: getAppIcon("Finder"), 
-        size: "12 MB", 
-        modified: "Today", 
-        exec: "finder",
-        isImageIcon: true
-      },
-      { 
-        name: "Safari.app", 
-        type: "app", 
-        icon: getAppIcon("Safari"), 
-        size: "28 MB", 
-        modified: "Today", 
-        exec: "safari",
-        isImageIcon: true
-      },
-      { 
-        name: "Notes.app", 
-        type: "app", 
-        icon: getAppIcon("Notes"), 
-        size: "6 MB", 
-        modified: "Yesterday", 
-        exec: "notes",
-        isImageIcon: true
-      },
-      { 
-        name: "Terminal.app", 
-        type: "app", 
-        icon: getAppIcon("Terminal"), 
-        size: "4 MB", 
-        modified: "Today", 
-        exec: "terminal",
-        isImageIcon: true
-      },
-      { 
-        name: "Settings.app", 
-        type: "app", 
-        icon: getAppIcon("Settings"), 
-        size: "8 MB", 
-        modified: "Today", 
-        exec: "settings",
-        isImageIcon: true
-      },
-      { 
-        name: "Music.app", 
-        type: "app", 
-        icon: getAppIcon("Music"), 
-        size: "45 MB", 
-        modified: "Yesterday", 
-        exec: "music",
-        isImageIcon: true
-      },
+      { name: "Finder.app", type: "app", icon: getAppIcon("Finder"), size: "12 MB", modified: "Today", exec: "finder", isImageIcon: true },
+      { name: "Safari.app", type: "app", icon: getAppIcon("Safari"), size: "28 MB", modified: "Today", exec: "safari", isImageIcon: true },
+      { name: "Notes.app", type: "app", icon: getAppIcon("Notes"), size: "6 MB", modified: "Yesterday", exec: "notes", isImageIcon: true },
+      { name: "Terminal.app", type: "app", icon: getAppIcon("Terminal"), size: "4 MB", modified: "Today", exec: "terminal", isImageIcon: true },
+      { name: "Settings.app", type: "app", icon: getAppIcon("Settings"), size: "8 MB", modified: "Today", exec: "settings", isImageIcon: true },
+      { name: "Music.app", type: "app", icon: getAppIcon("Music"), size: "45 MB", modified: "Yesterday", exec: "music", isImageIcon: true },
     ],
     desktop: [
       { name: "Macintosh HD", type: "alias", icon: "💾", size: "--", modified: "Today", target: "macos" },
       { name: "hackintosh.web", type: "file", icon: "🌐", size: "2 KB", modified: "Just now", preview: "macOS web simulation built with React" },
+      { name: "Projects", type: "folder", icon: "📁", size: "--", modified: "2 days ago", path: "projects" },
+      { name: "README.md", type: "file", icon: "📝", size: "4.2 KB", modified: "Today", preview: "# hackintosh.web\n\nA web-native macOS experience..." },
     ],
     documents: [
       { name: "Projects", type: "folder", icon: "📁", size: "--", modified: "2 days ago", path: "projects" },
@@ -155,8 +109,8 @@ function FinderContent() {
       { name: "README.md", type: "file", icon: "📝", size: "3.4 KB", modified: "Just now", preview: "# hackintosh.web\n\nmacOS experience in your browser" },
     ],
     portfolio: [
-      { name: "index.html", type: "file", icon: "🌐", size: "9 KB", modified: "3 days ago", preview: "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Portfolio</title>\n  </head>\n</html>" },
-      { name: "style.css", type: "file", icon: "🎨", size: "15 KB", modified: "3 days ago", preview: "body {\n  margin: 0;\n  padding: 0;\n  font-family: -apple-system, sans-serif;\n}" },
+      { name: "index.html", type: "file", icon: "🌐", size: "9 KB", modified: "3 days ago", preview: "<!DOCTYPE html>\n<html>\n <head>\n <title>Portfolio</title>\n </head>\n</html>" },
+      { name: "style.css", type: "file", icon: "🎨", size: "15 KB", modified: "3 days ago", preview: "body {\n margin: 0;\n padding: 0;\n font-family: -apple-system, sans-serif;\n}" },
     ],
     recents: [],
     network: [
@@ -200,14 +154,10 @@ function FinderContent() {
         }
       }
     }
-
     // Фильтрация по поиску
     if (searchQuery) {
-      files = files.filter(f => 
-        f.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      files = files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
-
     return files;
   };
 
@@ -220,7 +170,7 @@ function FinderContent() {
   const navigateToFolder = (folderName, targetPath) => {
     if (targetPath) {
       setCurrentFolder(targetPath);
-    } else if (folderName === "Macintosh HD") {
+    } else if (folderName === "Macintosh HD" || folderName === "macOS") {
       setCurrentFolder("macos");
     } else if (folderName === "Applications") {
       setCurrentFolder("applications");
@@ -246,8 +196,12 @@ function FinderContent() {
 
   // Открытие приложения
   const openApplication = (appId) => {
-    if (window.openAppFromFinder) {
+    if (openApp) {
+      openApp(appId);
+    } else if (window.openAppFromFinder) {
       window.openAppFromFinder(appId);
+    } else {
+      console.log(`Cannot open ${appId}: openApp function not available`);
     }
   };
 
@@ -259,15 +213,10 @@ function FinderContent() {
     return dateStr;
   };
 
-  // Рендер иконок
+  // Рендер иконок в основной области файлов
   const renderIcon = (file) => {
     if (file.isImageIcon && file.icon && file.icon.type === "image") {
-      // Проверка на валидность пути
-      const isValidPath = file.icon.path && 
-                        (file.icon.path.includes('.png') || 
-                          file.icon.path.includes('.svg') || 
-                          file.icon.path.includes('.ico'));
-      
+      const isValidPath = file.icon.path && (file.icon.path.includes('.png') || file.icon.path.includes('.svg') || file.icon.path.includes('.ico'));
       if (isValidPath) {
         return (
           <AssetIcon
@@ -281,7 +230,6 @@ function FinderContent() {
         );
       }
     }
-    // Если иконка не загрузилась, показываем эмодзи
     const emojiMap = {
       "Settings.app": "⚙️",
       "Finder.app": "🗂",
@@ -290,9 +238,11 @@ function FinderContent() {
       "Terminal.app": "💻",
       "Music.app": "🎵"
     };
-    return <span className="finder-list-icon-emoji" style={{ fontSize: isGridView ? 48 : 18 }}>
-      {emojiMap[file.name] || file.icon || "📱"}
-    </span>;
+    return (
+      <span className="finder-list-icon-emoji" style={{ fontSize: isGridView ? 48 : 18 }}>
+        {emojiMap[file.name] || file.icon || "📱"}
+      </span>
+    );
   };
 
   return (
@@ -303,36 +253,13 @@ function FinderContent() {
           <button className="finder-toolbar-button" onClick={() => navigateToFolder("macos")}>◀</button>
           <button className="finder-toolbar-button">▶</button>
         </div>
-        
         <div className="finder-view-controls">
-          <button 
-            className={`finder-view-button ${viewMode === "list" ? "active" : ""}`}
-            onClick={() => setViewMode("list")}
-          >
-            ☰
-          </button>
-          <button 
-            className={`finder-view-button ${viewMode === "grid" ? "active" : ""}`}
-            onClick={() => setViewMode("grid")}
-          >
-            ▦
-          </button>
-          <button 
-            className={`finder-view-button ${viewMode === "columns" ? "active" : ""}`}
-            onClick={() => setViewMode("columns")}
-          >
-            ▯
-          </button>
+          <button className={`finder-view-button ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>☰</button>
+          <button className={`finder-view-button ${viewMode === "grid" ? "active" : ""}`} onClick={() => setViewMode("grid")}>▦</button>
+          <button className={`finder-view-button ${viewMode === "columns" ? "active" : ""}`} onClick={() => setViewMode("columns")}>▯</button>
         </div>
-
         <div className="finder-search-container">
-          <input
-            type="text"
-            placeholder="Search"
-            className="finder-search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <input type="text" placeholder="Search" className="finder-search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
       </div>
 
@@ -340,34 +267,41 @@ function FinderContent() {
       <div className="finder-main-content">
         {/* Sidebar */}
         <div className="finder-sidebar">
+          {/* Favourites Section */}
           <div className="finder-sidebar-section">
             <div className="finder-sidebar-title">Favourites</div>
             {sidebar.favourites.map(item => (
-              <div
-                key={item.name}
-                className={`finder-sidebar-item ${currentFolder === item.name.toLowerCase() ? "active" : ""}`}
+              <div 
+                key={item.name} 
+                className={`finder-sidebar-item ${currentFolder === item.action ? "active" : ""}`} 
                 onClick={() => navigateToFolder(item.name)}
               >
-                <span className="finder-sidebar-icon">{item.icon}</span>
+                <span className="finder-sidebar-icon">
+                  <SidebarIcon name={item.action} />
+                </span>
                 <span>{item.name}</span>
               </div>
             ))}
           </div>
 
+          {/* Locations Section */}
           <div className="finder-sidebar-section">
             <div className="finder-sidebar-title">Locations</div>
             {sidebar.locations.map(item => (
-              <div
-                key={item.name}
-                className={`finder-sidebar-item ${currentFolder === item.action ? "active" : ""}`}
+              <div 
+                key={item.name} 
+                className={`finder-sidebar-item ${currentFolder === item.action ? "active" : ""}`} 
                 onClick={() => navigateToFolder(item.name)}
               >
-                <span className="finder-sidebar-icon">{item.icon}</span>
+                <span className="finder-sidebar-icon">
+                  <SidebarIcon name={item.action} />
+                </span>
                 <span>{item.name}</span>
               </div>
             ))}
           </div>
 
+          {/* Tags Section */}
           <div className="finder-sidebar-section">
             <div className="finder-sidebar-title">Tags</div>
             {sidebar.tags.map(tag => (
@@ -448,13 +382,7 @@ function FinderContent() {
                   <div className="finder-preview-header">
                     <div className="finder-preview-icon">
                       {selectedItem.isImageIcon && selectedItem.icon ? (
-                        <AssetIcon
-                          path={selectedItem.icon.path}
-                          fallback={selectedItem.icon.fallback}
-                          size={64}
-                          alt={selectedItem.name}
-                          style={{ borderRadius: 14 }}
-                        />
+                        <AssetIcon path={selectedItem.icon.path} fallback={selectedItem.icon.fallback} size={64} alt={selectedItem.name} style={{ borderRadius: 14 }} />
                       ) : (
                         <span style={{ fontSize: 64 }}>{selectedItem.icon}</span>
                       )}
@@ -525,13 +453,7 @@ function FinderContent() {
             <div className="finder-preview-header">
               <div className="finder-preview-icon">
                 {selectedItem.isImageIcon && selectedItem.icon ? (
-                  <AssetIcon
-                    path={selectedItem.icon.path}
-                    fallback={selectedItem.icon.fallback}
-                    size={64}
-                    alt={selectedItem.name}
-                    style={{ borderRadius: 14 }}
-                  />
+                  <AssetIcon path={selectedItem.icon.path} fallback={selectedItem.icon.fallback} size={64} alt={selectedItem.name} style={{ borderRadius: 14 }} />
                 ) : (
                   <span style={{ fontSize: 64 }}>{selectedItem.icon}</span>
                 )}
