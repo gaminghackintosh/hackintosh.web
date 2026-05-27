@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { resolveAssetUrl } from "../assets/resolveIcon";
+import { resolveAssetUrl } from "../assets/resolveIcon"
+;
 
 
 export function AssetIcon({ path, fallback = "", size = 24, alt = "", style, imgStyle, className }) {

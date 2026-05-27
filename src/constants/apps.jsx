@@ -1,7 +1,7 @@
 import {
   APP_ICONS,
   APP_ICON_FALLBACK,
-} from "../assets/paths";
+} from "./../assets/paths";
 
 export const APPS = [
   {

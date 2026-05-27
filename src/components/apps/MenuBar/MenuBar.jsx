@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import AppleIcon from "../../AppleIcon";
 
 /* ===== ИКОНКИ ДЛЯ CONTROL CENTER ===== */
-import { FiWifi, FiBluetooth, FiAirplay, FiMoon, FiMusic, FiPlay, FiPause, FiMonitor, FiVolume2 } from "react-icons/fi";
+import { FiWifi, FiMonitor, FiVolume2 } from "react-icons/fi";
 import { MdOutlineBedtime, MdOutlineScreenShare } from "react-icons/md";
 import { IoSwapHorizontalOutline } from "react-icons/io5";
 
@@ -16,8 +16,6 @@ export function MenuBar({ activeApp }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [showControlCenter, setShowControlCenter] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [bluetoothEnabled, setBluetoothEnabled] = useState(true);
-  const [airdropEnabled, setAirdropEnabled] = useState(false);
   const [stageManagerEnabled, setStageManagerEnabled] = useState(true);
   const [screenMirroring, setScreenMirroring] = useState(false);
   const [nowPlaying, setNowPlaying] = useState({ title: "Zemfira – земфира", isPlaying: true });
@@ -67,9 +65,22 @@ export function MenuBar({ activeApp }) {
   }, [showControlCenter]);
 
   useEffect(() => {
-    if (darkMode) document.documentElement.classList.add("dark-mode");
-    else document.documentElement.classList.remove("dark-mode");
+    if (darkMode) {
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+    }
+    // Сохраняем предпочтение в localStorage
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  // Проверяем сохраненную тему при загрузке
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setDarkMode(true);
+    }
+  }, []);
 
   const fmtTime = (date) =>
     date.toLocaleTimeString("en-US", {
@@ -86,6 +97,10 @@ export function MenuBar({ activeApp }) {
     });
 
   const toggleControlCenter = () => setShowControlCenter(!showControlCenter);
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
 
   return (
     <div ref={barRef} className="menuBar">
@@ -137,7 +152,7 @@ export function MenuBar({ activeApp }) {
       {showControlCenter && (
         <div ref={controlCenterRef} className="controlCenter">
           <div className="controlCenter__grid">
-            {/* СЕКЦИЯ СЕТИ (Wi-Fi, Bluetooth, AirDrop) – как в macOS */}
+            {/* СЕКЦИЯ СЕТИ (Wi-Fi + переключатель темы) */}
             <div className="controlCenter__networkGroup">
               <div className="controlCenter__networkItem">
                 <FiWifi className="controlCenter__networkIcon" />
@@ -146,25 +161,18 @@ export function MenuBar({ activeApp }) {
                   <div className="controlCenter__networkStatus">{wifiName}</div>
                 </div>
               </div>
+              
+              {/* Переключатель темы вместо Bluetooth */}
               <div className="controlCenter__networkItem">
-                <FiBluetooth className="controlCenter__networkIcon" />
+                <span className="controlCenter__themeIcon" style={{ fontSize: 20 }}>
+                  {darkMode ? "🌙" : "☀️"}
+                </span>
                 <div>
-                  <div className="controlCenter__networkLabel">Bluetooth</div>
-                  <div className="controlCenter__networkStatus">{bluetoothEnabled ? "On" : "Off"}</div>
+                  <div className="controlCenter__networkLabel">Theme</div>
+                  <div className="controlCenter__networkStatus">{darkMode ? "Dark" : "Light"}</div>
                 </div>
                 <label className="controlCenter__toggle">
-                  <input type="checkbox" checked={bluetoothEnabled} onChange={() => setBluetoothEnabled(!bluetoothEnabled)} />
-                  <span className="controlCenter__toggleSlider" />
-                </label>
-              </div>
-              <div className="controlCenter__networkItem">
-                <FiAirplay className="controlCenter__networkIcon" />
-                <div>
-                  <div className="controlCenter__networkLabel">AirDrop</div>
-                  <div className="controlCenter__networkStatus">{airdropEnabled ? "Everyone" : "Off"}</div>
-                </div>
-                <label className="controlCenter__toggle">
-                  <input type="checkbox" checked={airdropEnabled} onChange={() => setAirdropEnabled(!airdropEnabled)} />
+                  <input type="checkbox" checked={darkMode} onChange={toggleTheme} />
                   <span className="controlCenter__toggleSlider" />
                 </label>
               </div>

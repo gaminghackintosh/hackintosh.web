@@ -5,6 +5,7 @@ import { WindowContext } from "../../AppWindow/AppWindow";
 // Иконки
 import WiFi from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
 import Bluetooth from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
+import Network from "./../../../assets/icons/Settings_menuSections/Network.ico"
 
 import LogoType from "./../../../assets/images/logo/logo_butterfly.png";
 
@@ -22,7 +23,7 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
       items: [
         { id: "wifi", label: "Wi-Fi", icon: WiFi, iconType: "image" },
         { id: "bluetooth", label: "Bluetooth", icon: Bluetooth, iconType: "image" },
-        { id: "network", label: "Network", icon: "🌐", iconType: "image" },
+        { id: "network", label: "Network", icon: Network, iconType: "image" },
         { id: "vpn", label: "VPN", icon: "🔒", iconType: "image" }
       ]
     },
@@ -69,7 +70,17 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
       items: [
         { id: "passwords", label: "Passwords", icon: "🔐", iconType: "image" },
         { id: "internetaccounts", label: "Internet Accounts", icon: "🌍", iconType: "image" },
-        { id: "gamecenter", label: "Game Center", icon: "🎮", iconType: "image" }
+        { id: "gamecenter", label: "Game Center", icon: "🎮", iconType: "image" },
+        { id: "wallet", label: "Wallet & Apple Pay", icon: "", iconType: "image"}
+      ]
+    },
+    {
+      id: "hardware",
+      items: [
+        { id: "keyboard", label: "Keyboard", icon: "⌨️", iconType: "image" },
+        { id: "mouse", label: "Mouse", icon: "🖱️", iconType: "image" },
+        { id: "gamecontrollers", label: "Game Controllers", icon: "🎮", iconType: "image" },
+        { id: "printersscanners", label: "Printers & Scanners", icon: "🖨️", iconType: "image" }
       ]
     }
   ];

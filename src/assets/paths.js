@@ -10,12 +10,12 @@ export const ASSET_DIRS = {
 
 /**===== Иконки приложений (Dock, окна) =====**/
 export const APP_ICONS = {
-  finder: `${ASSET_DIRS.finder}/finder.svg`,
-  safari: `${ASSET_DIRS.apps}/safari.svg`,
-  notes: `${ASSET_DIRS.apps}/notes.svg`,
-  terminal: `${ASSET_DIRS.apps}/Terminal.ico`,
-  music: `${ASSET_DIRS.apps}/apple_music.ico`,
-  settings: `${ASSET_DIRS.apps}/settings.png`,
+  finder: `${ASSET_DIRS.apps}/Dark_Themes/Finder_Dark.png`,
+  safari: `${ASSET_DIRS.apps}/Dark_Themes/Safari_Dark.png`,
+  notes: `${ASSET_DIRS.apps}/Dark_Themes/Notes_Dark.png`,
+  terminal: `${ASSET_DIRS.apps}/Dark_Themes/Terminal_Dark.png`,
+  music: `${ASSET_DIRS.apps}/Dark_Themes/Music_Dark.png`,
+  settings: `${ASSET_DIRS.apps}/Dark_Themes/Settings_Dark.png`,
 };
 /* Emoji, пока нет картинки */
 export const APP_ICON_FALLBACK = {
