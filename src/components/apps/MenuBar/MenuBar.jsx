@@ -11,7 +11,7 @@ import batteryIcon from "../../../assets/icons/menuBar/battery_charge.png";
 import wifiIcon from "../../../assets/icons/menuBar/wi-fi.png";
 import controlCenterIcon from "../../../assets/icons/menuBar/control_center.svg";
 
-// Компонент окна "About This Mac"
+// ATM
 import AboutThisMac from "./AboutThisMac/ATM";
 
 export function MenuBar({ activeApp }) {

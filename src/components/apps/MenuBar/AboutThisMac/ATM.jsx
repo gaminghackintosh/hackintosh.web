@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AssetIcon } from "../../../AssetIcon";
 import { APP_ICONS } from "../../../../assets/paths";
 
 export default function AboutThisMac({ onClose }) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const windowRef = useRef(null);
+
+  // Центрирование окна при монтировании
+  useEffect(() => {
+    if (windowRef.current) {
+      const rect = windowRef.current.getBoundingClientRect();
+      setPosition({
+        x: (window.innerWidth - rect.width) / 2,
+        y: (window.innerHeight - rect.height) / 2
+      });
+    }
+  }, []);
+
   // Закрытие по клику вне окна
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -10,10 +26,52 @@ export default function AboutThisMac({ onClose }) {
     }
   };
 
+  // Начало перетаскивания
+  const handleMouseDown = (e) => {
+    e.stopPropagation();
+    setIsDragging(true);
+    setDragOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  // Перетаскивание
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e) => {
+      setPosition({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
   return (
     <div className="about-mac-backdrop" onClick={handleBackdropClick}>
-      <div className="about-mac-window">
-        <div className="about-mac-titlebar">
+      <div 
+        ref={windowRef}
+        className={`about-mac-window ${isDragging ? "dragging" : ""}`}
+        style={{
+          left: position.x,
+          top: position.y,
+          position: 'absolute'
+        }}
+      >
+        <div className="about-mac-titlebar" onMouseDown={handleMouseDown}>
           <div className="about-mac-traffic">
             <div className="tl tl-close" onClick={onClose} />
             <div className="tl tl-min" />

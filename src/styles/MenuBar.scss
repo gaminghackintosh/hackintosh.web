@@ -2,7 +2,7 @@
 @use "./variables" as vars;
 
 /* =========================================================
-   MENU BAR — ТЁМНОЕ СТЕКЛО
+   MENU BAR — ПОЛНОСТЬЮ СТЕКЛЯННАЯ
 ========================================================= */
 
 .menuBar {
@@ -18,10 +18,16 @@
   color: #f5f5f7;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 
-  /* Тёмное стекло для самой панели */
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(40px) saturate(1.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  /* Стеклянная панель как в новой macOS */
+  @include glass-dark(rgba(0, 0, 0, 0.15), 60px, 0.08, true);
+  
+  /* Лёгкое свечение сверху */
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.4);
+
+  border-bottom: none; /* Граница уже есть в миксине */
 }
 
 /* =========================================================
@@ -85,7 +91,7 @@
 }
 
 /* =========================================================
-   DROPDOWN MENU — ТЁМНОЕ СТЕКЛО (все меню)
+   DROPDOWN MENU — ТЁМНОЕ СТЕКЛО (уже есть)
 ========================================================= */
 
 .menuBar__dropdown {
@@ -98,7 +104,6 @@
   z-index: 10000;
   overflow: hidden;
 
-  /* Тёмное стекло через миксин */
   @include glass-dark(rgba(28, 28, 32, 0.95), 40px, 0.12, true);
   
   animation: menuFade 0.12s ease-out;
@@ -186,7 +191,6 @@
   padding: 6px 0;
   border-radius: 10px;
 
-  /* Разделители в Apple меню */
   .menuBar__dropdownItem:nth-child(4),
   .menuBar__dropdownItem:nth-child(6),
   .menuBar__dropdownItem:nth-child(9) {

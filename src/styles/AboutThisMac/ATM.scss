@@ -195,3 +195,73 @@
   color: white;
   border-color: #007aff;
 }
+
+// Glass
+.about-mac-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  animation: aboutMacFadeIn 0.3s ease;
+}
+
+@keyframes aboutMacFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.about-mac-window {
+  width: 520px;
+  max-width: 92%;
+  @include glass-dark(rgba(30, 30, 34, 0.9), 50px, 0.15, true);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: aboutMacSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Позиционирование для перетаскивания */
+  position: absolute;
+  
+  /* Тень при перетаскивании */
+  &.dragging {
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8);
+    transition: none;
+  }
+}
+
+@keyframes aboutMacSlideIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.about-mac-titlebar {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  
+  /* Курсор для перетаскивания */
+  cursor: grab;
+  user-select: none;
+  
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.about-mac-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: -0.1px;
+}

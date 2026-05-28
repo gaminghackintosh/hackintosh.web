@@ -5,7 +5,6 @@
   $border-opacity: 0.15,
   $shadow: true
 ) {
-  background: rgba(255, 255, 255, $bg-opacity);
   backdrop-filter: blur($blur) saturate(180%);
   -webkit-backdrop-filter: blur($blur) saturate(180%);
   border: 1px solid rgba(255, 255, 255, $border-opacity);
@@ -22,7 +21,7 @@
   $border-opacity: 0.12,
   $shadow: true
 ) {
-  background: $bg-color;
+  background: rgb(28 28 32 / 61%);
   backdrop-filter: blur($blur) saturate(1.5);
   -webkit-backdrop-filter: blur($blur) saturate(1.5);
   border: 1px solid rgba(255, 255, 255, $border-opacity);
