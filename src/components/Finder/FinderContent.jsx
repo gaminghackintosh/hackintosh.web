@@ -48,10 +48,10 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     favourites: [
       { name: "AirDrop", action: "airdrop" },
       { name: "Recents", action: "recents" },
-      { name: "Applications", action: "applications" },
       { name: "Desktop", action: "desktop" },
       { name: "Documents", action: "documents" },
       { name: "Downloads", action: "downloads" },
+      { name: "Applications", action: "applications" },
     ],
     icloud: [
       { name: "iCloud Drive", action: "icloud" },
@@ -306,6 +306,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
           </div>
 
           <div className="finder-sidebar-inner">
+
             {/* Favourites */}
             <div className="finder-sidebar-section">
               <div className="finder-sidebar-title">Favourites</div>
@@ -515,73 +516,73 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
 
             {/* List view */}
             {!isGridView && !isColumnView && (
-              <div className="finder-list-container">
-                {currentFiles.length === 0 ? (
-                  <div className="finder-empty-state">
-                    <span className="finder-empty-icon">📭</span>
-                    <span>This folder is empty.</span>
-                  </div>
-                ) : (
-                  currentFiles.map(file => (
-                    <div
-                      key={file.name}
-                      className={`finder-list-item ${selectedFile === file.name ? "selected" : ""}`}
-                      onClick={() => setSelectedFile(file.name)}
-                      onDoubleClick={() => {
-                        if (file.type === "folder") navigateToFolder(file.name, file.path);
-                        else if (file.type === "app") openApplication(file.exec);
-                      }}
-                    >
-                      <span className="finder-list-icon" style={{ width: columnWidths.name }}>
-                        <span className="finder-list-icon-wrapper">{renderIcon(file)}</span>
-                        <span>{file.name}</span>
-                      </span>
-                      <span className="finder-list-size" style={{ width: columnWidths.size }}>{file.size}</span>
-                      <span className="finder-list-modified" style={{ width: columnWidths.modified }}>{formatDate(file.modified)}</span>
+              <div className="finder-list-wrapper">
+                <div className="finder-list-container">
+                  {currentFiles.length === 0 ? (
+                    <div className="finder-empty-state">
+                      <span className="finder-empty-icon">📭</span>
+                      <span>This folder is empty.</span>
                     </div>
-                  ))
+                  ) : (
+                    currentFiles.map(file => (
+                      <div
+                        key={file.name}
+                        className={`finder-list-item ${selectedFile === file.name ? "selected" : ""}`}
+                        onClick={() => setSelectedFile(file.name)}
+                        onDoubleClick={() => {
+                          if (file.type === "folder") navigateToFolder(file.name, file.path);
+                          else if (file.type === "app") openApplication(file.exec);
+                        }}
+                      >
+                        <span className="finder-list-icon" style={{ width: columnWidths.name }}>
+                          <span className="finder-list-icon-wrapper">{renderIcon(file)}</span>
+                          <span>{file.name}</span>
+                        </span>
+                        <span className="finder-list-size" style={{ width: columnWidths.size }}>{file.size}</span>
+                        <span className="finder-list-modified" style={{ width: columnWidths.modified }}>{formatDate(file.modified)}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {selectedItem && (
+                  <div className="finder-preview-panel">
+                    <div className="finder-preview-header">
+                      <div className="finder-preview-icon">
+                        {selectedItem.isImageIcon && selectedItem.icon ? (
+                          <AssetIcon path={selectedItem.icon.path} fallback={selectedItem.icon.fallback} size={64} alt={selectedItem.name} style={{ borderRadius: 14 }} />
+                        ) : (
+                          <span style={{ fontSize: 64 }}>{selectedItem.icon}</span>
+                        )}
+                      </div>
+                      <div>
+                        <div className="finder-preview-title">{selectedItem.name}</div>
+                        <div className="finder-preview-type">{selectedItem.type.toUpperCase()}</div>
+                      </div>
+                    </div>
+                    <div className="finder-preview-info">
+                      <div><strong>Size:</strong> {selectedItem.size}</div>
+                      <div><strong>Modified:</strong> {formatDate(selectedItem.modified)}</div>
+                      <div><strong>Kind:</strong> {selectedItem.type === "folder" ? "Folder" : selectedItem.type === "app" ? "Application" : "Document"}</div>
+                    </div>
+                    {selectedItem.preview && (
+                      <div className="finder-preview-content">{selectedItem.preview}</div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
-
-            {/* Status bar */}
-            <div className="finder-status-bar">
-              {currentFiles.length} item{currentFiles.length !== 1 ? "s" : ""}
-              {selectedFile && ` • ${selectedFile} selected`}
-            </div>
           </div>
 
-          {/* Preview panel (list view) */}
-          {!isGridView && !isColumnView && selectedItem && (
-            <div className="finder-preview-panel">
-              <div className="finder-preview-header">
-                <div className="finder-preview-icon">
-                  {selectedItem.isImageIcon && selectedItem.icon ? (
-                    <AssetIcon path={selectedItem.icon.path} fallback={selectedItem.icon.fallback} size={64} alt={selectedItem.name} style={{ borderRadius: 14 }} />
-                  ) : (
-                    <span style={{ fontSize: 64 }}>{selectedItem.icon}</span>
-                  )}
-                </div>
-                <div>
-                  <div className="finder-preview-title">{selectedItem.name}</div>
-                  <div className="finder-preview-type">{selectedItem.type.toUpperCase()}</div>
-                </div>
-              </div>
-              <div className="finder-preview-info">
-                <div><strong>Size:</strong> {selectedItem.size}</div>
-                <div><strong>Modified:</strong> {formatDate(selectedItem.modified)}</div>
-                <div><strong>Kind:</strong> {selectedItem.type === "folder" ? "Folder" : selectedItem.type === "app" ? "Application" : "Document"}</div>
-              </div>
-              {selectedItem.preview && (
-                <div className="finder-preview-content">{selectedItem.preview}</div>
-              )}
-            </div>
-          )}
+          {/* Status bar */}
+          <div className="finder-status-bar">
+            {currentFiles.length} item{currentFiles.length !== 1 ? "s" : ""}
+            {selectedFile && ` • ${selectedFile} selected`}
+          </div>
         </div>
       </div>
     </div>
   );
-},
-)
+});
 
 export default FinderContent;
