@@ -23,7 +23,7 @@ const AirDropIcon = () => (
   </svg>
 );
 
-export function MenuBar({ activeApp }) {
+export function MenuBar({ activeApp, openApp, onCloseWindow, onMinimizeWindow, onZoomWindow }) {
   const [time, setTime] = useState(new Date());
   const [activeMenu, setActiveMenu] = useState(null);
   const [showControlCenter, setShowControlCenter] = useState(false);
@@ -49,7 +49,7 @@ export function MenuBar({ activeApp }) {
   const appleMenuOptions = [
     { id: "about",    label: "About This Mac" },
     { id: "div1",     type: "divider" },
-    { id: "settings", label: "System Settings…" },
+    { id: "settings", label: "System Settings…", action: () => openApp("settings") },
     { id: "appstore", label: "App Store…" },
     { id: "div2",     type: "divider" },
     { id: "recent",   label: "Recent Items", submenu: true },
@@ -68,7 +68,7 @@ export function MenuBar({ activeApp }) {
     File:   ["New Folder", "New Window", "Open…", "Close Window"],
     Edit:   ["Undo", "Redo", "Cut", "Copy", "Paste", "Select All"],
     View:   ["Show Sidebar", "Show Path Bar", "Sort By", "Clean Up"],
-    Window: ["Minimize", "Zoom", "Bring All to Front"],
+    Window: ["Minimize", "Zoom", "Bring All to Front", "Close Window"],
     Help:   ["Search", "About This Mac"],
   };
 
@@ -178,7 +178,19 @@ export function MenuBar({ activeApp }) {
                   <div className="menuBar__dropdown">
                     {menuOptions[item].map((opt, idx) => (
                       <div key={idx} className="menuBar__dropdownItem"
-                        onClick={() => { opt === "About This Mac" ? handleAboutThisMac() : setActiveMenu(null); }}
+                        onClick={() => {
+                          if (opt === "About This Mac") {
+                            handleAboutThisMac();
+                          } else if (opt === "Minimize") {
+                            onMinimizeWindow();
+                          } else if (opt === "Zoom") {
+                            onZoomWindow();
+                          } else if (opt === "Close Window") {
+                            onCloseWindow();
+                          } else {
+                            setActiveMenu(null);
+                          }
+                        }}
                       >
                         {opt}
                       </div>

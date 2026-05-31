@@ -293,7 +293,13 @@ export default function App() {
         backgroundSize: "cover",
       }}
     >
-      <MenuBar activeApp={activeApp} />
+      <MenuBar
+        activeApp={activeApp}
+        openApp={openApp}
+        onCloseWindow={() => closeWindow(activeWin)}
+        onMinimizeWindow={() => minimizeWindow(activeWin)}
+        onZoomWindow={() => maximizeWindow(activeWin)}
+      />
 
       {renderedWindows}
 
