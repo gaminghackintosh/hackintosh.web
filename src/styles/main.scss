@@ -17,7 +17,11 @@
 @use "./_ControlCenter";
 @use "./AppWindow/AppWindows";
 @use "./AboutThisMac/ATM";
+
+// APP
 @use "./NotesWindow/Notes";
+@use "./_Musics/Music";
+@use "./_Terminal/Terminal";
 
 body {
   margin: 0;

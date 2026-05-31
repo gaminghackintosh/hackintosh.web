@@ -18,7 +18,7 @@ export const AppWindow = memo(function AppWindow({
   children,
   onZoom = null,
 }) {
-  // Начальное состояние из win
+  // Начальное состояние из win (только при создании)
   const [pos, setPos] = useState({ x: win.x, y: win.y });
   const [size, setSize] = useState({ width: win.width, height: win.height });
   
@@ -35,15 +35,10 @@ export const AppWindow = memo(function AppWindow({
   const [hoverEdge, setHoverEdge] = useState(null);
 
   const RESIZE_EDGE_SIZE = 10;
-  const TITLE_BAR_HEIGHT = 0; // ✅ Убрали высоту заголовка
+  const TITLE_BAR_HEIGHT = 0;
 
-  // ✅ Синхронизация с win при изменении пропсов
-  useLayoutEffect(() => {
-    setPos({ x: win.x, y: win.y });
-    setSize({ width: win.width, height: win.height });
-  }, [win.x, win.y, win.width, win.height]);
-
-  // Синхронизация DOM с React-состоянием
+  // ❌ УДАЛЁН ЭФФЕКТ, КОТОРЫЙ СБРАСЫВАЛ РАЗМЕРЫ
+  // Теперь DOM синхронизируется только когда меняется локальный state
   useLayoutEffect(() => {
     if (windowRef.current) {
       windowRef.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
@@ -52,13 +47,12 @@ export const AppWindow = memo(function AppWindow({
     }
   }, [pos, size]);
 
-  // Определение края для ресайза (верхний край теперь доступен)
+  // Определение края для ресайза
   const getResizeEdge = (e) => {
     if (!windowRef.current) return null;
     const rect = windowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    // Если y < 0, считаем, что клик на верхней границе
     const edges = [];
     if (y < RESIZE_EDGE_SIZE) edges.push("top");
     if (y > rect.height - RESIZE_EDGE_SIZE) edges.push("bottom");
@@ -159,10 +153,8 @@ export const AppWindow = memo(function AppWindow({
     }
   };
 
-  // ❗️ Важно: onTitleMouseDown остаётся, но не используется в этом компоненте.
-  // Он доступен через контекст для перетаскивания из кастомных заголовков приложений.
   const onTitleMouseDown = (e) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || getResizeEdge(e)) return;
     onFocus();
     dragging.current = true;
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
@@ -170,7 +162,7 @@ export const AppWindow = memo(function AppWindow({
     const onMove = (ev) => {
       if (!dragging.current) return;
       const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
-      const newY = Math.max(0, ev.clientY - offset.current.y); // без отступа сверху
+      const newY = Math.max(0, ev.clientY - offset.current.y);
       
       if (windowRef.current) {
         windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
@@ -191,6 +183,12 @@ export const AppWindow = memo(function AppWindow({
     document.addEventListener("mouseup", onUp);
     e.preventDefault();
   };
+
+  const trafficLights = [
+    { type: "close", action: onClose },
+    { type: "minimize", action: onMinimize },
+    { type: "zoom", action: onZoom },
+  ];
 
   return (
     <WindowContext.Provider value={{ onClose, onMinimize, onZoom, onFocus, onTitleMouseDown }}>
@@ -213,8 +211,6 @@ export const AppWindow = memo(function AppWindow({
           willChange: "transform, opacity",
         }}
       >
-        {/* ✅ Title-Bar полностью удалён! */}
-        
         <div className="app-window__content">{children}</div>
 
         <div className="resize-handle">

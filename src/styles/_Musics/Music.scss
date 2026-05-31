@@ -1,0 +1,565 @@
+@use "./../variables" as vars;
+
+// ─── Tokens ───────────────────────────────────────────────────────
+$music-bg:        #161618;
+$music-sidebar-bg:#111113;
+$music-border:    rgba(255, 255, 255, 0.06);
+$music-hover:     rgba(255, 255, 255, 0.04);
+$music-active-bg: rgba(255, 255, 255, 0.07);
+$music-accent:    #fa233b;
+$music-accent2:   #ff6b81;
+$text-primary:    rgba(255, 255, 255, 0.92);
+$text-secondary:  rgba(255, 255, 255, 0.45);
+$text-tertiary:   rgba(255, 255, 255, 0.25);
+
+// ─── Root ─────────────────────────────────────────────────────────
+.music {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $music-bg;
+  color: $text-primary;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  overflow: hidden;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HEADER — traffic lights + toolbar in one bar
+// ═══════════════════════════════════════════════════════════════════
+.music-header {
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(18, 18, 20, 0.95);
+  border-bottom: 1px solid $music-border;
+  cursor: move;
+  position: relative;
+  z-index: 3;
+  -webkit-app-region: drag;
+}
+
+// Traffic lights
+.music-traffic-lights {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.music-tl {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: filter 0.1s;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.1s;
+    background-size: 8px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  &:hover::after { opacity: 1; }
+
+  &--close    { background: #ff5f57; &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+  &--minimize { background: #ffbd2e; &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+  &--zoom     { background: #28c840; &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+}
+
+// ── Toolbar controls ──────────────────────────────────────────────
+.music-toolbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.music-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.music-ctrl-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s, background 0.12s;
+
+  &:hover     { color: $text-primary; background: rgba(255,255,255,0.06); }
+  &--play     { font-size: 18px; color: $text-primary; width: 36px; height: 36px; background: rgba(255,255,255,0.08); border-radius: 50%;
+    &:hover   { background: rgba(255,255,255,0.14); }
+  }
+  &--active   { color: $music-accent; &:hover { color: $music-accent2; } }
+}
+
+.music-volume-slider {
+  width: 72px;
+  height: 3px;
+  border-radius: 2px;
+  appearance: none;
+  background: rgba(255,255,255,0.15);
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    transition: transform 0.1s;
+  }
+  &:hover::-webkit-slider-thumb { transform: scale(1.2); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LAYOUT
+// ═══════════════════════════════════════════════════════════════════
+.music-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════════════════
+.music-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: $music-sidebar-bg;
+  border-right: 1px solid $music-border;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.music-sidebar-search {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  transition: background 0.15s;
+
+  &:focus-within {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  &-icon {
+    color: $text-tertiary;
+    font-size: 11px;
+    margin-right: 7px;
+    flex-shrink: 0;
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $text-primary;
+    font-size: 12px;
+    width: 100%;
+    &::placeholder { color: $text-tertiary; }
+  }
+}
+
+.music-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 8px;
+}
+
+.music-sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  color: $text-tertiary;
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+}
+
+.music-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.60);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+
+  &:hover  { background: $music-hover; color: $text-primary; }
+  &.active { background: $music-active-bg; color: $text-primary; font-weight: 500; }
+}
+
+.music-sidebar-icon {
+  width: 18px;
+  font-size: 13px;
+  color: $music-accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.8;
+
+  .music-sidebar-item.active & { opacity: 1; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MAIN
+// ═══════════════════════════════════════════════════════════════════
+.music-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+}
+
+// ─── Column headers ───────────────────────────────────────────────
+.music-table-header {
+  display: grid;
+  grid-template-columns: 44px 1fr 1.4fr 100px 56px;
+  padding: 0 16px;
+  height: 32px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid $music-border;
+  flex-shrink: 0;
+  background: $music-bg;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────
+.music-table-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0 80px; // space for now-playing bar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.10) transparent;
+
+  &::-webkit-scrollbar       { width: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 4px; }
+}
+
+// ─── Row ──────────────────────────────────────────────────────────
+.music-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 1.4fr 100px 56px;
+  padding: 0 16px;
+  height: 40px;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 1px 6px;
+  transition: background 0.08s;
+
+  &:hover { background: $music-hover; }
+
+  &--active {
+    background: $music-active-bg;
+    color: $text-primary;
+
+    .music-col-title-text { color: $music-accent; }
+  }
+}
+
+.music-col-num {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  font-size: 12px;
+  color: $text-secondary;
+  font-variant-numeric: tabular-nums;
+}
+
+.music-row-num { color: $text-tertiary; }
+
+.music-active-icon {
+  color: $music-accent;
+  font-size: 11px;
+}
+
+.music-col-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  overflow: hidden;
+  padding-right: 12px;
+
+  &-text {
+    font-size: 13px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.1s;
+  }
+
+  &-artist {
+    font-size: 11px;
+    color: $text-secondary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.music-col-album,
+.music-col-genre {
+  font-size: 12px;
+  color: $text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.music-col-time {
+  font-size: 12px;
+  color: $text-secondary;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+// ─── Equalizer bars animation ─────────────────────────────────────
+.music-playing-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+
+  span {
+    width: 3px;
+    background: $music-accent;
+    border-radius: 1px;
+    animation: music-bar 0.8s ease-in-out infinite alternate;
+
+    &:nth-child(1) { animation-delay: 0s;     height: 100%; }
+    &:nth-child(2) { animation-delay: 0.2s;   height: 60%; }
+    &:nth-child(3) { animation-delay: 0.4s;   height: 80%; }
+  }
+}
+
+@keyframes music-bar {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1); }
+}
+
+// ─── Empty state ──────────────────────────────────────────────────
+.music-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 10px;
+  color: $text-tertiary;
+
+  &-icon { font-size: 40px; opacity: 0.3; }
+
+  p { margin: 0; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.3); }
+
+  .music-empty-sub { font-size: 12px; }
+}
+
+// ─── Import button ────────────────────────────────────────────────
+.music-import-btn {
+  position: absolute;
+  bottom: 70px; // above now-playing bar
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $music-accent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba($music-accent, 0.40);
+  transition: transform 0.15s, box-shadow 0.15s;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba($music-accent, 0.55);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  NOW PLAYING BAR
+// ═══════════════════════════════════════════════════════════════════
+.music-now-playing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 62px;
+  flex-shrink: 0;
+  background: rgba(14, 14, 16, 0.96);
+  border-top: 1px solid $music-border;
+  backdrop-filter: blur(20px);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+
+  &-art {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  &-disc {
+    font-size: 20px;
+    color: $music-accent;
+    opacity: 0.7;
+
+    &--spin {
+      animation: music-spin 4s linear infinite;
+    }
+  }
+
+  &-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    width: 160px;
+    flex-shrink: 0;
+  }
+
+  &-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-primary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-artist {
+    font-size: 11px;
+    color: $text-secondary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@keyframes music-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// ─── Progress bar ─────────────────────────────────────────────────
+.music-progress {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 0;
+
+  &-time {
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: $text-tertiary;
+    width: 32px;
+    flex-shrink: 0;
+
+    &:last-child { text-align: right; }
+  }
+
+  &-track {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.12);
+    position: relative;
+    overflow: visible;
+
+    &:hover .music-progress-thumb { opacity: 1; transform: translateX(-50%) scale(1); }
+  }
+
+  &-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: $music-accent;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  &-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%) scale(0.6);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    pointer-events: none;
+    margin-top: 0;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+}

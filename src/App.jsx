@@ -22,6 +22,7 @@ import { MenuBar } from "./components/apps/MenuBar/MenuBar";
 import { TerminalContent } from "./components/apps/Terminal/Terminal";
 import { NotesContent } from "./components/apps/Notes/NotesContent";
 import { SettingsContent } from "./components/apps/Settings/SettingsContent";
+import { MusicContent } from "./components/apps/MusicApp/MusicContent";
 
 import { DEFAULT_WALLPAPER } from "./constants/wallpapers";
 
@@ -238,6 +239,10 @@ export default function App() {
             {...commonProps}
           />
         );
+      case "music":
+        return <MusicContent {...commonProps} />;
+
+
       default:
         return <PlaceholderContent appId={appId} {...commonProps} />;
     }
