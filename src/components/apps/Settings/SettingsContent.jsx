@@ -3,9 +3,13 @@ import { WALLPAPER_GROUPS } from "../../../constants/wallpapers";
 import { WindowContext } from "../../AppWindow/AppWindow";
 
 // Icons
-import WiFi      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
-import Bluetooth from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
-import Network   from "./../../../assets/icons/Settings_menuSections/Network.ico";
+import WiFi_Icon      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
+import Bluetooth_Icon from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
+import Network_Icon   from "./../../../assets/icons/Settings_menuSections/Network.ico";
+
+import GameCenter_Icon from "./../../../assets/icons/Settings_menuSections/Game_Center.png";
+import Wallet_Icon    from "./../../../assets/icons/Settings_menuSections/Wallet.png";
+
 import LogoType  from "./../../../assets/images/logo/logo_butterfly.png";
 
 // Shared components
@@ -16,6 +20,7 @@ import { ToggleSwitch } from "./Settings_Components/ToggleSwitch";
 
 // Import Components Settings
 import {
+  WiFiSettings,
   AccessibilitySettings,
   AppearanceSettings,
   BluetoothSettings,
@@ -43,9 +48,9 @@ const MENU_SECTIONS = [
   {
     id: "network",
     items: [
-      { id: "wifi",      label: "Wi-Fi",      icon: WiFi,      iconType: "image" },
-      { id: "bluetooth", label: "Bluetooth",  icon: Bluetooth, iconType: "image" },
-      { id: "network",   label: "Network",    icon: Network,   iconType: "image" },
+      { id: "wifi",      label: "Wi-Fi",      icon: WiFi_Icon,      iconType: "image" },
+      { id: "bluetooth", label: "Bluetooth",  icon: Bluetooth_Icon, iconType: "image" },
+      { id: "network",   label: "Network",    icon: Network_Icon,   iconType: "image" },
       { id: "vpn",       label: "VPN",        icon: "🔒",      iconType: "emoji" },
     ],
   },
@@ -92,8 +97,8 @@ const MENU_SECTIONS = [
     items: [
       { id: "passwords",         label: "Passwords",           icon: "🔐", iconType: "emoji" },
       { id: "internetaccounts",  label: "Internet Accounts",   icon: "🌍", iconType: "emoji" },
-      { id: "gamecenter",        label: "Game Center",         icon: "🎮", iconType: "emoji" },
-      { id: "wallet",            label: "Wallet & Apple Pay",  icon: "💳", iconType: "emoji" },
+      { id: "gamecenter",        label: "Game Center",         icon: GameCenter_Icon, iconType: "image" },
+      { id: "wallet",            label: "Wallet & Apple Pay",  icon: Wallet_Icon, iconType: "image" },
     ],
   },
   {
@@ -111,6 +116,7 @@ const MENU_SECTIONS = [
 
 function renderTab(activeTab, currentWallpaper, onWallpaperChange) {
   switch (activeTab) {
+    case "wifi":             return <WiFiSettings />;
     case "accessibility":    return <AccessibilitySettings />;
     case "appearance":       return <AppearanceSettings />;
     case "bluetooth":        return <BluetoothSettings />;

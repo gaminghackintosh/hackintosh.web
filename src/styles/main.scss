@@ -6,7 +6,11 @@
 // Components
 @use "./Dock";
 @use "./MenuBar";
+
+// Settings_Components
 @use "./Settings/Settings";
+@use "./Settings/WiFiSettings";
+
 @use "./BootScreen";
 @use "./Finder";
 @use "./_ControlCenter";

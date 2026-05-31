@@ -1,3 +1,4 @@
+export * from "./Wi-Fi";
 export * from "./AccessibilitySettings";
 export * from "./AppearanceSettings";
 export * from "./BluetoothSettings";
