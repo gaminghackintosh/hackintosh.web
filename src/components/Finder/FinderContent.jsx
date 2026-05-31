@@ -4,7 +4,11 @@ import { APPS } from "../../constants/apps";
 import { SidebarIcon } from "./SidebarIcon";
 import { WindowContext } from "../AppWindow/AppWindow"; 
 
+import { useContextMenu } from "./../../hooks/useContextMenu";
+import { ContextMenu } from "./../ContextMenu/ContextMenu";
+
 const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize, onMaximize }) {
+  const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
   const [selectedFile, setSelectedFile] = useState(null);
   const [currentFolder, setCurrentFolder] = useState("macos");
   const [viewMode, setViewMode] = useState("list");
@@ -20,6 +24,23 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     modified: 150
   });
 
+  // Обработка ПКМ
+  const handleContextMenu = (e, file) => {
+    const items = [
+      { label: "Open", action: () => openApplication(file.exec) },
+      { label: "Open with...", action: () => console.log("Open with...") },
+      { type: "divider" },
+      { label: "Cut", action: () => console.log("Cut") },
+      { label: "Copy", action: () => console.log("Copy") },
+      { label: "Paste", action: () => console.log("Paste") },
+      { type: "divider" },
+      { label: "Move to Trash", action: () => console.log("Move to Trash") },
+      { label: "Get Info", action: () => console.log("Get Info") },
+    ];
+    openContextMenu(e, items);
+  };
+
+  // Получение иконки приложения из APPS
   const getAppIcon = (appName) => {
     const app = APPS.find(a => a.name.toLowerCase() === appName.toLowerCase().replace('.app', ''));
     if (app) {
@@ -32,6 +53,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     return null;
   };
 
+  // Функция для получения fallback иконки
   const getFallbackForApp = (appId) => {
     const fallbacks = {
       finder: "🗂",
@@ -44,6 +66,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     return fallbacks[appId] || "📱";
   };
 
+  // Данные сайдбара
   const sidebar = {
     favourites: [
       { name: "AirDrop", action: "airdrop" },
@@ -71,6 +94,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     ],
   };
 
+  // Файловая система
   const filesystem = {
     macos: [
       { name: "Applications", type: "folder", icon: "📱", size: "--", modified: "Today", path: "/Applications" },
@@ -169,7 +193,6 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
   const isGridView = viewMode === "grid";
   const isColumnView = viewMode === "columns";
 
-  // Current folder display name
   const getFolderDisplayName = () => {
     const map = {
       macos: "Macintosh HD",
@@ -280,14 +303,15 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
 
         {/* ── SIDEBAR ── */}
         <div className="finder-sidebar">
-          <div className="finder-traffic-lights"
-              onMouseDown={(e) => {
+          <div
+            className="finder-traffic-lights"
+            onMouseDown={(e) => {
               // Разрешаем перетаскивание, если клик НЕ по кнопкам управления
               if (!e.target.closest('.finder-traffic-light')) {
                 onTitleMouseDown(e);
               }
             }}
-            >
+          >
             <button
               className="finder-traffic-light finder-traffic-light--close"
               onClick={onClose}
@@ -306,7 +330,6 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
           </div>
 
           <div className="finder-sidebar-inner">
-
             {/* Favourites */}
             <div className="finder-sidebar-section">
               <div className="finder-sidebar-title">Favourites</div>
@@ -392,9 +415,24 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
 
             <div className="finder-toolbar-actions">
               <div className="finder-view-controls">
-                <button className={`finder-view-button ${viewMode === "list" ? "active" : ""}`} onClick={() => setViewMode("list")}>☰</button>
-                <button className={`finder-view-button ${viewMode === "grid" ? "active" : ""}`} onClick={() => setViewMode("grid")}>▦</button>
-                <button className={`finder-view-button ${viewMode === "columns" ? "active" : ""}`} onClick={() => setViewMode("columns")}>▯</button>
+                <button
+                  className={`finder-view-button ${viewMode === "list" ? "active" : ""}`}
+                  onClick={() => setViewMode("list")}
+                >
+                  ☰
+                </button>
+                <button
+                  className={`finder-view-button ${viewMode === "grid" ? "active" : ""}`}
+                  onClick={() => setViewMode("grid")}
+                >
+                  ▦
+                </button>
+                <button
+                  className={`finder-view-button ${viewMode === "columns" ? "active" : ""}`}
+                  onClick={() => setViewMode("columns")}
+                >
+                  ▯
+                </button>
               </div>
               <div className="finder-search-container">
                 <input
@@ -533,6 +571,8 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
                           if (file.type === "folder") navigateToFolder(file.name, file.path);
                           else if (file.type === "app") openApplication(file.exec);
                         }}
+
+                        onContextMenu={(e) => handleContextMenu(e, file)}
                       >
                         <span className="finder-list-icon" style={{ width: columnWidths.name }}>
                           <span className="finder-list-icon-wrapper">{renderIcon(file)}</span>
@@ -580,6 +620,15 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
             {selectedFile && ` • ${selectedFile} selected`}
           </div>
         </div>
+
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            items={contextMenu.items}
+            onClose={closeContextMenu}
+          />
+        )}
       </div>
     </div>
   );

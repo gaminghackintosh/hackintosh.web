@@ -15,6 +15,8 @@ import Sequoia_11 from "./../assets/images/wallpapers/Sequoia/wallpaper_11.png";
 import Tahoe_1 from "./../assets/images/wallpapers/Tahoe/Tahoe Light.png";
 import Tahoe_2 from "./../assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 
+const SEQUOIA_GROUP = 0;
+const TAHOE_GROUP = 1;
 
 export const WALLPAPER_GROUPS = [
   {
@@ -39,13 +41,16 @@ export const WALLPAPER_GROUPS = [
     id: "Tahoe",
     title: "macOS Tahoe",
     wallpapers: [
-      { id: "Tahoe_1", name: "Tahoe Default", image: Tahoe_1, thumbnail: Tahoe_1 },
+      { id: "Tahoe_1", name: "Tahoe Light", image: Tahoe_1, thumbnail: Tahoe_1 },
       { id: "Tahoe_2", name: "Tahoe Dark", image: Tahoe_2, thumbnail: Tahoe_2 }
     ]
   }
 ];
 
-export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[1].wallpapers[1];
+// wallpapers[0] — Tahoe Light
+// wallpapers[1] — Tahoe Dark
+
+export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[0].wallpapers[10];
 export const WALLPAPERS = WALLPAPER_GROUPS.flatMap(g => g.wallpapers);
 export function getWallpaperById(id) {
   return WALLPAPERS.find(w => w.id === id) || DEFAULT_WALLPAPER;

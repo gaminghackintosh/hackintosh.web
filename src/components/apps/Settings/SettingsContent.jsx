@@ -208,7 +208,7 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const [activeTab,   setActiveTab]   = useState("wallpaper");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { onClose, onMinimize, onFocus, onTitleMouseDown } = useContext(WindowContext);
+  const { onClose, onMinimize, onFocus, onTitleMouseDown, onZoom } = useContext(WindowContext);
 
   // Filter sidebar items by search query
   const filteredSections = MENU_SECTIONS
@@ -237,7 +237,7 @@ export function SettingsContent({ currentWallpaper, onWallpaperChange }) {
         <div className="sidebar-traffic-lights">
           <button className="traffic-light traffic-light--close"    onClick={onClose} />
           <button className="traffic-light traffic-light--minimize" onClick={onMinimize} />
-          <button className="traffic-light traffic-light--zoom" />
+          <button className="traffic-light traffic-light--zoom" onClick={onZoom} />
         </div>
 
         {/* Search */}

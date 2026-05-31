@@ -6,6 +6,7 @@
 // Components
 @use "./Dock";
 @use "./MenuBar";
+@use "./ContextMenu";
 
 // Settings_Components
 @use "./Settings/Settings";
@@ -16,6 +17,7 @@
 @use "./_ControlCenter";
 @use "./AppWindow/AppWindows";
 @use "./AboutThisMac/ATM";
+@use "./NotesWindow/Notes";
 
 body {
   margin: 0;

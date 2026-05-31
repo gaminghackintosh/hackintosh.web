@@ -3,6 +3,7 @@ import React, { useState, useRef, useLayoutEffect, memo } from "react";
 export const WindowContext = React.createContext({
   onClose: () => {},
   onMinimize: () => {},
+  onZoom: () => {},
   onFocus: () => {},
   onTitleMouseDown: () => {},
 });
@@ -13,11 +14,11 @@ export const AppWindow = memo(function AppWindow({
   onMinimize,
   onFocus,
   isActive,
+  isMinimized = false,
   children,
-  titleBarHidden = false,
   onZoom = null,
 }) {
-  // Начальное состояние
+  // Начальное состояние из win
   const [pos, setPos] = useState({ x: win.x, y: win.y });
   const [size, setSize] = useState({ width: win.width, height: win.height });
   
@@ -34,9 +35,15 @@ export const AppWindow = memo(function AppWindow({
   const [hoverEdge, setHoverEdge] = useState(null);
 
   const RESIZE_EDGE_SIZE = 10;
-  const TITLE_BAR_HEIGHT = 40;
+  const TITLE_BAR_HEIGHT = 0; // ✅ Убрали высоту заголовка
 
-  // Синхронизация DOM с React-состоянием при изменении размера окна извне
+  // ✅ Синхронизация с win при изменении пропсов
+  useLayoutEffect(() => {
+    setPos({ x: win.x, y: win.y });
+    setSize({ width: win.width, height: win.height });
+  }, [win.x, win.y, win.width, win.height]);
+
+  // Синхронизация DOM с React-состоянием
   useLayoutEffect(() => {
     if (windowRef.current) {
       windowRef.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
@@ -45,15 +52,15 @@ export const AppWindow = memo(function AppWindow({
     }
   }, [pos, size]);
 
-  // Определение края для ресайза
+  // Определение края для ресайза (верхний край теперь доступен)
   const getResizeEdge = (e) => {
     if (!windowRef.current) return null;
     const rect = windowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    if (y < TITLE_BAR_HEIGHT) return null;
+    // Если y < 0, считаем, что клик на верхней границе
     const edges = [];
-    if (y < TITLE_BAR_HEIGHT + RESIZE_EDGE_SIZE) edges.push("top");
+    if (y < RESIZE_EDGE_SIZE) edges.push("top");
     if (y > rect.height - RESIZE_EDGE_SIZE) edges.push("bottom");
     if (x < RESIZE_EDGE_SIZE) edges.push("left");
     if (x > rect.width - RESIZE_EDGE_SIZE) edges.push("right");
@@ -137,7 +144,7 @@ export const AppWindow = memo(function AppWindow({
       const onUp = () => {
         resizing.current = false;
         resizeEdge.current = null;
-        
+        // Синхронизируем React-состояние после завершения ресайза
         if (windowRef.current) {
           const rect = windowRef.current.getBoundingClientRect();
           setPos({ x: rect.left, y: rect.top });
@@ -152,8 +159,10 @@ export const AppWindow = memo(function AppWindow({
     }
   };
 
+  // ❗️ Важно: onTitleMouseDown остаётся, но не используется в этом компоненте.
+  // Он доступен через контекст для перетаскивания из кастомных заголовков приложений.
   const onTitleMouseDown = (e) => {
-    if (e.button !== 0 || getResizeEdge(e)) return;
+    if (e.button !== 0) return;
     onFocus();
     dragging.current = true;
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
@@ -161,7 +170,7 @@ export const AppWindow = memo(function AppWindow({
     const onMove = (ev) => {
       if (!dragging.current) return;
       const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
-      const newY = Math.max(28, ev.clientY - offset.current.y);
+      const newY = Math.max(0, ev.clientY - offset.current.y); // без отступа сверху
       
       if (windowRef.current) {
         windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
@@ -170,7 +179,6 @@ export const AppWindow = memo(function AppWindow({
 
     const onUp = () => {
       dragging.current = false;
-      // Синхронизируем React-состояние после завершения перетаскивания
       if (windowRef.current) {
         const rect = windowRef.current.getBoundingClientRect();
         setPos({ x: rect.left, y: rect.top });
@@ -184,54 +192,29 @@ export const AppWindow = memo(function AppWindow({
     e.preventDefault();
   };
 
-  const trafficLights = [
-    { type: "close", action: onClose },
-    { type: "minimize", action: onMinimize },
-    { type: "zoom", action: onZoom },
-  ];
-
   return (
-    <WindowContext.Provider value={{ onClose, onMinimize, onFocus, onTitleMouseDown }}>
+    <WindowContext.Provider value={{ onClose, onMinimize, onZoom, onFocus, onTitleMouseDown }}>
       <div
         ref={windowRef}
         className={`app-window ${isActive ? "app-window--active" : "app-window--inactive"} ${
           hoverEdge ? "app-window--resizing" : ""
-        }`}
+        } ${isMinimized ? "app-window--minimized" : ""}`}
         onMouseDown={onWindowMouseDown}
         onMouseMove={onWindowMouseMove}
         onMouseLeave={() => setCursor("default")}
+        onContextMenu={(e) => e.stopPropagation()}
         style={{
-          position: 'fixed',
+          position: "fixed",
           transform: `translate(${pos.x}px, ${pos.y}px)`,
           width: size.width,
           height: size.height,
           zIndex: win.zIndex,
-          cursor: cursor,
-          willChange: 'transform', 
+          cursor,
+          willChange: "transform, opacity",
         }}
       >
-        {!titleBarHidden && (
-          <div className="title-bar" onMouseDown={onTitleMouseDown}>
-            <div
-              className={`traffic-lights ${isActive ? "traffic-lights--active" : "traffic-lights--inactive"}`}
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              {trafficLights.map((btn, i) => (
-                <div
-                  key={i}
-                  className={`traffic-light traffic-light--${btn.type}`}
-                  onClick={btn.action || undefined}
-                />
-              ))}
-            </div>
-            <span
-              className={`title-bar__title ${isActive ? "title-bar__title--active" : "title-bar__title--inactive"}`}
-            >
-              {win.title}
-            </span>
-          </div>
-        )}
-
+        {/* ✅ Title-Bar полностью удалён! */}
+        
         <div className="app-window__content">{children}</div>
 
         <div className="resize-handle">

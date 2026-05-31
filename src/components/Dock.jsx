@@ -15,6 +15,7 @@ const GITHUB_APP = {
 export default function Dock({
   onOpen,
   openApps,
+  minimizedApps = new Set(),
 }) {
   const [hoverIdx, setHoverIdx] = useState(null);
 
@@ -94,7 +95,7 @@ export default function Dock({
 
               <div className="dock__indicator">
                 {isOpen && !app.isLink && (
-                  <div className="dock__indicator-dot" />
+                  <div className={`dock__indicator-dot ${minimizedApps.has(app.id) ? "dock__indicator-dot--minimized" : ""}`} />
                 )}
               </div>
             </div>

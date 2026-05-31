@@ -5,6 +5,10 @@ import {
   DESKTOP_ICON_FALLBACK,
 } from "./assets/paths";
 
+// hooks
+import { ContextMenu } from "./components/ContextMenu/ContextMenu";
+import { useContextMenu } from "./hooks/useContextMenu";
+
 import BootScreen from "./components/Boot/BootScreen";
 import Dock from "./components/Dock";
 
@@ -29,6 +33,9 @@ const INITIAL_POSITIONS = {
   settings: { x: 80, y: 56, w: 740, h: 500 },
   music: { x: 180, y: 80, w: 740, h: 500 },
 };
+
+// Высота Dock в пикселях (настройте под свою тему)
+const DOCK_HEIGHT = 80;
 
 function PlaceholderContent({ appId }) {
   return (
@@ -56,6 +63,8 @@ export default function App() {
   const [bootComplete, setBootComplete] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [windowStates, setWindowStates] = useState({});
+  const [minimizedApps, setMinimizedApps] = useState(new Set());
+  const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
 
   const [wallpaperState, setWallpaperState] = useState({
     id: DEFAULT_WALLPAPER.id,
@@ -71,7 +80,6 @@ export default function App() {
       timeout = setTimeout(() => setIsMobile(window.innerWidth <= 1024), 100);
     };
     window.addEventListener('resize', handler);
-    // Устанавливаем начальное значение
     handler();
     return () => {
       clearTimeout(timeout);
@@ -82,21 +90,41 @@ export default function App() {
   // блокировка событий копирования
   useEffect(() => {
     const preventCopy = (e) => e.preventDefault();
-    
     document.addEventListener('copy', preventCopy);
     document.addEventListener('cut', preventCopy);
-    document.addEventListener('contextmenu', preventCopy);
     document.addEventListener('selectstart', preventCopy);
-    
     return () => {
       document.removeEventListener('copy', preventCopy);
       document.removeEventListener('cut', preventCopy);
-      document.removeEventListener('contextmenu', preventCopy);
       document.removeEventListener('selectstart', preventCopy);
     };
   }, []);
 
+  // Обработка изменения размера браузера – окна не вылетают за границы
+  useEffect(() => {
+    const handleResize = () => {
+      setWindows(prev =>
+        prev.map(win => ({
+          ...win,
+          x: Math.min(win.x, window.innerWidth - 100),
+          y: Math.min(win.y, window.innerHeight - 100),
+          width: Math.min(win.width, window.innerWidth),
+          height: Math.min(win.height, window.innerHeight - 28),
+        }))
+      );
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const openApp = (appId) => {
+    // Если окно свёрнуто — разворачиваем его
+    if (minimizedApps.has(appId)) {
+      setMinimizedApps((prev) => { const s = new Set(prev); s.delete(appId); return s; });
+      focusWindow(appId);
+      return;
+    }
+
     const existing = windows.find((w) => w.id === appId);
     if (existing) return focusWindow(appId);
 
@@ -123,6 +151,12 @@ export default function App() {
   const closeWindow = (appId) => {
     setWindows((prev) => prev.filter((w) => w.id !== appId));
     setOpenApps((prev) => prev.filter((id) => id !== appId));
+    setMinimizedApps((prev) => { const s = new Set(prev); s.delete(appId); return s; });
+  };
+
+  const minimizeWindow = (appId) => {
+    setMinimizedApps((prev) => new Set([...prev, appId]));
+    setActiveWin(null);
   };
 
   const focusWindow = (appId) => {
@@ -134,16 +168,18 @@ export default function App() {
     setActiveWin(appId);
   };
 
+  // ✅ Максимизация/восстановление с учётом Dock
   const maximizeWindow = (appId) => {
     setWindows((prev) => {
       const win = prev.find((w) => w.id === appId);
       if (!win) return prev;
 
-      const isMaximized = win.x === 0 && win.y === 0;
+      const maximized = win.width >= window.innerWidth - 2 && win.height >= window.innerHeight - 28 - DOCK_HEIGHT;
       const savedState = windowStates[appId];
       const p = INITIAL_POSITIONS[appId] || { x: 120, y: 80, w: 600, h: 420 };
 
-      if (isMaximized) {
+      if (maximized) {
+        // Восстанавливаем позицию
         return prev.map((w) =>
           w.id === appId
             ? {
@@ -156,43 +192,54 @@ export default function App() {
             : w
         );
       } else {
+        // Сохраняем текущую позицию и разворачиваем на весь экран (с учётом Menu Bar и Dock)
         setWindowStates((prevState) => ({
           ...prevState,
           [appId]: { x: win.x, y: win.y, w: win.width, h: win.height },
         }));
         return prev.map((w) =>
           w.id === appId
-            ? { ...w, x: 0, y: 28, width: window.innerWidth, height: window.innerHeight - 28 }
+            ? { ...w, x: 0, y: 28, width: window.innerWidth, height: window.innerHeight - 28 - DOCK_HEIGHT }
             : w
         );
       }
     });
   };
 
+  // ─── УНИВЕРСАЛЬНЫЙ renderContent ──────────────────────────────────────
   const renderContent = (appId) => {
+    // Общие пропсы управления окном
+    const commonProps = {
+      onClose: () => closeWindow(appId),
+      onMinimize: () => minimizeWindow(appId),
+      onMaximize: () => maximizeWindow(appId),
+      onZoom: () => maximizeWindow(appId), // Для кнопки zoom в Settings
+    };
+
     switch (appId) {
       case "finder":
         return (
           <FinderContent
             openApp={openApp}
             onClose={() => closeWindow("finder")}
-            onMinimize={() => closeWindow("finder")}
+            onMinimize={() => minimizeWindow("finder")}
             onMaximize={() => maximizeWindow("finder")}
           />
         );
       case "terminal":
-        return <TerminalContent />;
+        return <TerminalContent {...commonProps} />;
       case "notes":
-        return <NotesContent />;
+        return <NotesContent {...commonProps} />;
       case "settings":
         return (
           <SettingsContent
             currentWallpaper={wallpaperState.id}
             onWallpaperChange={setWallpaperState}
+            {...commonProps}
           />
         );
       default:
-        return <PlaceholderContent appId={appId} />;
+        return <PlaceholderContent appId={appId} {...commonProps} />;
     }
   };
 
@@ -207,24 +254,36 @@ export default function App() {
         key={win.id}
         win={win}
         isActive={activeWin === win.id}
+        isMinimized={minimizedApps.has(win.id)}
         onClose={() => closeWindow(win.id)}
-        onMinimize={() => closeWindow(win.id)}
+        onMinimize={() => minimizeWindow(win.id)}
         onFocus={() => focusWindow(win.id)}
         onZoom={() => maximizeWindow(win.id)}
-        titleBarHidden={win.id === 'settings' || win.id === 'finder'}
       >
         {renderContent(win.id)}
       </AppWindow>
     )),
-    [windows, activeWin, closeWindow, focusWindow, maximizeWindow, renderContent]
+    [windows, activeWin, minimizedApps, closeWindow, minimizeWindow, focusWindow, maximizeWindow, renderContent]
   );
+
+  const handleDesktopContextMenu = (e) => {
+    const items = [
+      { label: "New Folder", action: () => console.log("New Folder") },
+      { type: "divider" },
+      { label: "Change Wallpaper", action: () => console.log("Change Wallpaper") },
+      { type: "divider" },
+      { label: "Get Info", action: () => console.log("Get Info") },
+      { label: "Open in Terminal", action: () => console.log("Open in Terminal") },
+    ];
+    openContextMenu(e, items);
+  };
 
   if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
   if (isMobile) return <MobileNotSupported />;
 
-
   return (
     <div
+      onContextMenu={handleDesktopContextMenu}
       style={{
         width: "100vw",
         height: "100vh",
@@ -236,10 +295,18 @@ export default function App() {
     >
       <MenuBar activeApp={activeApp} />
 
-      {/* ✅ Используем мемоизированный список */}
       {renderedWindows}
 
-      <Dock onOpen={openApp} openApps={openApps} />
+      <Dock onOpen={openApp} openApps={openApps} minimizedApps={minimizedApps} />
+
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={contextMenu.items}
+          onClose={closeContextMenu}
+        />
+      )}
     </div>
   );
 }
