@@ -97,21 +97,22 @@ Happy exploring.
 
 ## 🎮 Terminal Commands
 
-The built-in Terminal supports:
+The built-in Terminal supports the following commands:
 
-help — list available commands
-ls — list directory
-pwd — working directory
-whoami — current user
-uname — system info
-date — current date & time
-echo [text] — print text
-cat readme.md — print this file
-figlet [text] — print styled ASCII art text
-neofetch — system info with ASCII art
-git log — real commit history
-clear — clear screen
-text
+| Command | Description |
+|---------|-------------|
+| `help` | List available commands |
+| `ls` | List directory contents |
+| `pwd` | Print working directory |
+| `whoami` | Display current user |
+| `uname` | Show system information |
+| `date` | Show current date & time |
+| `echo [text]` | Print text to the terminal |
+| `cat readme.md` | Print the contents of README file |
+| `figlet [text]` | Display styled ASCII art text |
+| `neofetch` | Show system information with ASCII art |
+| `git log` | Display real commit history from GitHub |
+| `clear` | Clear the terminal screen |
 
 
 ## 🤝 Contributing
