@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import {
   DESKTOP_ICONS,
@@ -55,7 +55,7 @@ export default function App() {
   const [activeWin, setActiveWin] = useState(null);
   const [bootComplete, setBootComplete] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [windowStates, setWindowStates] = useState({}); // Для сохранения позиций при максимизации
+  const [windowStates, setWindowStates] = useState({});
 
   const [wallpaperState, setWallpaperState] = useState({
     id: DEFAULT_WALLPAPER.id,
@@ -63,6 +63,7 @@ export default function App() {
     value: DEFAULT_WALLPAPER.image,
   });
 
+  // Для проверки мобильности
   useEffect(() => {
     let timeout;
     const handler = () => {
@@ -70,17 +71,29 @@ export default function App() {
       timeout = setTimeout(() => setIsMobile(window.innerWidth <= 1024), 100);
     };
     window.addEventListener('resize', handler);
+    // Устанавливаем начальное значение
+    handler();
     return () => {
       clearTimeout(timeout);
       window.removeEventListener('resize', handler);
     };
   }, []);
 
+  // блокировка событий копирования
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const preventCopy = (e) => e.preventDefault();
+    
+    document.addEventListener('copy', preventCopy);
+    document.addEventListener('cut', preventCopy);
+    document.addEventListener('contextmenu', preventCopy);
+    document.addEventListener('selectstart', preventCopy);
+    
+    return () => {
+      document.removeEventListener('copy', preventCopy);
+      document.removeEventListener('cut', preventCopy);
+      document.removeEventListener('contextmenu', preventCopy);
+      document.removeEventListener('selectstart', preventCopy);
+    };
   }, []);
 
   const openApp = (appId) => {
@@ -121,7 +134,6 @@ export default function App() {
     setActiveWin(appId);
   };
 
-  // Логика максимизации/восстановления окна
   const maximizeWindow = (appId) => {
     setWindows((prev) => {
       const win = prev.find((w) => w.id === appId);
@@ -132,7 +144,6 @@ export default function App() {
       const p = INITIAL_POSITIONS[appId] || { x: 120, y: 80, w: 600, h: 420 };
 
       if (isMaximized) {
-        // Восстанавливаем позицию
         return prev.map((w) =>
           w.id === appId
             ? {
@@ -145,7 +156,6 @@ export default function App() {
             : w
         );
       } else {
-        // Сохраняем текущую позицию и разворачиваем на весь экран
         setWindowStates((prevState) => ({
           ...prevState,
           [appId]: { x: win.x, y: win.y, w: win.width, h: win.height },
@@ -190,11 +200,28 @@ export default function App() {
     ? APPS.find((a) => a.id === activeWin)?.name
     : "Finder";
 
-  if (!bootComplete)
-    return <BootScreen onComplete={() => setBootComplete(true)} />;
+  // ✅ Мемоизированный список окон
+  const renderedWindows = useMemo(() => 
+    windows.map((win) => (
+      <AppWindow
+        key={win.id}
+        win={win}
+        isActive={activeWin === win.id}
+        onClose={() => closeWindow(win.id)}
+        onMinimize={() => closeWindow(win.id)}
+        onFocus={() => focusWindow(win.id)}
+        onZoom={() => maximizeWindow(win.id)}
+        titleBarHidden={win.id === 'settings' || win.id === 'finder'}
+      >
+        {renderContent(win.id)}
+      </AppWindow>
+    )),
+    [windows, activeWin, closeWindow, focusWindow, maximizeWindow, renderContent]
+  );
 
-  if (isMobile)
-    return <MobileNotSupported />;
+  if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
+  if (isMobile) return <MobileNotSupported />;
+
 
   return (
     <div
@@ -209,20 +236,8 @@ export default function App() {
     >
       <MenuBar activeApp={activeApp} />
 
-      {windows.map((win) => (
-        <AppWindow
-          key={win.id}
-          win={win}
-          isActive={activeWin === win.id}
-          onClose={() => closeWindow(win.id)}
-          onMinimize={() => closeWindow(win.id)}
-          onFocus={() => focusWindow(win.id)}
-          onZoom={() => maximizeWindow(win.id)} // Передаём функцию максимизации
-          titleBarHidden={win.id === 'settings' || win.id === 'finder'}
-        >
-          {renderContent(win.id)}
-        </AppWindow>
-      ))}
+      {/* ✅ Используем мемоизированный список */}
+      {renderedWindows}
 
       <Dock onOpen={openApp} openApps={openApps} />
     </div>

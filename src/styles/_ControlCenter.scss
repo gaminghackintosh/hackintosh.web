@@ -1,166 +1,301 @@
 @use "./_variables" as vars;
 
-.controlCenter {
+// ─── Tokens ───────────────────────────────────────────────────────
+$cc-bg-start:   rgba(40, 40, 44, 0.72);
+$cc-bg-end:     rgba(24, 24, 28, 0.82);
+$cc-border:     rgba(255, 255, 255, 0.08);
+$cc-shadow:     rgba(0, 0, 0, 0.55);
+$cc-inset:      rgba(255, 255, 255, 0.06);
+
+$card-bg:       rgba(255, 255, 255, 0.06);
+$card-border:   rgba(255, 255, 255, 0.06);
+$card-hover:    rgba(255, 255, 255, 0.1);
+
+$tile-bg:       rgba(255, 255, 255, 0.06);
+$tile-active:   rgba(255, 255, 255, 0.16);
+
+$net-on:        vars.$color-accent;   // #0a84ff
+$net-off:       rgba(255,255,255,0.15);
+
+$text-primary:  rgba(255,255,255,0.92);
+$text-sub:      rgba(255,255,255,0.45);
+
+$radius-panel:  24px;
+$radius-card:   18px;
+$radius-tile:   16px;
+
+// ═══════════════════════════════════════════════════════════════════
+//  ROOT PANEL
+// ═══════════════════════════════════════════════════════════════════
+.cc {
   position: absolute;
   top: 38px;
   right: 12px;
-
-  width: 360px;
   padding: 14px;
-
-  border-radius: 28px;
-
-  background: linear-gradient(
-    180deg,
-    vars.$color-cc-bg-gradient-start 0%,
-    vars.$color-cc-bg-gradient-end 100%
-  );
-
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-
-  border: 1px solid vars.$color-cc-border;
-
-  box-shadow:
-    0 20px 60px vars.$color-cc-shadow,
-    inset 0 1px 0 vars.$color-cc-inset-shadow;
-
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: $radius-panel;
+  background: linear-gradient(175deg, $cc-bg-start 0%, $cc-bg-end 100%);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid $cc-border;
+  box-shadow: 0 24px 64px $cc-shadow;
   z-index: 10001;
-
-  animation: controlCenterFadeIn 0.18s ease-out;
-
-  overflow: hidden;
+  animation: cc-in 0.20s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible;
 }
 
-.controlCenter__networkGroup {
+@keyframes cc-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TOP ROW  ─  network group  +  tiles column
+// ═══════════════════════════════════════════════════════════════════
+.cc__top-row {
+  display: grid;
+  grid-template-columns: 1fr 155px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+// ── Network group ─────────────────────────────────────────────────
+.cc__network-group {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: $radius-card;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 0;
+}
+
+.cc__net-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.04);
+  margin: 0 14px;
+}
+
+.cc__net-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.12s;
+  flex: 1;
+
+  &:hover { background: $card-hover; }
+}
+
+// ── Network icon dot ──────────────────────────────────────────────
+.cc-net-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.18s, box-shadow 0.18s;
+
+  &--on {
+    background: $net-on;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.35);
+  }
+  &--off {
+    background: $net-off;
+    color: rgba(255,255,255,0.5);
+  }
+}
+
+.cc__net-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cc__net-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-primary;
+  letter-spacing: -0.1px;
+  line-height: 1;
+}
+
+.cc__net-sub {
+  font-size: 11px;
+  color: $text-sub;
+  margin-top: 2px;
+}
+
+// ── Tiles column ──────────────────────────────────────────────────
+.cc__tiles-col {
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  padding: 10px;
-
-  border-radius: 22px;
-
-  background: linear-gradient(
-    180deg,
-    vars.$color-cc-network-group-bg-start,
-    vars.$color-cc-network-group-bg-end
-  );
-
-  border: 1px solid vars.$color-cc-network-group-border;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.controlCenter__networkItem {
+.cc__tiles-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 1;
+}
+
+// ── Individual tile ───────────────────────────────────────────────
+.cc-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 12px 10px 10px;
+  border-radius: $radius-tile;
+  border: 1px solid $card-border;
+  background: $tile-bg;
+  cursor: pointer;
+  transition: background 0.14s, transform 0.1s;
+  color: $text-primary;
+  min-height: 0;
+  text-align: left;
+
+  // Focus tile is the tall one
+  &:first-child:not(:last-child) {
+    flex: 1;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 14px 12px;
+
+    .cc-tile__icon {
+      margin-bottom: auto;
+    }
+    .cc-tile__label {
+      font-size: 12px;
+    }
+  }
+
+  &:hover:not(.cc-tile--active) { background: rgba(255,255,255,0.1); transform: scale(1.02); }
+
+  &--active {
+    background: $tile-active;
+    border-color: rgba(255,255,255,0.12);
+
+    .cc-tile__icon { color: #fff; }
+  }
+
+  &:active { transform: scale(0.96); }
+}
+
+.cc-tile__icon {
+  color: rgba(255,255,255,0.80);
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  transition: background 0.15s, transform 0.12s;
-  cursor: default;
-
-  &:hover {
-    background: vars.$color-cc-network-item-hover;
-    transform: scale(1.01);
-  }
+  transition: color 0.15s;
 }
 
-.controlCenter__networkIcon {
-  width: 34px;
-  height: 34px;
-  padding: 8px;
-  border-radius: 12px;
-  background: vars.$color-cc-network-icon-bg;
-  color: vars.$color-white;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px vars.$color-cc-network-icon-shadow;
+.cc-tile__label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: $text-primary;
+  line-height: 1.2;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
-.controlCenter__networkLabel {
+// ═══════════════════════════════════════════════════════════════════
+//  CARD  (Display + Sound)
+// ═══════════════════════════════════════════════════════════════════
+.cc__card {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: $radius-card;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cc__card-label {
   font-size: 13px;
   font-weight: 600;
-  color: vars.$color-text-primary;
+  color: $text-primary;
   letter-spacing: -0.1px;
 }
 
-.controlCenter__networkStatus {
-  margin-top: 2px;
-  font-size: 11px;
-  color: vars.$color-text-tertiary; // rgba(255,255,255,0.5)
+// ── Slider row ────────────────────────────────────────────────────
+.cc__slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-// Переключатель
-.controlCenter__toggle {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
+.cc__slider-icon,
+.cc__headphone-icon,
+.cc__airplay-btn {
+  color: rgba(255,255,255,0.55);
   flex-shrink: 0;
-  margin-left: auto;
-
-  input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-
-    &:focus {
-      outline: none;
-    }
-  }
+  display: flex;
+  align-items: center;
 }
 
-.controlCenter__toggleSlider {
-  position: absolute;
+.cc__airplay-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
   cursor: pointer;
-  inset: 0;
-  background: vars.$color-cc-toggle-off-bg;
-  backdrop-filter: blur(10px);
-  border-radius: 30px;
-  transition: 0.2s;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  color: rgba(255,255,255,0.70);
+  transition: background 0.12s;
+  padding: 0;
 
-  &::before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    bottom: 2px;
-    background: vars.$color-cc-toggle-slider-knob;
-    border-radius: 50%;
-    transition: 0.2s;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-  }
+  &:hover { background: rgba(255,255,255,0.12); color: #fff; }
 }
 
-// Состояние включено
-input:checked + .controlCenter__toggleSlider {
+// ── Custom slider ─────────────────────────────────────────────────
+.cc__slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 20px;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  // Two-tone fill via background gradient on the track
   background: linear-gradient(
-    180deg,
-    vars.$color-cc-toggle-on-gradient-start,
-    vars.$color-cc-toggle-on-gradient-end
+    to right,
+    rgba(255,255,255,0.80) 0%,
+    rgba(255,255,255,0.80) var(--val, 50%),
+    rgba(255,255,255,0.12) var(--val, 50%),
+    rgba(255,255,255,0.12) 100%
   );
+  transition: background 0.05s;
 
-  &::before {
-    transform: translateX(20px);
+  // Thumb
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+    cursor: pointer;
+    transition: transform 0.1s;
   }
-}
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+    border: none;
+    cursor: pointer;
+  }
 
-// Фокус
-.controlCenter__toggle input:focus + .controlCenter__toggleSlider {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-// Анимация появления
-@keyframes controlCenterFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  &:hover::-webkit-slider-thumb { transform: scale(1.1); }
 }

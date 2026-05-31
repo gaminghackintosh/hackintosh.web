@@ -7,6 +7,11 @@ body {
   background: #0b0f1a;
   color: vars.$color-text-primary;
 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
 /* (временно отключено, для решении проблем)
     // ------------------------------------------------------------
     //  Основные системные курсоры macOS
@@ -77,6 +82,13 @@ body {
 */
 }
 
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 // ------------------------------------------------------------
 //  Применение курсоров к элементам интерфейса
 // ------------------------------------------------------------
@@ -100,7 +112,7 @@ textarea,
   cursor: var(--cursor-text);
 }
 
-// Вертикальный текст (редко, но может пригодиться)
+// Вертикальный текст
 [data-vertical-text] {
   cursor: var(--cursor-vertical-text);
 }
@@ -125,7 +137,7 @@ textarea,
   cursor: var(--cursor-alias);
 }
 
-// Запрещённое действие (например, нельзя перетащить)
+// Запрещённое действие
 [data-no-drop] {
   cursor: var(--cursor-no-drop);
 }
@@ -143,7 +155,7 @@ textarea,
   cursor: var(--cursor-zoom-out);
 }
 
-// Состояние загрузки (интерфейс заблокирован)
+// Состояние загрузки
 .busy,
 .loading {
   cursor: var(--cursor-wait);

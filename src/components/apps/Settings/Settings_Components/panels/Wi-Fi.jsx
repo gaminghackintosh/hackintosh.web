@@ -14,7 +14,7 @@ export const WiFiSettings = () => {
 
   // Моковые данные сетей
   const knownNetworks = [
-    { id: 1, name: "MERCUSYS_5G", secured: true, connected: true },
+    { id: 1, name: "Kernel Panic Network", secured: true, connected: true },
     { id: 2, name: "MERCUSYS_B939", secured: true, connected: false },
   ];
 
@@ -36,18 +36,14 @@ export const WiFiSettings = () => {
             </div>
             <ToggleSwitch checked={wifiEnabled} onChange={() => setWifiEnabled(!wifiEnabled)} />
           </div>
-        </SettingsGroup>
 
-        {/* ── Текущая подключенная сеть ── */}
-        {wifiEnabled && (
-          <SettingsGroup>
-            <div className="connected-status">
+          <div className="connected-status">
               <div className="dot" />
               <span className="status-text">Connected</span>
-              <span className="network-name">MERCUSYS_5G</span>
-            </div>
-          </SettingsGroup>
-        )}
+              <span className="network-name">Kernel Panic Network</span>
+          </div>
+        </SettingsGroup>
+
 
         {/* ── Personal Hotspots ── */}
         {wifiEnabled && (

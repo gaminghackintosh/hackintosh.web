@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useLayoutEffect, memo } from "react";
 
 export const WindowContext = React.createContext({
   onClose: () => {},
@@ -7,7 +7,7 @@ export const WindowContext = React.createContext({
   onTitleMouseDown: () => {},
 });
 
-export function AppWindow({
+export const AppWindow = memo(function AppWindow({
   win,
   onClose,
   onMinimize,
@@ -15,21 +15,37 @@ export function AppWindow({
   isActive,
   children,
   titleBarHidden = false,
-  onZoom = null, // Добавляем проп onZoom
+  onZoom = null,
 }) {
+  // Начальное состояние
   const [pos, setPos] = useState({ x: win.x, y: win.y });
   const [size, setSize] = useState({ width: win.width, height: win.height });
+  
+  // Refs для производительности
+  const windowRef = useRef(null);
   const dragging = useRef(false);
   const resizing = useRef(false);
   const resizeEdge = useRef(null);
   const offset = useRef({ x: 0, y: 0 });
-  const windowRef = useRef(null);
+  const initialPos = useRef({ x: 0, y: 0 });
+  const initialSize = useRef({ w: 0, h: 0 });
+  
   const [cursor, setCursor] = useState("default");
   const [hoverEdge, setHoverEdge] = useState(null);
 
   const RESIZE_EDGE_SIZE = 10;
   const TITLE_BAR_HEIGHT = 40;
 
+  // Синхронизация DOM с React-состоянием при изменении размера окна извне
+  useLayoutEffect(() => {
+    if (windowRef.current) {
+      windowRef.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+      windowRef.current.style.width = `${size.width}px`;
+      windowRef.current.style.height = `${size.height}px`;
+    }
+  }, [pos, size]);
+
+  // Определение края для ресайза
   const getResizeEdge = (e) => {
     if (!windowRef.current) return null;
     const rect = windowRef.current.getBoundingClientRect();
@@ -59,6 +75,8 @@ export function AppWindow({
     return cursorMap[edge] || "default";
   };
 
+  // ─── Mouse events ────────────────────────────────────────────────
+
   const onWindowMouseMove = (e) => {
     const edge = getResizeEdge(e);
     setCursor(getCursorStyle(edge));
@@ -72,44 +90,63 @@ export function AppWindow({
       onFocus();
       resizing.current = true;
       resizeEdge.current = edge;
-      offset.current = { x: e.clientX, y: e.clientY, w: size.width, h: size.height };
+      offset.current = { x: e.clientX, y: e.clientY };
+      initialPos.current = { x: pos.x, y: pos.y };
+      initialSize.current = { w: size.width, h: size.height };
+
       const onMove = (ev) => {
         if (!resizing.current) return;
         const dx = ev.clientX - offset.current.x;
         const dy = ev.clientY - offset.current.y;
         const minWidth = 300;
         const minHeight = 200;
-        const newSize = { width: offset.current.w, height: offset.current.h };
-        const newPos = { ...pos };
+        let newWidth = initialSize.current.w;
+        let newHeight = initialSize.current.h;
+        let newX = initialPos.current.x;
+        let newY = initialPos.current.y;
+
         if (resizeEdge.current.includes("right")) {
-          newSize.width = Math.max(minWidth, offset.current.w + dx);
+          newWidth = Math.max(minWidth, initialSize.current.w + dx);
         }
         if (resizeEdge.current.includes("left")) {
-          const newWidth = Math.max(minWidth, offset.current.w - dx);
-          if (newWidth >= minWidth) {
-            newSize.width = newWidth;
-            newPos.x = pos.x + dx;
+          const w = Math.max(minWidth, initialSize.current.w - dx);
+          if (w >= minWidth) {
+            newWidth = w;
+            newX = initialPos.current.x + dx;
           }
         }
         if (resizeEdge.current.includes("bottom")) {
-          newSize.height = Math.max(minHeight, offset.current.h + dy);
+          newHeight = Math.max(minHeight, initialSize.current.h + dy);
         }
         if (resizeEdge.current.includes("top")) {
-          const newHeight = Math.max(minHeight, offset.current.h - dy);
-          if (newHeight >= minHeight) {
-            newSize.height = newHeight;
-            newPos.y = pos.y + dy;
+          const h = Math.max(minHeight, initialSize.current.h - dy);
+          if (h >= minHeight) {
+            newHeight = h;
+            newY = initialPos.current.y + dy;
           }
         }
-        setPos(newPos);
-        setSize(newSize);
+
+        // Прямое обновление DOM
+        if (windowRef.current) {
+          windowRef.current.style.width = `${newWidth}px`;
+          windowRef.current.style.height = `${newHeight}px`;
+          windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+        }
       };
+
       const onUp = () => {
         resizing.current = false;
         resizeEdge.current = null;
+        
+        if (windowRef.current) {
+          const rect = windowRef.current.getBoundingClientRect();
+          setPos({ x: rect.left, y: rect.top });
+          setSize({ width: rect.width, height: rect.height });
+        }
         document.removeEventListener("mousemove", onMove);
         document.removeEventListener("mouseup", onUp);
       };
+
       document.addEventListener("mousemove", onMove);
       document.addEventListener("mouseup", onUp);
     }
@@ -120,18 +157,28 @@ export function AppWindow({
     onFocus();
     dragging.current = true;
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+
     const onMove = (ev) => {
       if (!dragging.current) return;
-      setPos({
-        x: Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x)),
-        y: Math.max(28, ev.clientY - offset.current.y),
-      });
+      const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
+      const newY = Math.max(28, ev.clientY - offset.current.y);
+      
+      if (windowRef.current) {
+        windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+      }
     };
+
     const onUp = () => {
       dragging.current = false;
+      // Синхронизируем React-состояние после завершения перетаскивания
+      if (windowRef.current) {
+        const rect = windowRef.current.getBoundingClientRect();
+        setPos({ x: rect.left, y: rect.top });
+      }
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
     };
+
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
     e.preventDefault();
@@ -154,15 +201,15 @@ export function AppWindow({
         onMouseMove={onWindowMouseMove}
         onMouseLeave={() => setCursor("default")}
         style={{
-          left: pos.x,
-          top: pos.y,
+          position: 'fixed',
+          transform: `translate(${pos.x}px, ${pos.y}px)`,
           width: size.width,
           height: size.height,
           zIndex: win.zIndex,
           cursor: cursor,
+          willChange: 'transform', 
         }}
       >
-
         {!titleBarHidden && (
           <div className="title-bar" onMouseDown={onTitleMouseDown}>
             <div
@@ -185,10 +232,8 @@ export function AppWindow({
           </div>
         )}
 
-        {/* Основной контент */}
         <div className="app-window__content">{children}</div>
 
-        {/* Иконка ресайза */}
         <div className="resize-handle">
           <svg width="14" height="14" viewBox="0 0 14 14">
             <path d="M14 0 L14 14 L0 14" fill="none" stroke="white" strokeWidth="1" opacity="0.6" />
@@ -199,4 +244,4 @@ export function AppWindow({
       </div>
     </WindowContext.Provider>
   );
-}
+});
