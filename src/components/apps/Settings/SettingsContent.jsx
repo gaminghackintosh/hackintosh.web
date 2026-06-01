@@ -2,15 +2,44 @@ import React, { useState, useContext, useMemo, useCallback, memo } from "react";
 import { WALLPAPER_GROUPS } from "../../../constants/wallpapers";
 import { WindowContext } from "../../AppWindow/AppWindow";
 
-// Icons
+// Icons - PNG images for network section
 import WiFi_Icon      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
 import Bluetooth_Icon from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
 import Network_Icon   from "./../../../assets/icons/Settings_menuSections/Network.ico";
 
 import GameCenter_Icon from "./../../../assets/icons/Settings_menuSections/Game_Center.png";
-import Wallet_Icon    from "./../../../assets/icons/Settings_menuSections/Wallet.png";
 
 import LogoType  from "./../../../assets/images/logo/logo_butterfly.png";
+
+// SVG icons for all other sections
+import {
+  NotificationsIcon,
+  SoundIcon,
+  FocusIcon,
+  ScreenTimeIcon,
+  BatteryIcon,
+  GeneralIcon,
+  AppearanceIcon,
+  AccessibilityIcon,
+  ControlCenterIcon,
+  SiriIcon,
+  PrivacyIcon,
+  DesktopDockIcon,
+  DisplaysIcon,
+  ScreenSaverIcon,
+  EnergySaverIcon,
+  LockScreenIcon,
+  LoginPasswordIcon,
+  TouchIDIcon,
+  UsersGroupsIcon,
+  PasswordsIcon,
+  InternetAccountsIcon,
+  iCloudIcon,
+  KeyboardIcon,
+  MouseIcon,
+  GameControllersIcon,
+  PrintersScannersIcon,
+} from "./Settings_Components/SettingsIcons";
 
 // Shared components
 import { SettingsPanel } from "./Settings_Components/SettingsPanel";
@@ -20,9 +49,9 @@ import { ToggleSwitch } from "./Settings_Components/ToggleSwitch";
 
 // Import Components Settings
 import {
-  WiFiSettings,
   AccessibilitySettings,
   AppearanceSettings,
+  BatterySettings,
   BluetoothSettings,
   ControlCenterSettings,
   DesktopDockSettings,
@@ -32,6 +61,7 @@ import {
   GameCenterSettings,
   GameControllersSettings,
   GeneralSettings,
+  iCloudSettings,
   InternetAccountsSettings,
   LockScreenSettings,
   LoginPasswordSettings,
@@ -41,7 +71,10 @@ import {
   PasswordsSettings,
   PrivacySettings,
   SoundSettings,
+  TouchIDSettings,
+  UsersSettings,
   VPNSettings,
+  WiFiSettings,
 } from "./Settings_Components/panels";
 
 // ─── Menu structure ──────────────────────────────────────────────────────────
@@ -59,57 +92,60 @@ const MENU_SECTIONS = [
   {
     id: "system",
     items: [
-      { id: "notifications", label: "Notifications", icon: "🔔", iconType: "emoji" },
-      { id: "sound",         label: "Sound",          icon: "🔊", iconType: "emoji" },
-      { id: "focus",         label: "Focus",          icon: "🧘", iconType: "emoji" },
-      { id: "screentime",    label: "Screen Time",    icon: "⏱️", iconType: "emoji" },
+      { id: "notifications", label: "Notifications", icon: NotificationsIcon, iconType: "svg" },
+      { id: "sound",         label: "Sound",          icon: SoundIcon, iconType: "svg" },
+      { id: "focus",         label: "Focus",          icon: FocusIcon, iconType: "svg" },
+      { id: "screentime",    label: "Screen Time",    icon: ScreenTimeIcon, iconType: "svg" },
+      { id: "battery",       label: "Battery",        icon: BatteryIcon, iconType: "svg" },
     ],
   },
   {
     id: "general",
     items: [
-      { id: "general",       label: "General",            icon: "⚙️", iconType: "emoji" },
-      { id: "appearance",    label: "Appearance",         icon: "🎨", iconType: "emoji" },
-      { id: "accessibility", label: "Accessibility",      icon: "♿", iconType: "emoji" },
-      { id: "controlcenter", label: "Control Center",     icon: "🎮", iconType: "emoji" },
-      { id: "siri",          label: "Siri & Spotlight",   icon: "🔍", iconType: "emoji" },
-      { id: "privacy",       label: "Privacy & Security", icon: "🔐", iconType: "emoji" },
+      { id: "general",       label: "General",            icon: GeneralIcon, iconType: "svg" },
+      { id: "appearance",    label: "Appearance",         icon: AppearanceIcon, iconType: "svg" },
+      { id: "accessibility", label: "Accessibility",      icon: AccessibilityIcon, iconType: "svg" },
+      { id: "controlcenter", label: "Control Center",     icon: ControlCenterIcon, iconType: "svg" },
+      { id: "siri",          label: "Siri & Spotlight",   icon: SiriIcon, iconType: "svg" },
+      { id: "privacy",       label: "Privacy & Security", icon: PrivacyIcon, iconType: "svg" },
     ],
   },
   {
     id: "desktop",
     items: [
-      { id: "desktopdock",  label: "Desktop & Dock", icon: "🖥️", iconType: "emoji" },
-      { id: "displays",     label: "Displays",        icon: "🖥️", iconType: "emoji" },
+      { id: "desktopdock",  label: "Desktop & Dock", icon: DesktopDockIcon, iconType: "svg" },
+      { id: "displays",     label: "Displays",        icon: DisplaysIcon, iconType: "svg" },
       { id: "wallpaper",    label: "Wallpaper",       icon: "🖼️", iconType: "emoji" },
-      { id: "screensaver",  label: "Screen Saver",    icon: "✨", iconType: "emoji" },
-      { id: "energysaver",  label: "Energy Saver",    icon: "🔋", iconType: "emoji" },
+      { id: "screensaver",  label: "Screen Saver",    icon: ScreenSaverIcon, iconType: "svg" },
+      { id: "energysaver",  label: "Energy Saver",    icon: EnergySaverIcon, iconType: "svg" },
     ],
   },
   {
     id: "security",
     items: [
-      { id: "lockscreen",    label: "Lock Screen",    icon: "🔒", iconType: "emoji" },
-      { id: "loginpassword", label: "Login Password", icon: "🔑", iconType: "emoji" },
-      { id: "usersgroups",   label: "Users & Groups", icon: "👥", iconType: "emoji" },
+      { id: "lockscreen",    label: "Lock Screen",    icon: LockScreenIcon, iconType: "svg" },
+      { id: "loginpassword", label: "Login Password", icon: LoginPasswordIcon, iconType: "svg" },
+      { id: "touchid",       label: "Touch ID & Password", icon: TouchIDIcon, iconType: "svg" },
+      { id: "usersgroups",   label: "Users & Groups", icon: UsersGroupsIcon, iconType: "svg" },
     ],
   },
   {
     id: "accounts",
     items: [
-      { id: "passwords",         label: "Passwords",           icon: "🔐", iconType: "emoji" },
-      { id: "internetaccounts",  label: "Internet Accounts",   icon: "🌍", iconType: "emoji" },
+      { id: "passwords",         label: "Passwords",           icon: PasswordsIcon, iconType: "svg" },
+      { id: "internetaccounts",  label: "Internet Accounts",   icon: InternetAccountsIcon, iconType: "svg" },
+      { id: "icloud",            label: "iCloud",              icon: iCloudIcon, iconType: "svg" },
       { id: "gamecenter",        label: "Game Center",         icon: GameCenter_Icon, iconType: "image" },
-      { id: "wallet",            label: "Wallet & Apple Pay",  icon: Wallet_Icon, iconType: "image" },
+      { id: "wallet",            label: "Wallet & Apple Pay",  icon: "💳", iconType: "emoji" },
     ],
   },
   {
     id: "hardware",
     items: [
-      { id: "keyboard",           label: "Keyboard",           icon: "⌨️", iconType: "emoji" },
-      { id: "mouse",              label: "Mouse",              icon: "🖱️", iconType: "emoji" },
-      { id: "gamecontrollers",    label: "Game Controllers",   icon: "🎮", iconType: "emoji" },
-      { id: "printersscanners",   label: "Printers & Scanners",icon: "🖨️", iconType: "emoji" },
+      { id: "keyboard",           label: "Keyboard",           icon: KeyboardIcon, iconType: "svg" },
+      { id: "mouse",              label: "Mouse",              icon: MouseIcon, iconType: "svg" },
+      { id: "gamecontrollers",    label: "Game Controllers",   icon: GameControllersIcon, iconType: "svg" },
+      { id: "printersscanners",   label: "Printers & Scanners",icon: PrintersScannersIcon, iconType: "svg" },
     ],
   },
 ];
@@ -145,11 +181,16 @@ const renderTab = (activeTab, currentWallpaper, onWallpaperChange) => {
     
     case "mouse":            return <MouseSettings />;
     case "gamecontrollers":  return <GameControllersSettings />;
+    
+    // Новые разделы
+    case "battery":          return <BatterySettings />;
+    case "touchid":          return <TouchIDSettings />;
+    case "usersgroups":      return <UsersSettings />;
+    case "ICloud":           return <ICloudSettings />;
 
     // Неподдерживаемые разделы - показываем заглушку
     case "screentime":
     case "siri":
-    case "usersgroups":
     case "wallet":
     case "keyboard":
     case "printersscanners":
@@ -157,7 +198,6 @@ const renderTab = (activeTab, currentWallpaper, onWallpaperChange) => {
       return (
         <SettingsPanel title={activeTab === "screentime" ? "Screen Time" : 
                                activeTab === "siri" ? "Siri & Spotlight" :
-                               activeTab === "usersgroups" ? "Users & Groups" :
                                activeTab === "wallet" ? "Wallet & Apple Pay" :
                                activeTab === "keyboard" ? "Keyboard" :
                                activeTab === "printersscanners" ? "Printers & Scanners" :
@@ -328,11 +368,12 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
                   onClick={() => handleItemClick(item.id)}
                 >
                   <span className="tab-icon">
-                    {item.iconType === "image" ? (
-                      <img src={item.icon} alt={item.label} />
-                    ) : (
-                      <span>{item.icon}</span>
-                    )}
+                    {item.iconType === "image" && <img src={item.icon} alt={item.label} />}
+                    {item.iconType === "svg" && (() => {
+                      const IconComponent = item.icon;
+                      return <IconComponent size={20} />;
+                    })()}
+                    {item.iconType === "emoji" && <span>{item.icon}</span>}
                   </span>
                   <span className="tab-label">{item.label}</span>
                   {item.badge && <span className="tab-badge">{item.badge}</span>}
