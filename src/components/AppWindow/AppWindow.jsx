@@ -18,10 +18,9 @@ export const AppWindow = memo(function AppWindow({
   children,
   onZoom = null,
 }) {
-  // Начальное состояние из win (только при создании)
   const [pos, setPos] = useState({ x: win.x, y: win.y });
   const [size, setSize] = useState({ width: win.width, height: win.height });
-  
+
   // Refs для производительности
   const windowRef = useRef(null);
   const dragging = useRef(false);
@@ -30,15 +29,40 @@ export const AppWindow = memo(function AppWindow({
   const offset = useRef({ x: 0, y: 0 });
   const initialPos = useRef({ x: 0, y: 0 });
   const initialSize = useRef({ w: 0, h: 0 });
-  
+
   const [cursor, setCursor] = useState("default");
   const [hoverEdge, setHoverEdge] = useState(null);
+  const [animating, setAnimating] = useState(false);
 
   const RESIZE_EDGE_SIZE = 10;
   const TITLE_BAR_HEIGHT = 0;
 
-  // ❌ УДАЛЁН ЭФФЕКТ, КОТОРЫЙ СБРАСЫВАЛ РАЗМЕРЫ
-  // Теперь DOM синхронизируется только когда меняется локальный state
+  // === Синхронизация с пропсами (только при максимизации/восстановлении) ===
+  useLayoutEffect(() => {
+    // Если уже анимируем – пропускаем, чтобы не перебивать анимацию
+    if (animating) return;
+
+    const targetX = win.x;
+    const targetY = win.y;
+    const targetW = win.width;
+    const targetH = win.height;
+
+    // Запускаем анимацию только если координаты действительно изменились
+    if (
+      pos.x !== targetX ||
+      pos.y !== targetY ||
+      size.width !== targetW ||
+      size.height !== targetH
+    ) {
+      setAnimating(true);
+      requestAnimationFrame(() => {
+        setPos({ x: targetX, y: targetY });
+        setSize({ width: targetW, height: targetH });
+      });
+    }
+  }, [win.x, win.y, win.width, win.height]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // === Применение позиции и размера к DOM ===
   useLayoutEffect(() => {
     if (windowRef.current) {
       windowRef.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
@@ -127,7 +151,6 @@ export const AppWindow = memo(function AppWindow({
           }
         }
 
-        // Прямое обновление DOM
         if (windowRef.current) {
           windowRef.current.style.width = `${newWidth}px`;
           windowRef.current.style.height = `${newHeight}px`;
@@ -138,7 +161,6 @@ export const AppWindow = memo(function AppWindow({
       const onUp = () => {
         resizing.current = false;
         resizeEdge.current = null;
-        // Синхронизируем React-состояние после завершения ресайза
         if (windowRef.current) {
           const rect = windowRef.current.getBoundingClientRect();
           setPos({ x: rect.left, y: rect.top });
@@ -163,7 +185,7 @@ export const AppWindow = memo(function AppWindow({
       if (!dragging.current) return;
       const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
       const newY = Math.max(0, ev.clientY - offset.current.y);
-      
+
       if (windowRef.current) {
         windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
       }
@@ -194,13 +216,23 @@ export const AppWindow = memo(function AppWindow({
     <WindowContext.Provider value={{ onClose, onMinimize, onZoom, onFocus, onTitleMouseDown }}>
       <div
         ref={windowRef}
-        className={`app-window ${isActive ? "app-window--active" : "app-window--inactive"} ${
-          hoverEdge ? "app-window--resizing" : ""
-        } ${isMinimized ? "app-window--minimized" : ""}`}
+        className={[
+          "app-window",
+          isActive ? "app-window--active" : "app-window--inactive",
+          hoverEdge ? "app-window--resizing" : "",
+          isMinimized ? "app-window--minimized" : "",
+          animating ? "app-window--animating" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         onMouseDown={onWindowMouseDown}
         onMouseMove={onWindowMouseMove}
         onMouseLeave={() => setCursor("default")}
         onContextMenu={(e) => e.stopPropagation()}
+        onTransitionEnd={() => {
+          // Снимаем флаг анимации после завершения перехода
+          setAnimating(false);
+        }}
         style={{
           position: "fixed",
           transform: `translate(${pos.x}px, ${pos.y}px)`,
@@ -208,7 +240,8 @@ export const AppWindow = memo(function AppWindow({
           height: size.height,
           zIndex: win.zIndex,
           cursor,
-          willChange: "transform, opacity",
+          // will-change только во время анимации или ресайза для производительности
+          willChange: animating || hoverEdge ? "transform, width, height" : "auto",
         }}
       >
         <div className="app-window__content">{children}</div>

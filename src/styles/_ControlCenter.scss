@@ -1,341 +1,212 @@
 @use "./_variables" as vars;
 
-// ─── Tokens (macOS Control Center compact) ───────────────────────
-$cc-bg:         rgba(28, 28, 30, 0.78);
-$cc-border:     rgba(255, 255, 255, 0.1);
-$cc-shadow:     0 6px 28px rgba(0, 0, 0, 0.45);
-$cc-inset-highlight: rgba(255, 255, 255, 0.06);
+$cc-bg:       rgba(36, 36, 40, 0.82);
+$cc-border:   rgba(255, 255, 255, 0.09);
+$cc-shadow:   rgba(0, 0, 0, 0.60);
+$card-bg:     rgba(255, 255, 255, 0.07);
+$card-border: rgba(255, 255, 255, 0.07);
+$hover-bg:    rgba(255, 255, 255, 0.09);
+$accent:      vars.$color-accent;
+$text-1:      rgba(255, 255, 255, 0.92);
+$text-2:      rgba(255, 255, 255, 0.48);
+$r-panel:     20px;
+$r-card:      16px;
+$r-tile:      14px;
 
-$card-bg:       rgba(255, 255, 255, 0.05);
-$card-border:   rgba(255, 255, 255, 0.06);
-$card-hover:    rgba(255, 255, 255, 0.1);
-
-$tile-bg:       rgba(255, 255, 255, 0.05);
-$tile-active:   rgba(10, 132, 255, 0.16);
-$tile-hover:    rgba(255, 255, 255, 0.1);
-
-$net-on:        vars.$color-accent;           // #0a84ff
-$net-off:       rgba(255, 255, 255, 0.15);
-$net-active-bg: rgba(255, 255, 255, 0.05);
-
-$text-primary:  rgba(255, 255, 255, 0.92);
-$text-sub:      rgba(255, 255, 255, 0.42);
-
-$radius-panel:  18px;
-$radius-card:   14px;
-$radius-tile:   12px;
-$radius-btn:    8px;
-
-// ═══════════════════════════════════════════════════════════════════
-//  ROOT PANEL
-// ═══════════════════════════════════════════════════════════════════
+// ── Panel ─────────────────────────────────────────────────────────
 .cc {
-  position: absolute;
+  position: fixed;
   top: 36px;
-  right: 10px;
-  width: 310px;                 // фиксированная ширина как в оригинале
-  padding: 12px;
+  right: 12px;
+  width: 310px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  border-radius: $radius-panel;
+  gap: 8px;
+  border-radius: $r-panel;
   background: $cc-bg;
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
   border: 1px solid $cc-border;
   box-shadow:
-    inset 0 1px 0 $cc-inset-highlight,
-    0 6px 28px $cc-shadow;
+    0 22px 56px $cc-shadow,
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   z-index: 10001;
-  animation: cc-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: visible;
+  animation: cc-appear 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top right;
 }
 
-@keyframes cc-in {
-  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes cc-appear {
+  from { opacity: 0; transform: scale(0.94) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  TOP ROW  ─  network + tiles
-// ═══════════════════════════════════════════════════════════════════
-.cc__top-row {
+.cc__card {
+  background: $card-bg;
+  border: 1px solid $card-border;
+  border-radius: $r-card;
+  overflow: hidden;
+}
+
+.cc__div {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.055);
+  margin: 0 12px;
+}
+
+// ── Top row ───────────────────────────────────────────────────────
+.cc__top {
   display: grid;
-  grid-template-columns: 1fr 138px;
+  grid-template-columns: 1fr 108px;
   gap: 8px;
   align-items: stretch;
 }
 
-// ── Network group ─────────────────────────────────────────────────
-.cc__network-group {
-  background: $card-bg;
-  border: 1px solid $card-border;
-  border-radius: $radius-card;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 2px 0;
-}
+.cc__network { display: flex; flex-direction: column; }
 
-.cc__net-divider {
-  height: 1px;
-  background: rgba(255,255,255,0.04);
-  margin: 0 12px;
-}
-
-.cc__net-item {
+// ── Net row ───────────────────────────────────────────────────────
+.cc-net-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 14px;
+  gap: 11px;
+  padding: 10px 13px;
   cursor: pointer;
   transition: background 0.12s;
-  flex: 1;
+  user-select: none;
 
-  &:hover { background: $card-hover; }
-  &--active { background: $net-active-bg; }
+  &:hover  { background: $hover-bg; }
+  &:active { background: rgba(255,255,255,0.12); }
+  &:first-child { border-radius: $r-card $r-card 0 0; }
+  &:last-child  { border-radius: 0 0 $r-card $r-card; }
 }
 
-// ── Network icon dot ──────────────────────────────────────────────
 .cc-net-icon {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.18s, box-shadow 0.18s;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
 
   &--on {
-    background: $net-on;
+    background: $accent;
     color: #fff;
-    box-shadow: 0 3px 10px rgba(10, 132, 255, 0.3);
-  }
-  &--off {
-    background: $net-off;
-    color: rgba(255,255,255,0.5);
+    box-shadow: 0 3px 10px rgba(10, 132, 255, 0.45);
   }
 }
 
-.cc__net-text {
+.cc-net-text  { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cc-net-label { font-size: 12.5px; font-weight: 600; color: $text-1; line-height: 1; }
+.cc-net-sub   { font-size: 10.5px; color: $text-2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+// ── Tiles ─────────────────────────────────────────────────────────
+.cc__tiles {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 8px;
 }
 
-.cc__net-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: $text-primary;
-  line-height: 1;
-}
-
-.cc__net-sub {
-  font-size: 10.5px;
-  color: $text-sub;
-}
-
-// ── Tiles column ──────────────────────────────────────────────────
-.cc__tiles-col {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cc__tiles-row {
+.cc__tile-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
 }
 
-// ── Individual tile ───────────────────────────────────────────────
 .cc-tile {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: 12px 10px;
-  border-radius: $radius-tile;
-  border: 1px solid $card-border;
-  background: $tile-bg;
-  cursor: pointer;
-  transition: background 0.14s, transform 0.1s;
-  color: $text-primary;
-  min-height: 0;
-  text-align: left;
-
-  &:first-child:not(:last-child) {
-    flex: 1;
-    justify-content: space-between;
-    padding: 14px 12px;
-
-    .cc-tile__icon { margin-bottom: auto; }
-    .cc-tile__label { font-size: 11px; }
-  }
-
-  &:hover:not(.cc-tile--active) {
-    background: $tile-hover;
-    transform: scale(1.02);
-  }
-
-  &--active {
-    background: $tile-active;
-    border-color: rgba(255,255,255,0.12);
-    .cc-tile__icon { color: #fff; }
-  }
-
-  &:active { transform: scale(0.96); }
-}
-
-.cc-tile__icon {
-  color: rgba(255,255,255,0.8);
-  display: flex;
-  align-items: center;
-  transition: color 0.15s;
-}
-
-.cc-tile__label {
-  font-size: 10px;
-  font-weight: 500;
-  color: $text-primary;
-  line-height: 1.2;
-  white-space: pre-line;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  CARD (Display + Sound) + дополнительные ряды
-// ═══════════════════════════════════════════════════════════════════
-.cc__card {
+  justify-content: space-between;
+  padding: 11px 10px;
+  border-radius: $r-tile;
   background: $card-bg;
   border: 1px solid $card-border;
-  border-radius: $radius-card;
-  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  color: $text-1;
+  gap: 6px;
+  min-height: 0;
+
+  &:first-child { flex: 1; }
+
+  &:hover:not(.cc-tile--on) { background: rgba(255,255,255,0.11); }
+  &:active { transform: scale(0.96); }
+
+  &--on {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.16);
+    .cc-tile__icon { color: #fff; }
+  }
+}
+
+.cc-tile__icon  { color: rgba(255,255,255,0.70); display:flex; transition: color 0.15s; }
+.cc-tile__label { font-size: 10px; font-weight: 500; color: $text-1; line-height: 1.2; white-space: pre-line; word-break: break-word; }
+
+// ── Slider cards ─────────────────────────────────────────────────
+.cc__slider-card {
+  padding: 11px 13px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
-.cc__card-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: $text-primary;
-  letter-spacing: -0.1px;
-}
+.cc__slider-title { font-size: 12px; font-weight: 600; color: $text-1; line-height: 1; }
 
-// ── Slider row ────────────────────────────────────────────────────
 .cc__slider-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
-.cc__slider-icon,
-.cc__headphone-icon,
-.cc__airplay-btn {
-  color: rgba(255,255,255,0.55);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
+.cc__slider-icon { color: $text-2; flex-shrink: 0; }
 
-.cc__airplay-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  justify-content: center;
-  cursor: pointer;
-  color: rgba(255,255,255,0.7);
-  transition: background 0.12s, color 0.12s;
-  padding: 0;
-
-  &:hover { background: rgba(255,255,255,0.12); color: #fff; }
-}
-
-// ── Slider track (macOS thin) ─────────────────────────────────────
+// ── Smooth slider ─────────────────────────────────────────────────
+// НЕТ CSS-transition на background — фон обновляется через DOM напрямую,
+// добавление transition вызвало бы lag/дёрганье при drag.
 .cc__slider {
   -webkit-appearance: none;
   appearance: none;
   flex: 1;
-  height: 5px;
-  border-radius: 2.5px;
+  height: 22px;
+  border-radius: 11px;
   outline: none;
   cursor: pointer;
+  border: none;
   background: linear-gradient(
     to right,
-    rgba(255,255,255,0.75) 0%,
-    rgba(255,255,255,0.75) var(--val, 50%),
-    rgba(255,255,255,0.1) var(--val, 50%),
-    rgba(255,255,255,0.1) 100%
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 255, 255, 0.88) var(--val, 50%),
+    rgba(255, 255, 255, 0.14) var(--val, 50%),
+    rgba(255, 255, 255, 0.14) 100%
   );
-  transition: background 0.05s;
 
+  // Thumb прозрачный — фон трека и есть визуальный слайдер
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    cursor: pointer;
-    transition: transform 0.1s;
+    background: transparent;
+    cursor: grab;
+    &:active { cursor: grabbing; }
   }
+
   &::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    background: #fff;
-    border: 0.5px solid rgba(0,0,0,0.1);
-    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    cursor: pointer;
+    background: transparent;
+    border: none;
+    cursor: grab;
   }
 
-  &:hover::-webkit-slider-thumb { transform: scale(1.1); }
-  &:hover::-moz-range-thumb      { transform: scale(1.1); }
-}
-
-// ── Дополнительные кнопки Display / Sound ───────────────────────
-.cc__option-row {
-  display: flex;
-  gap: 8px;
-}
-
-.cc__option-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: $radius-btn;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.05);
-  color: $text-primary;
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.12s;
-  white-space: nowrap;
-
-  &:hover { background: rgba(255,255,255,0.1); }
-
-  &--active {
-    background: rgba(10,132,255,0.18);
-    border-color: rgba(10,132,255,0.3);
+  &:active {
+    transform: scaleY(0.91);
+    transition: transform 0.07s;
   }
-}
-
-.cc__option-btn-icon {
-  color: rgba(255,255,255,0.7);
-  display: flex;
-  align-items: center;
-}
-
-.cc__output-name {
-  font-size: 10.5px;
-  color: $text-sub;
-  padding-left: 28px; // выровнять по иконкам вывода
 }
