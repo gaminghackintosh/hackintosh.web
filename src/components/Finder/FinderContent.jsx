@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, memo } from "react";
+import React, { useState, useEffect, useContext, memo, useCallback, useMemo } from "react";
 import { AssetIcon } from "../AssetIcon";
 import { APPS } from "../../constants/apps";
 import { SidebarIcon } from "./SidebarIcon";
@@ -94,40 +94,13 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
   const [tabs, setTabs] = useState([
     { id: 0, label: "Macintosh HD", folder: "macos" }
   ]);
-  const [columnWidths] = useState({
+  const columnWidths = useMemo(() => ({
     name: 300,
     size: 100,
     modified: 150
-  });
+  }), []);
 
-  const handleContextMenu = (e, file) => {
-    const items = [
-      { label: "Open", action: () => openApplication(file.exec) },
-      { label: "Open with...", action: () => console.log("Open with...") },
-      { type: "divider" },
-      { label: "Cut", action: () => console.log("Cut") },
-      { label: "Copy", action: () => console.log("Copy") },
-      { label: "Paste", action: () => console.log("Paste") },
-      { type: "divider" },
-      { label: "Move to Trash", action: () => console.log("Move to Trash") },
-      { label: "Get Info", action: () => console.log("Get Info") },
-    ];
-    openContextMenu(e, items);
-  };
-
-  const getAppIcon = (appName) => {
-    const app = APPS.find(a => a.name.toLowerCase() === appName.toLowerCase().replace('.app', ''));
-    if (app) {
-      return {
-        type: "image",
-        path: app.iconPath,
-        fallback: app.id || "finder"
-      };
-    }
-    return null;
-  };
-
-  const sidebar = {
+  const sidebar = useMemo(() => ({
     favourites: [
       { name: "AirDrop", action: "airdrop" },
       { name: "Recents", action: "recents" },
@@ -152,10 +125,9 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       { name: "Blue", color: "#5ac8fa", action: "blue" },
       { name: "Purple", color: "#bf5af2", action: "purple" },
     ],
-  };
+  }), []);
 
-  // Файловая система
-  const filesystem = {
+  const filesystem = useMemo(() => ({
     macos: [
       { name: "Applications", type: "folder", iconType: "folder", size: "--", modified: "Today", path: "/Applications" },
       { name: "Library", type: "folder", iconType: "folder", size: "--", modified: "Today", path: "/Library" },
@@ -165,12 +137,12 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       { name: "LICENSE", type: "file", iconType: "file", size: "1.2 KB", modified: "Yesterday", preview: "MIT License\n\nCopyright (c) 2026 hackintosh.web..." },
     ],
     applications: [
-      { name: "Finder.app", type: "app", icon: getAppIcon("Finder"), size: "12 MB", modified: "Today", exec: "finder", isImageIcon: true },
-      { name: "Safari.app", type: "app", icon: getAppIcon("Safari"), size: "28 MB", modified: "Today", exec: "safari", isImageIcon: true },
-      { name: "Notes.app", type: "app", icon: getAppIcon("Notes"), size: "6 MB", modified: "Yesterday", exec: "notes", isImageIcon: true },
-      { name: "Terminal.app", type: "app", icon: getAppIcon("Terminal"), size: "4 MB", modified: "Today", exec: "terminal", isImageIcon: true },
-      { name: "Settings.app", type: "app", icon: getAppIcon("Settings"), size: "8 MB", modified: "Today", exec: "settings", isImageIcon: true },
-      { name: "Music.app", type: "app", icon: getAppIcon("Music"), size: "45 MB", modified: "Yesterday", exec: "music", isImageIcon: true },
+      { name: "Finder.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "finder")?.iconPath, fallback: "finder" }, size: "12 MB", modified: "Today", exec: "finder", isImageIcon: true },
+      { name: "Safari.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "safari")?.iconPath, fallback: "safari" }, size: "28 MB", modified: "Today", exec: "safari", isImageIcon: true },
+      { name: "Notes.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "notes")?.iconPath, fallback: "notes" }, size: "6 MB", modified: "Yesterday", exec: "notes", isImageIcon: true },
+      { name: "Terminal.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "terminal")?.iconPath, fallback: "terminal" }, size: "4 MB", modified: "Today", exec: "terminal", isImageIcon: true },
+      { name: "Settings.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "settings")?.iconPath, fallback: "settings" }, size: "8 MB", modified: "Today", exec: "settings", isImageIcon: true },
+      { name: "Music.app", type: "app", icon: { type: "image", path: APPS.find(a => a.name.toLowerCase() === "music")?.iconPath, fallback: "music" }, size: "45 MB", modified: "Yesterday", exec: "music", isImageIcon: true },
     ],
     desktop: [
       { name: "Macintosh HD", type: "alias", iconType: "drive", size: "--", modified: "Today", target: "macos" },
@@ -207,9 +179,9 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     ],
     icloud: [],
     shared: [],
-  };
+  }), []);
 
-  const getRecents = () => {
+  const getRecents = useCallback(() => {
     const recent = [];
     const addIfRecent = (items) => {
       items.forEach(item => {
@@ -223,9 +195,9 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     addIfRecent(filesystem.documents);
     addIfRecent(filesystem.downloads);
     return recent.slice(0, 10);
-  };
+  }, [filesystem]);
 
-  const getCurrentFiles = () => {
+  const getCurrentFiles = useCallback(() => {
     let files = [];
     if (currentFolder === "recents") {
       files = getRecents();
@@ -246,14 +218,14 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       files = files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
     return files;
-  };
+  }, [currentFolder, searchQuery, filesystem, getRecents]);
 
-  const currentFiles = getCurrentFiles();
-  const selectedItem = currentFiles.find(f => f.name === selectedFile);
+  const currentFiles = useMemo(() => getCurrentFiles(), [getCurrentFiles]);
+  const selectedItem = useMemo(() => currentFiles.find(f => f.name === selectedFile), [currentFiles, selectedFile]);
   const isGridView = viewMode === "grid";
   const isColumnView = viewMode === "columns";
 
-  const getFolderDisplayName = () => {
+  const getFolderDisplayName = useCallback(() => {
     const map = {
       macos: "Macintosh HD",
       applications: "Applications",
@@ -267,9 +239,9 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       shared: "Shared",
     };
     return map[currentFolder] || currentFolder;
-  };
+  }, [currentFolder]);
 
-  const navigateToFolder = (folderName, targetPath) => {
+  const navigateToFolder = useCallback((folderName, targetPath) => {
     const folderMap = {
       "Macintosh HD": "macos", "macOS": "macos",
       "Applications": "applications", "Documents": "documents",
@@ -286,21 +258,20 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       setCurrentFolder(folderName);
     }
     setSelectedFile(null);
-  };
+  }, [filesystem]);
 
-  const openApplication = (appId) => {
+  const openApplication = useCallback((appId) => {
     if (openApp) openApp(appId);
-  };
+  }, [openApp]);
 
-  const formatDate = (dateStr) => {
+  const formatDate = useCallback((dateStr) => {
     if (dateStr === "Today") return new Date().toLocaleDateString();
     if (dateStr === "Yesterday") return new Date(Date.now() - 86400000).toLocaleDateString();
     if (dateStr === "Just now") return new Date().toLocaleTimeString();
     return dateStr;
-  };
+  }, []);
 
-  // Метод рендеринга чистых SVG-иконок
-  const renderIcon = (file, sizeOverride = null) => {
+  const renderIcon = useCallback((file, sizeOverride = null) => {
     if (file.isImageIcon && file.icon && file.icon.type === "image") {
       return (
         <AssetIcon
@@ -327,15 +298,15 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       case "computer": return <div className="finder-svg-wrapper" style={sizeStyle}><FinderSVG.Computer /></div>;
       default: return <div className="finder-svg-wrapper" style={sizeStyle}><FinderSVG.File /></div>;
     }
-  };
+  }, [isGridView]);
 
-  const addTab = () => {
+  const addTab = useCallback(() => {
     const newId = Date.now();
     setTabs(prev => [...prev, { id: newId, label: getFolderDisplayName(), folder: currentFolder }]);
     setActiveTab(newId);
-  };
+  }, [currentFolder, getFolderDisplayName]);
 
-  const closeTab = (id, e) => {
+  const closeTab = useCallback((id, e) => {
     e.stopPropagation();
     if (tabs.length === 1) return;
     const idx = tabs.findIndex(t => t.id === id);
@@ -346,13 +317,40 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
       setActiveTab(newActive.id);
       setCurrentFolder(newActive.folder);
     }
-  };
+  }, [tabs, activeTab]);
 
-  const switchTab = (tab) => {
+  const switchTab = useCallback((tab) => {
     setActiveTab(tab.id);
     setCurrentFolder(tab.folder);
     setSelectedFile(null);
-  };
+  }, []);
+
+  const handleContextMenu = useCallback((e, file) => {
+    const items = [
+      { label: "Open", action: () => openApplication(file.exec) },
+      { label: "Open with...", action: () => console.log("Open with...") },
+      { type: "divider" },
+      { label: "Cut", action: () => console.log("Cut") },
+      { label: "Copy", action: () => console.log("Copy") },
+      { label: "Paste", action: () => console.log("Paste") },
+      { type: "divider" },
+      { label: "Move to Trash", action: () => console.log("Move to Trash") },
+      { label: "Get Info", action: () => console.log("Get Info") },
+    ];
+    openContextMenu(e, items);
+  }, [openContextMenu, openApplication]);
+
+  const handleFileClick = useCallback((fileName) => {
+    setSelectedFile(fileName);
+  }, []);
+
+  const handleFileDoubleClick = useCallback((file) => {
+    if (file.type === "folder") {
+      navigateToFolder(file.name, file.path);
+    } else if (file.type === "app") {
+      openApplication(file.exec);
+    }
+  }, [navigateToFolder, openApplication]);
 
   return (
     <div className="finder">
@@ -481,10 +479,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
                   </div>
                 ) : (
                   currentFiles.map(file => (
-                    <div key={file.name} className={`finder-grid-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => setSelectedFile(file.name)} onDoubleClick={() => {
-                      if (file.type === "folder") navigateToFolder(file.name, file.path);
-                      else if (file.type === "app") openApplication(file.exec);
-                    }}>
+                    <div key={file.name} className={`finder-grid-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)}>
                       <div className="finder-grid-icon">{renderIcon(file)}</div>
                       <span className="finder-grid-name">{file.name}</span>
                     </div>
@@ -498,10 +493,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
               <div className="finder-column-container">
                 <div className="finder-column-list">
                   {currentFiles.map(file => (
-                    <div key={file.name} className={`finder-column-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => setSelectedFile(file.name)} onDoubleClick={() => {
-                      if (file.type === "folder") navigateToFolder(file.name, file.path);
-                      else if (file.type === "app") openApplication(file.exec);
-                    }}>
+                    <div key={file.name} className={`finder-column-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)}>
                       <span className="finder-column-item-icon">{renderIcon(file, 16)}</span>
                       <span>{file.name}</span>
                     </div>
@@ -538,10 +530,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
                     </div>
                   ) : (
                     currentFiles.map(file => (
-                      <div key={file.name} className={`finder-list-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => setSelectedFile(file.name)} onDoubleClick={() => {
-                        if (file.type === "folder") navigateToFolder(file.name, file.path);
-                        else if (file.type === "app") openApplication(file.exec);
-                      }} onContextMenu={(e) => handleContextMenu(e, file)}>
+                      <div key={file.name} className={`finder-list-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)} onContextMenu={(e) => handleContextMenu(e, file)}>
                         <span className="finder-list-icon" style={{ width: columnWidths.name }}>
                           <span className="finder-list-icon-wrapper">{renderIcon(file)}</span>
                           <span className="finder-list-text-name">{file.name}</span>

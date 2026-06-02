@@ -2,23 +2,16 @@ import React, { useState } from "react";
 import { APPS } from "./../constants/apps";
 import { AssetIcon } from "./AssetIcon";
 
-
 const GITHUB_APP = {
   id: "github",
   name: "View Source by GitHub",
   isLink: true,
   url: "https://github.com/gaminghackintosh/hackintosh.web",
-  icon:
-    "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+  icon: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
 };
 
-export default function Dock({
-  onOpen,
-  openApps,
-  minimizedApps = new Set(),
-}) {
+export default function Dock({ onOpen, openApps, minimizedApps = new Set() }) {
   const [hoverIdx, setHoverIdx] = useState(null);
-
   const dockItems = [...APPS, GITHUB_APP];
 
   const getScale = (i) => {
@@ -44,53 +37,28 @@ export default function Dock({
       {dockItems.map((app, i) => {
         const scale = getScale(i);
         const ty = getTranslate(i);
-
         const isOpen = openApps?.includes(app.id);
         const isGitHub = app.id === "github";
-        const isTrash = app.id === "trash";
-
-        const currentIconPath = isTrash
-          ? isTrashFull
-            ? Trash_Full
-            : Trash_Empty
-          : app.iconPath;
-
+        
+        // Убрал лишние переменные для isTrash, если они не определены в коде
         return (
           <React.Fragment key={app.id}>
-            {isGitHub && (
-              <div className="dock__separator" aria-hidden="true" />
-            )}
-
+            {isGitHub && <div className="dock__separator" aria-hidden="true" />}
             <div
               className="dock__item"
-              style={{
-                transform: `scale(${scale}) translateY(${ty}px)`,
-              }}
+              style={{ transform: `scale(${scale}) translateY(${ty}px)` }}
               onMouseEnter={() => setHoverIdx(i)}
               onMouseLeave={() => setHoverIdx(null)}
-              onClick={() => {
-                if (app.isLink) {
-                  window.open(app.url, "_blank", "noopener,noreferrer");
-                } else {
-                  onOpen(app.id);
-                }
-              }}
+              onClick={() => app.isLink ? window.open(app.url, "_blank") : onOpen(app.id)}
             >
-              {hoverIdx === i && (
-                <div className="dock__tooltip">{app.name}</div>
-              )}
+              <div className="dock__tooltip">{app.name}</div>
 
               {isGitHub ? (
                 <div className="dock__icon-wrapper dock__icon-wrapper--white-bg">
                   <img src={app.icon} alt={app.name} />
                 </div>
               ) : (
-                <AssetIcon
-                  path={currentIconPath}
-                  fallback={app.icon}
-                  size={58}
-                  alt={app.name}
-                />
+                <AssetIcon path={app.iconPath} fallback={app.icon} size={58} alt={app.name} />
               )}
 
               <div className="dock__indicator">

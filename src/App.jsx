@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useCallback, useMemo } from "react";
 import { useMobileCheck } from "./hooks/useMobileCheck";
 import { useWindowManager } from "./hooks/useWindowManager";
 import { useContextMenu } from "./hooks/useContextMenu";
@@ -29,14 +29,33 @@ export default function App() {
     value: defaultWallpaper,
   });
 
-  // Обработчик для десктопа
-  const handleDesktopContextMenu = (e) => {
+  const handleDesktopContextMenu = useCallback((e) => {
     openContextMenu(e, [
       { label: "New Folder", action: () => console.log("New Folder") },
       { type: "divider" },
       { label: "Change Wallpaper", action: () => openApp("settings", "Settings") }
     ]);
-  };
+  }, [openContextMenu, openApp]);
+
+  const windowComponents = useMemo(() => windows.map((win) => (
+    <AppWindow
+      key={win.id}
+      win={win}
+      isActive={activeWin === win.id}
+      isMinimized={minimizedApps.has(win.id)}
+      onClose={() => closeWindow(win.id)}
+      onMinimize={() => minimizeWindow(win.id)}
+      onFocus={() => focusWindow(win.id)}
+      onZoom={() => maximizeWindow(win.id)}
+    >
+      <Suspense fallback={<WindowLoading />}>
+        {renderAppContent(win.id, { 
+            closeWindow, minimizeWindow, maximizeWindow, 
+            setWallpaper 
+        })}
+      </Suspense>
+    </AppWindow>
+  )), [windows, activeWin, minimizedApps, closeWindow, minimizeWindow, maximizeWindow, focusWindow, renderAppContent]);
 
   if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
   if (isMobile) return <MobileNotSupported />;
@@ -50,25 +69,7 @@ export default function App() {
         onZoom={() => maximizeWindow(activeWin)}
       />
 
-      {windows.map((win) => (
-        <AppWindow
-          key={win.id}
-          win={win}
-          isActive={activeWin === win.id}
-          isMinimized={minimizedApps.has(win.id)}
-          onClose={() => closeWindow(win.id)}
-          onMinimize={() => minimizeWindow(win.id)}
-          onFocus={() => focusWindow(win.id)}
-          onZoom={() => maximizeWindow(win.id)}
-        >
-          <Suspense fallback={<WindowLoading />}>
-            {renderAppContent(win.id, { 
-                closeWindow, minimizeWindow, maximizeWindow, 
-                setWallpaper 
-            })}
-          </Suspense>
-        </AppWindow>
-      ))}
+      {windowComponents}
 
       <Dock onOpen={openApp} openApps={openApps} minimizedApps={minimizedApps} />
 
