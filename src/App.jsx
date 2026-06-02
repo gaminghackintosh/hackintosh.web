@@ -23,6 +23,7 @@ import { TerminalContent } from "./components/apps/Terminal/Terminal";
 import { NotesContent } from "./components/apps/Notes/NotesContent";
 import { SettingsContent } from "./components/apps/Settings/SettingsContent";
 import { MusicContent } from "./components/apps/MusicApp/MusicContent";
+import { SafariContent } from "./components/apps/Safari/SafariContent";
 
 import { DEFAULT_WALLPAPER } from "./constants/wallpapers";
 
@@ -65,6 +66,7 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [windowStates, setWindowStates] = useState({});
   const [minimizedApps, setMinimizedApps] = useState(new Set());
+  
   const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
 
   const [wallpaperState, setWallpaperState] = useState({
@@ -243,6 +245,8 @@ export default function App() {
             {...commonProps}
           />
         );
+      case "safari":
+        return <SafariContent {...commonProps} />;
       case "music":
         return <MusicContent {...commonProps} />;
 
