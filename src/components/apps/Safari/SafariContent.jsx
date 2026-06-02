@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo, memo } from "react";
+import React, { useContext, useState, useCallback, useMemo, memo } from "react";
+import { WindowContext } from "../../AppWindow/AppWindow";
 import {
   FiArrowLeft, FiArrowRight, FiRefreshCw,
   FiShare2, FiPlus, FiSearch,
@@ -9,8 +10,9 @@ import { BsSliders2 } from "react-icons/bs";
 
 import safariBg from "./../../../assets/images/Safari_Wallpapers/Safari_Background.webp";
 import { AboutPage, HackintoshPage, CatsPage, SurprisePage } from "./Local_Pages/LocalPages";
+import { MemoryGame } from "./Local_Pages/MemoryGame";
 
-// ── Оптимизированные Favicon SVGs (мемоизированные) ─────────────
+// ── Optimized favicons ───────────────────────────────
 const AppleFavicon = memo(() => (
   <svg viewBox="0 0 60 60" width="30" height="30" fill="#1d1d1f">
     <path d="M42.56 46.5c-1.93 2.87-3.97 5.67-7.05 5.73-3.1.07-4.1-1.84-7.61-1.84-3.55 0-4.63 1.79-7.57 1.91-3.03.11-5.33-3.06-7.27-5.87C9.83 39.37 6.86 28.84 10.87 21.7c2.01-3.52 5.63-5.74 9.54-5.81 2.97-.05 5.78 2.01 7.62 2.01 1.8 0 5.23-2.48 8.82-2.1 1.5.06 5.71.6 8.42 4.58-.2.14-5.02 2.97-4.97 8.83.06 6.99 6.14 9.32 6.2 9.35-.06.16-.98 3.34-3.2 6.54M30.15 8.1c1.7-1.92 4.49-3.38 6.81-3.47.3 2.7-.78 5.44-2.4 7.38-1.6 1.97-4.24 3.5-6.83 3.29-.35-2.65.96-5.43 2.42-7.2"/>
@@ -38,7 +40,7 @@ const GoogleFavicon = memo(() => (
   </svg>
 ));
 
-// Статические данные (не пересоздаются при ререндере)
+// Static data (never recreated)
 const FAVORITES = [
   { title: "Apple",  icon: AppleFavicon,  bg: "#fff",    url: "https://apple.com" },
   { title: "Yandex", icon: YandexFavicon, bg: "#FC3F1D", url: "https://ya.ru" },
@@ -48,9 +50,10 @@ const FAVORITES = [
 ];
 
 const FROM_IPHONE = ["INCY AI Helper"];
-const LOCAL_COMMANDS = new Set(["about", "hackintosh", "cats", "surprise"]);
+const LOCAL_COMMANDS = new Set(["about", "hackintosh", "cats", "surprise", "games"]);
 
-// Мемоизированный компонент вкладки
+
+// ── Memoized child components ───────────────────────────────────
 const Tab = memo(({ tab, isActive, onSelect, onClose, isOnlyTab }) => (
   <div 
     className={`sf__tab ${isActive ? "active" : ""}`}
@@ -69,7 +72,6 @@ const Tab = memo(({ tab, isActive, onSelect, onClose, isOnlyTab }) => (
   </div>
 ));
 
-// Мемоизированный компонент списка вкладок
 const TabsBar = memo(({ tabs, activeTabId, onSelectTab, onCloseTab }) => (
   <div className="sf__tabs-bar">
     {tabs.map(tab => (
@@ -88,7 +90,6 @@ const TabsBar = memo(({ tabs, activeTabId, onSelectTab, onCloseTab }) => (
   </div>
 ));
 
-// Мемоизированный компонент стартовой страницы
 const StartPage = memo(({ bookmarks, onNavigate }) => (
   <div className="sf__start">
     <div className="sf__start-inner">
@@ -151,7 +152,6 @@ const StartPage = memo(({ bookmarks, onNavigate }) => (
   </div>
 ));
 
-// Мемоизированный компонент заблокированной страницы
 const BlockedPage = memo(({ url, onGoHome }) => (
   <div className="sf__blocked">
     <div className="sf__blocked-icon">🧭</div>
@@ -166,24 +166,28 @@ const BlockedPage = memo(({ url, onGoHome }) => (
 ));
 
 function PageRenderer({ command, onNavigate }) {
+  console.log("Rendering command:", command); 
+
   switch (command) {
     case "about":      return <AboutPage />;
     case "hackintosh": return <HackintoshPage />;
     case "cats":       return <CatsPage />;
     case "surprise":   return <SurprisePage onNavigate={onNavigate} />;
-    default:           return null;
+    case "games":      return <MemoryGame />;
+    default:           return <BlockedPage url={command} onGoHome={() => onNavigate("")} />;
   }
 }
 
 export function SafariContent({ onClose, onMinimize, onZoom }) {
-  // Используем useReducer для более предсказуемых обновлений
+  // Получаем функцию для перетаскивания окна из контекста
+  const { onTitleMouseDown } = useContext(WindowContext);
+
   const [tabs, setTabs] = useState(() => [
     { id: 1, title: "Start Page", url: "", isStart: true }
   ]);
   const [activeTabId, setActiveTabId] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Ленивая инициализация bookmarks
   const [bookmarks, setBookmarks] = useState(() => {
     try {
       const saved = localStorage.getItem("safari_bookmarks");
@@ -193,20 +197,13 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
     }
   });
 
-  // Мемоизация активной вкладки
   const activeTab = useMemo(
     () => tabs.find(t => t.id === activeTabId) || tabs[0],
     [tabs, activeTabId]
   );
 
-  // Оптимизированные обработчики с useCallback
   const addTab = useCallback((url = "", title = "New Tab") => {
-    const newTab = { 
-      id: Date.now(), 
-      title, 
-      url, 
-      isStart: !url 
-    };
+    const newTab = { id: Date.now(), title, url, isStart: !url };
     setTabs(prev => [...prev, newTab]);
     setActiveTabId(newTab.id);
   }, []);
@@ -214,12 +211,9 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
   const closeTab = useCallback((id, e) => {
     e?.stopPropagation();
     if (tabs.length === 1) return;
-    
     setTabs(prev => {
       const newTabs = prev.filter(t => t.id !== id);
-      if (activeTabId === id) {
-        setActiveTabId(newTabs[0].id);
-      }
+      if (activeTabId === id) setActiveTabId(newTabs[0].id);
       return newTabs;
     });
   }, [tabs.length, activeTabId]);
@@ -229,43 +223,34 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
   }, []);
 
   const navigate = useCallback((target) => {
-    if (!target?.trim()) return;
-    
-    const lowerTarget = target.toLowerCase().trim();
-    const isLocal = LOCAL_COMMANDS.has(lowerTarget);
+  if (!target?.trim()) return;
+  
+  const cleanTarget = target.toLowerCase().trim();
+  const isLocal = LOCAL_COMMANDS.has(cleanTarget);
 
     if (isLocal) {
       updateTab(activeTab.id, {
-        url: lowerTarget,
-        title: lowerTarget.charAt(0).toUpperCase() + lowerTarget.slice(1),
-        isStart: false,
+      url: cleanTarget, // Устанавливаем именно команду (например, "surprise")
+      title: cleanTarget.charAt(0).toUpperCase() + cleanTarget.slice(1),
+      isStart: false,
       });
-      return;
+       return;
     }
 
-    updateTab(activeTab.id, {
-      url: target.startsWith("http") ? target : `https://${target}`,
+  const url = target.startsWith("http") ? target : `https://${target}`;
+  updateTab(activeTab.id, {
+      url: url,
       title: target,
       isStart: false,
-    });
-    
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 300); // Уменьшил задержку
-    return () => clearTimeout(timer);
+  });
   }, [activeTab.id, updateTab]);
 
   const goHome = useCallback(() => {
-    updateTab(activeTab.id, { 
-      url: "", 
-      title: "Start Page", 
-      isStart: true 
-    });
+    updateTab(activeTab.id, { url: "", title: "Start Page", isStart: true });
   }, [activeTab.id, updateTab]);
 
   const handleKey = useCallback((e) => {
-    if (e.key === "Enter") {
-      navigate(activeTab.url || "");
-    }
+    if (e.key === "Enter") navigate(activeTab.url || "");
   }, [activeTab.url, navigate]);
 
   const handleRefresh = useCallback(() => {
@@ -275,12 +260,7 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
 
   const addBookmark = useCallback(() => {
     if (!activeTab.url || activeTab.isStart) return;
-    
-    const newBookmark = { 
-      title: activeTab.title, 
-      url: activeTab.url 
-    };
-    
+    const newBookmark = { title: activeTab.title, url: activeTab.url };
     setBookmarks(prev => {
       const updated = [...prev, newBookmark];
       localStorage.setItem("safari_bookmarks", JSON.stringify(updated));
@@ -289,24 +269,14 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
   }, [activeTab.title, activeTab.url, activeTab.isStart]);
 
   const handleSelectTab = useCallback((tabId) => {
-    if (tabId === null) {
-      addTab();
-    } else {
-      setActiveTabId(tabId);
-    }
+    if (tabId === null) addTab();
+    else setActiveTabId(tabId);
   }, [addTab]);
 
-  // Мемоизация контента
   const renderContent = useMemo(() => {
-    if (activeTab.isStart) {
-      return <StartPage bookmarks={bookmarks} onNavigate={navigate} />;
-    }
-
+    if (activeTab.isStart) return <StartPage bookmarks={bookmarks} onNavigate={navigate} />;
     const isLocal = LOCAL_COMMANDS.has(activeTab.url?.toLowerCase());
-    if (isLocal) {
-      return <PageRenderer command={activeTab.url.toLowerCase()} onNavigate={navigate} />;
-    }
-
+    if (isLocal) return <PageRenderer command={activeTab.url.toLowerCase()} onNavigate={navigate} />;
     return <BlockedPage url={activeTab.url} onGoHome={goHome} />;
   }, [activeTab.isStart, activeTab.url, bookmarks, navigate, goHome]);
 
@@ -315,7 +285,11 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
       <div className="sf__bg-overlay" />
 
       <div className="sf__toolbar">
-        <div className="sf__toolbar-top">
+        {/* Весь верхний блок тулбара становится перетаскиваемой областью */}
+        <div 
+          className="sf__toolbar-top"
+          onMouseDown={onTitleMouseDown}  // ← ключевая строка для перетаскивания
+        >
           <div className="sf__toolbar-left">
             <div className="sf__tl-group">
               <button className="sf__tl sf__tl--close" onClick={onClose} title="Close"/>
