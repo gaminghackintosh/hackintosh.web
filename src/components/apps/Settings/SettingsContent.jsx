@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useCallback, memo } from "react";
+import React, { useState, useContext, useMemo, useCallback, memo, useEffect } from "react";
 import { WALLPAPER_GROUPS } from "../../../constants/wallpapers";
 import { WindowContext } from "../../AppWindow/AppWindow";
 
@@ -6,7 +6,6 @@ import { WindowContext } from "../../AppWindow/AppWindow";
 import WiFi_Icon      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
 import Bluetooth_Icon from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
 import Network_Icon   from "./../../../assets/icons/Settings_menuSections/Network.ico";
-
 import GameCenter_Icon from "./../../../assets/icons/Settings_menuSections/Game_Center.png";
 
 // SVG icons for all other sections
@@ -145,136 +144,147 @@ const MENU_SECTIONS = [
   },
 ];
 
+// ─── Компоненты-заглушки для нереализованных разделов ────────────────────────
+const UnimplementedPanel = memo(({ title }) => (
+  <SettingsPanel title={title}>
+    <div className="unimplemented-placeholder">
+      <div className="unimplemented-icon">🚧</div>
+      <h3>{title}</h3>
+      <p>This section is under development and will be available in a future update.</p>
+    </div>
+  </SettingsPanel>
+));
+
+// ─── Panel для обоев (memoized) ──────────────────────────────────────────────
+const WallpaperPanel = memo(function WallpaperPanel({ currentWallpaper, onWallpaperChange }) {
+  return (
+    <SettingsPanel title="Wallpaper" description="Choose a background image for your desktop">
+      {WALLPAPER_GROUPS.map((group) => (
+        <div key={group.id} className="wallpaper-group">
+          <h3 className="wallpaper-group-title">{group.title}</h3>
+          <div className="wallpaper-grid">
+            {group.wallpapers.map((wp) => {
+              const isSelected = currentWallpaper === wp.id;
+              return (
+                <div
+                  key={wp.id}
+                  className={`wallpaper-card${isSelected ? " selected" : ""}`}
+                  onClick={() => onWallpaperChange?.({ id: wp.id, type: "image", value: wp.image })}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onWallpaperChange?.({ id: wp.id, type: "image", value: wp.image });
+                    }
+                  }}
+                >
+                  <div className="wallpaper-thumbnail">
+                    <img 
+                      src={wp.thumbnail} 
+                      alt={wp.name} 
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {isSelected && <div className="check-badge">✓</div>}
+                  </div>
+                  <span className="wallpaper-title">{wp.name}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </SettingsPanel>
+  );
+});
+
+// ─── Panel "About This Mac" (memoized) ───────────────────────────────────────
+const AboutPanel = memo(() => (
+  <SettingsPanel title="About This Mac">
+    <SettingsGroup>
+      <div className="about-header">
+        <div className="about-logo">🍎</div>
+        <div className="about-info">
+          <div className="about-name">hackintosh.web</div>
+          <div className="about-version">macOS Sonoma 14.0.1</div>
+          <div className="about-copyright">™ & © 1983–2026 Apple Inc. All rights reserved.</div>
+        </div>
+      </div>
+    </SettingsGroup>
+    <SettingsGroup title="System Information">
+      <SettingsRow label="macOS Version" value="14.0.1 (23A344)" />
+      <SettingsRow label="Chip" value="Apple M3 Max (Virtual)" />
+      <SettingsRow label="Memory" value="16 GB LPDDR5X" />
+      <SettingsRow label="Serial Number" value="HACKW192K98X" />
+    </SettingsGroup>
+    <SettingsGroup title="Storage">
+      <SettingsRow label="Macintosh HD" value="420 GB available of 512 GB">
+        <div className="storage-bar">
+          <div className="storage-bar-fill" style={{ width: "82%" }} />
+        </div>
+      </SettingsRow>
+    </SettingsGroup>
+  </SettingsPanel>
+));
+
+// ─── Map для быстрого доступа к панелям ──────────────────────────────────────
+const PANELS = {
+  wifi: WiFiSettings,
+  bluetooth: BluetoothSettings,
+  network: NetworkSettings,
+  vpn: VPNSettings,
+  notifications: NotificationsSettings,
+  sound: SoundSettings,
+  focus: FocusSettings,
+  general: GeneralSettings,
+  appearance: AppearanceSettings,
+  accessibility: AccessibilitySettings,
+  controlcenter: ControlCenterSettings,
+  privacy: PrivacySettings,
+  desktopdock: DesktopDockSettings,
+  displays: DisplaysSettings,
+  energysaver: EnergySaverSettings,
+  lockscreen: LockScreenSettings,
+  loginpassword: LoginPasswordSettings,
+  passwords: PasswordsSettings,
+  internetaccounts: InternetAccountsSettings,
+  gamecenter: GameCenterSettings,
+  mouse: MouseSettings,
+  gamecontrollers: GameControllersSettings,
+  battery: BatterySettings,
+  touchid: TouchIDSettings,
+  usersgroups: UsersSettings,
+  screentime: () => <UnimplementedPanel title="Screen Time" />,
+  siri: () => <UnimplementedPanel title="Siri & Spotlight" />,
+  wallet: () => <UnimplementedPanel title="Wallet & Apple Pay" />,
+  keyboard: () => <UnimplementedPanel title="Keyboard" />,
+  printersscanners: () => <UnimplementedPanel title="Printers & Scanners" />,
+  screensaver: () => <UnimplementedPanel title="Screen Saver" />,
+};
+
 // ─── Tab content renderer (memoized) ──────────────────────────────────────────
 const renderTab = (activeTab, currentWallpaper, onWallpaperChange) => {
-  switch (activeTab) {
-    case "wifi":             return <WiFiSettings />;
-    case "bluetooth":        return <BluetoothSettings />;
-    case "network":          return <NetworkSettings />;
-    case "vpn":              return <VPNSettings />;
-    
-    case "notifications":    return <NotificationsSettings />;
-    case "sound":            return <SoundSettings />;
-    case "focus":            return <FocusSettings />;
-    
-    case "general":          return <GeneralSettings />;
-    case "appearance":       return <AppearanceSettings />;
-    case "accessibility":    return <AccessibilitySettings />;
-    case "controlcenter":    return <ControlCenterSettings />;
-    case "privacy":          return <PrivacySettings />;
-    
-    case "desktopdock":      return <DesktopDockSettings />;
-    case "displays":         return <DisplaysSettings />;
-    case "energysaver":      return <EnergySaverSettings />;
-    
-    case "lockscreen":       return <LockScreenSettings />;
-    case "loginpassword":    return <LoginPasswordSettings />;
-    
-    case "passwords":        return <PasswordsSettings />;
-    case "internetaccounts": return <InternetAccountsSettings />;
-    case "gamecenter":       return <GameCenterSettings />;
-    
-    case "mouse":            return <MouseSettings />;
-    case "gamecontrollers":  return <GameControllersSettings />;
-    
-    // Новые разделы
-    case "battery":          return <BatterySettings />;
-    case "touchid":          return <TouchIDSettings />;
-    case "usersgroups":      return <UsersSettings />;
-
-    // Неподдерживаемые разделы - показываем заглушку
-    case "screentime":
-    case "siri":
-    case "wallet":
-    case "keyboard":
-    case "printersscanners":
-    case "screensaver":
-      return (
-        <SettingsPanel title={activeTab === "screentime" ? "Screen Time" : 
-                               activeTab === "siri" ? "Siri & Spotlight" :
-                               activeTab === "wallet" ? "Wallet & Apple Pay" :
-                               activeTab === "keyboard" ? "Keyboard" :
-                               activeTab === "printersscanners" ? "Printers & Scanners" :
-                               "Screen Saver"}>
-          <SettingsGroup>
-            <SettingsRow label="This section is not yet implemented." />
-          </SettingsGroup>
-        </SettingsPanel>
-      );
-
-    case "wallpaper":
-      return (
-        <SettingsPanel title="Wallpaper" description="Choose a background image for your desktop">
-          {WALLPAPER_GROUPS.map((group) => (
-            <div key={group.id} className="wallpaper-group">
-              <h3 className="wallpaper-group-title">{group.title}</h3>
-              <div className="wallpaper-grid">
-                {group.wallpapers.map((wp) => {
-                  const isSelected = currentWallpaper === wp.id;
-                  return (
-                    <div
-                      key={wp.id}
-                      className={`wallpaper-card${isSelected ? " selected" : ""}`}
-                      onClick={() => onWallpaperChange?.({ id: wp.id, type: "image", value: wp.image })}
-                    >
-                      <div className="wallpaper-thumbnail">
-                        <img 
-                          src={wp.thumbnail} 
-                          alt={wp.name} 
-                          loading="lazy"
-                        />
-                        {isSelected && <div className="check-badge">✓</div>}
-                      </div>
-                      <span className="wallpaper-title">{wp.name}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </SettingsPanel>
-      );
-
-    case "about":
-      return (
-        <SettingsPanel title="About This Mac">
-          <SettingsGroup>
-            <div className="about-header">
-              <div className="about-logo">🍎</div>
-              <div className="about-info">
-                <div className="about-name">hackintosh.web</div>
-                <div className="about-version">macOS Sonoma 14.0.1</div>
-              </div>
-            </div>
-          </SettingsGroup>
-          <SettingsGroup>
-            <SettingsRow label="Version"       value="14.0.1" />
-            <SettingsRow label="Build"         value="23A344" />
-            <SettingsRow label="Serial Number" value="HACKW192K98X" />
-            <SettingsRow label="Processor"     value="Apple M3 Max (Virtual)" />
-            <SettingsRow label="Memory"        value="16 GB LPDDR5X" />
-            <SettingsRow label="Graphics"      value="Integrated GPU (16-core)" />
-            <SettingsRow label="Storage"       value="512 GB (420 GB available)" />
-          </SettingsGroup>
-          <p className="about-footer">™ & © 1983–2026 Apple Inc. All rights reserved.</p>
-        </SettingsPanel>
-      );
-
-    default:
-      return (
-        <SettingsPanel title={activeTab}>
-          <SettingsGroup>
-            <SettingsRow label="This section is not yet implemented." />
-          </SettingsGroup>
-        </SettingsPanel>
-      );
+  if (activeTab === "wallpaper") {
+    return <WallpaperPanel currentWallpaper={currentWallpaper} onWallpaperChange={onWallpaperChange} />;
   }
+  
+  if (activeTab === "about" || activeTab === "appleid") {
+    return <AboutPanel />;
+  }
+
+  const PanelComponent = PANELS[activeTab];
+  if (PanelComponent) {
+    return <PanelComponent />;
+  }
+
+  return <UnimplementedPanel title={activeTab} />;
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export const SettingsContent = memo(function SettingsContent({ currentWallpaper, onWallpaperChange }) {
-  const [activeTab,   setActiveTab]   = useState("general");
+  const [activeTab, setActiveTab] = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { onClose, onMinimize, onFocus, onTitleMouseDown, onZoom } = useContext(WindowContext);
@@ -312,6 +322,21 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
     [activeTab, currentWallpaper, handleWallpaperChange]
   );
 
+  // Мемоизированный рендер иконок
+  const renderIcon = useCallback((item) => {
+    if (item.iconType === "image") {
+      return <img src={item.icon} alt={item.label} loading="lazy" />;
+    }
+    if (item.iconType === "svg") {
+      const IconComponent = item.icon;
+      return <IconComponent size={20} />;
+    }
+    if (item.iconType === "emoji") {
+      return <span>{item.icon}</span>;
+    }
+    return null;
+  }, []);
+
   return (
     <div className="settings-container">
       {/* ── SIDEBAR ── */}
@@ -319,9 +344,9 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
 
         {/* Traffic lights */}
         <div className="sidebar-traffic-lights">
-          <button className="traffic-light traffic-light--close"    onClick={onClose} />
-          <button className="traffic-light traffic-light--minimize" onClick={onMinimize} />
-          <button className="traffic-light traffic-light--zoom" onClick={onZoom} />
+          <button className="traffic-light traffic-light--close"    onClick={onClose} aria-label="Close" />
+          <button className="traffic-light traffic-light--minimize" onClick={onMinimize} aria-label="Minimize" />
+          <button className="traffic-light traffic-light--zoom" onClick={onZoom} aria-label="Zoom" />
         </div>
 
         {/* Search */}
@@ -331,6 +356,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
             placeholder="Search"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
+            aria-label="Search settings"
           />
         </div>
 
@@ -338,6 +364,14 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
         <div
           className={`sidebar-apple-id${activeTab === "about" ? " active" : ""}`}
           onClick={() => handleItemClick("appleid")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleItemClick("appleid");
+            }
+          }}
         >
           <div className="apple-id-avatar">
             <span className="apple-id-avatar-fallback">g</span>
@@ -351,7 +385,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
         <div className="sidebar-divider" />
 
         {/* Menu list */}
-        <div className="tabs-list">
+        <div className="tabs-list" role="tablist">
           {filteredSections.map((section, idx) => (
             <div key={section.id} className="menu-section">
               {idx > 0 && <div className="section-divider" />}
@@ -360,14 +394,18 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
                   key={item.id}
                   className={`tab-item${activeTab === item.id ? " active" : ""}`}
                   onClick={() => handleItemClick(item.id)}
+                  role="tab"
+                  aria-selected={activeTab === item.id}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleItemClick(item.id);
+                    }
+                  }}
                 >
                   <span className="tab-icon">
-                    {item.iconType === "image" && <img src={item.icon} alt={item.label} />}
-                    {item.iconType === "svg" && (() => {
-                      const IconComponent = item.icon;
-                      return <IconComponent size={20} />;
-                    })()}
-                    {item.iconType === "emoji" && <span>{item.icon}</span>}
+                    {renderIcon(item)}
                   </span>
                   <span className="tab-label">{item.label}</span>
                   {item.badge && <span className="tab-badge">{item.badge}</span>}
@@ -379,7 +417,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
       </div>
 
       {/* ── CONTENT ── */}
-      <div className="settings-content">
+      <div className="settings-content" role="tabpanel">
         {tabContent}
       </div>
     </div>

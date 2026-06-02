@@ -17,6 +17,17 @@ export const APP_ICONS = {
   music: `${ASSET_DIRS.apps}/Dark_Themes/Music_Dark.png`,
   settings: `${ASSET_DIRS.apps}/Dark_Themes/Settings_Dark.png`,
 };
+
+/**===== Светлые иконки приложений для светлой темы =====**/
+export const APP_ICONS_LIGHT = {
+  finder: `${ASSET_DIRS.apps}/Light_Themes/Finder.png`,
+  safari: `${ASSET_DIRS.apps}/Light_Themes/Safari.png`,
+  notes: `${ASSET_DIRS.apps}/Light_Themes/Notes.png`,
+  terminal: `${ASSET_DIRS.apps}/Light_Themes/Terminal.ico`,
+  music: `${ASSET_DIRS.apps}/Light_Themes/apple_music.ico`,
+  settings: `${ASSET_DIRS.apps}/Light_Themes/settings_1.png`,
+};
+
 /* Emoji, пока нет картинки */
 export const APP_ICON_FALLBACK = {
   finder: "🗂",

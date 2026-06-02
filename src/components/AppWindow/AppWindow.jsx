@@ -1,6 +1,5 @@
-import React, { useState, useRef, useLayoutEffect, memo, useMemo } from "react";
+import React, { useState, useRef, useLayoutEffect, memo, useMemo, useCallback } from "react";
 
-// Мемоизированное значение контекста по умолчанию
 const defaultWindowContextValue = {
   onClose: () => {},
   onMinimize: () => {},
@@ -21,76 +20,139 @@ export const AppWindow = memo(function AppWindow({
   children,
   onZoom = null,
 }) {
-  const [pos, setPos] = useState({ x: win.x, y: win.y });
-  const [size, setSize] = useState({ width: win.width, height: win.height });
+  // Инициализируем только один раз
+  const [pos, setPos] = useState(() => ({ x: win.x, y: win.y }));
+  const [size, setSize] = useState(() => ({ width: win.width, height: win.height }));
+  const [isMaximized, setIsMaximized] = useState(false);
 
-  // Refs для производительности
+  // Refs для drag без ререндеров
   const windowRef = useRef(null);
+  const contentRef = useRef(null);
   const dragging = useRef(false);
+  const resizing = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
+  const startPos = useRef({ x: 0, y: 0 });
+  const startSize = useRef({ width: 0, height: 0 });
 
-  const [animating, setAnimating] = useState(false);
-
-  // === Синхронизация с пропсами (только при максимизации/восстановлении) ===
+  // Синхронизация с пропсами только при внешних изменениях (максимизация)
   useLayoutEffect(() => {
-    // Если уже анимируем – пропускаем, чтобы не перебивать анимацию
-    if (animating) return;
-
-    const targetX = win.x;
-    const targetY = win.y;
-    const targetW = win.width;
-    const targetH = win.height;
-
-    // Запускаем анимацию только если координаты действительно изменились
-    if (
-      pos.x !== targetX ||
-      pos.y !== targetY ||
-      size.width !== targetW ||
-      size.height !== targetH
-    ) {
-      setAnimating(true);
-      requestAnimationFrame(() => {
-        setPos({ x: targetX, y: targetY });
-        setSize({ width: targetW, height: targetH });
-      });
+    if (win.x !== pos.x || win.y !== pos.y) {
+      setPos({ x: win.x, y: win.y });
+      setIsMaximized(win.x === 0 && win.y === 28);
     }
-  }, [win.x, win.y, win.width, win.height]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (win.width !== size.width || win.height !== size.height) {
+      setSize({ width: win.width, height: win.height });
+      setIsMaximized(win.width >= window.innerWidth - 2);
+    }
+  }, [win.x, win.y, win.width, win.height]);
 
-
-  // ─── Mouse events ────────────────────────────────────────────────
-
-  const onTitleMouseDown = (e) => {
-    if (e.button !== 0) return;
+  // Оптимизированный drag без state обновлений в реальном времени
+  const onTitleMouseDown = useCallback((e) => {
+    if (e.button !== 0 || isMaximized) return;
+    
     onFocus();
     dragging.current = true;
     offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+    startPos.current = { x: pos.x, y: pos.y };
+
+    // Визуальная обратная связь
+    if (windowRef.current) {
+      windowRef.current.style.cursor = 'grabbing';
+      windowRef.current.style.transition = 'none';
+    }
 
     const onMove = (ev) => {
       if (!dragging.current) return;
+      
       const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
-      const newY = Math.max(0, ev.clientY - offset.current.y);
+      const newY = Math.max(28, ev.clientY - offset.current.y);
 
+      // Прямая манипуляция DOM без state
       if (windowRef.current) {
         windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
       }
     };
 
-    const onUp = () => {
+    const onUp = (ev) => {
+      if (!dragging.current) return;
       dragging.current = false;
+
+      // Восстанавливаем стили
       if (windowRef.current) {
-        const rect = windowRef.current.getBoundingClientRect();
-        setPos({ x: rect.left, y: rect.top });
+        windowRef.current.style.cursor = '';
+        windowRef.current.style.transition = '';
       }
+
+      // Вычисляем финальную позицию один раз
+      const finalX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
+      const finalY = Math.max(28, ev.clientY - offset.current.y);
+      
+      // Обновляем state только в конце
+      setPos({ x: finalX, y: finalY });
+      
+      // Синхронизируем с windowRef
+      if (windowRef.current) {
+        windowRef.current.style.transform = `translate(${finalX}px, ${finalY}px)`;
+      }
+
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
     };
 
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
+    document.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("mouseup", onUp, { passive: true });
     e.preventDefault();
-  };
+  }, [pos.x, pos.y, size.width, size.height, isMaximized, onFocus]);
 
-  // Мемоизированное значение контекста
+  // Оптимизированный resize
+  const onResizeMouseDown = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onFocus();
+
+    resizing.current = true;
+    startSize.current = { width: size.width, height: size.height };
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    if (windowRef.current) {
+      windowRef.current.style.transition = 'none';
+    }
+
+    const onMove = (ev) => {
+      if (!resizing.current) return;
+      
+      const deltaX = ev.clientX - startX;
+      const deltaY = ev.clientY - startY;
+      const newWidth = Math.max(250, startSize.current.width + deltaX);
+      const newHeight = Math.max(200, startSize.current.height + deltaY);
+
+      // Прямая манипуляция DOM
+      if (windowRef.current) {
+        windowRef.current.style.width = `${newWidth}px`;
+        windowRef.current.style.height = `${newHeight}px`;
+      }
+    };
+
+    const onUp = () => {
+      resizing.current = false;
+      
+      if (windowRef.current) {
+        windowRef.current.style.transition = '';
+        setSize({ 
+          width: parseFloat(windowRef.current.style.width) || size.width, 
+          height: parseFloat(windowRef.current.style.height) || size.height 
+        });
+      }
+
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+
+    document.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("mouseup", onUp, { passive: true });
+  }, [size.width, size.height, onFocus]);
+
   const contextValue = useMemo(() => ({
     onClose,
     onMinimize,
@@ -99,39 +161,8 @@ export const AppWindow = memo(function AppWindow({
     onTitleMouseDown,
   }), [onClose, onMinimize, onZoom, onFocus, onTitleMouseDown]);
 
-  // Обработчик для редактирования размера окна
-  const onResizeMouseDown = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onFocus();
-
-    const startW = size.width;
-    const startH = size.height;
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    const onMove = (ev) => {
-      // Используем rAF для плавности
-      requestAnimationFrame(() => {
-        const deltaX = ev.clientX - startX;
-        const deltaY = ev.clientY - startY;
-
-        setSize({ 
-          width: Math.max(250, startW + deltaX), 
-          height: Math.max(200, startH + deltaY) 
-        });
-      });
-    };
-
-    const onUp = () => {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-    };
-
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-  };
-
+  // Предотвращаем ререндер контента при изменении позиции
+  const memoizedChildren = useMemo(() => children, [children]);
 
   return (
     <WindowContext.Provider value={contextValue}>
@@ -141,26 +172,29 @@ export const AppWindow = memo(function AppWindow({
           "app-window",
           isActive ? "app-window--active" : "app-window--inactive",
           isMinimized ? "app-window--minimized" : "",
-          animating ? "app-window--animating" : "",
-        ]
-          .filter(Boolean)
-          .join(" ")}
+        ].filter(Boolean).join(" ")}
         onContextMenu={(e) => e.stopPropagation()}
-        onTransitionEnd={() => {
-          setAnimating(false);
-        }}
+        onMouseDown={onFocus}
         style={{
           position: "fixed",
           transform: `translate(${pos.x}px, ${pos.y}px)`,
           width: size.width,
           height: size.height,
           zIndex: win.zIndex,
-          willChange: animating ? "transform, width, height" : "auto",
+          willChange: "transform",
+          contain: "layout style paint",
+          touchAction: "none",
         }}
       >
-        <div className="app-window__content">{children}</div>
+        <div ref={contentRef} className="app-window__content" style={{ contain: "content" }}>
+          {memoizedChildren}
+        </div>
 
-        <div className="resize-handle" onMouseDown={onResizeMouseDown}>
+        <div 
+          className="resize-handle" 
+          onMouseDown={onResizeMouseDown}
+          style={{ touchAction: "none" }}
+        >
           <svg width="14" height="14" viewBox="0 0 14 14">
             <path d="M14 0 L14 14 L0 14" fill="none" stroke="white" strokeWidth="1" opacity="0.6" />
             <path d="M10 14 L14 10" stroke="white" strokeWidth="1" opacity="0.6" />

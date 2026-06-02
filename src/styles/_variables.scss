@@ -95,3 +95,51 @@ $color-cc-toggle-off-bg: transparent;
 $color-cc-toggle-on-gradient-start: #0a84ff;
 $color-cc-toggle-on-gradient-end: #0066ff;
 $color-cc-toggle-slider-knob: #ffffff;
+
+// ===== LIGHT THEME VARIABLES =====
+$light-color-text-primary: #1d1d1ff2;
+$light-color-text-secondary: #1d1d1fbf;
+$light-color-text-tertiary: #1d1d1f8c;
+$light-color-text-muted: #1d1d1f59;
+
+$light-color-bg-body: rgb(245, 245, 247);
+$light-color-bg-sidebar: rgba(255, 255, 255, 0.85);
+$light-color-bg-sidebar-hover: rgba(0, 0, 0, 0.04);
+$light-color-bg-sidebar-active: rgba(10, 132, 255, 0.15);
+
+$light-color-bg-input: rgba(0, 0, 0, 0.06);
+$light-color-bg-input-focus: rgba(0, 0, 0, 0.1);
+$light-color-placeholder: rgba(0, 0, 0, 0.35);
+
+$light-color-border-light: rgba(0, 0, 0, 0.08);
+$light-color-border-lighter: rgba(0, 0, 0, 0.12);
+$light-color-divider: rgba(0, 0, 0, 0.1);
+
+$light-color-menubar-bg: rgba(255, 255, 255, 0.65);
+$light-color-menubar-border: rgba(0, 0, 0, 0.08);
+$light-color-menubar-item: rgba(0, 0, 0, 0.85);
+$light-color-menubar-item-hover: rgba(0, 0, 0, 0.08);
+$light-color-menubar-item-active: rgba(0, 0, 0, 0.12);
+$light-color-dropdown-bg: rgba(255, 255, 255, 0.92);
+$light-color-dropdown-border: rgba(0, 0, 0, 0.1);
+$light-color-dropdown-item-hover: rgba(0, 0, 0, 0.05);
+
+$light-color-cc-bg: rgba(255, 255, 255, 0.75);
+$light-color-cc-border: rgba(0, 0, 0, 0.1);
+$light-color-cc-shadow: rgba(0, 0, 0, 0.15);
+$light-color-cc-card-bg: rgba(0, 0, 0, 0.04);
+$light-color-cc-card-border: rgba(0, 0, 0, 0.06);
+$light-color-cc-network-item-hover: rgba(0, 0, 0, 0.05);
+$light-color-cc-network-icon-bg: rgba(0, 0, 0, 0.08);
+$light-color-cc-network-icon-color: rgba(0, 0, 0, 0.5);
+
+$light-color-dock-bg: rgba(255, 255, 255, 0.45);
+$light-color-dock-border: rgba(255, 255, 255, 0.4);
+$light-color-dock-shadow: rgba(0, 0, 0, 0.15);
+$light-color-dock-separator: rgba(0, 0, 0, 0.2);
+
+$light-color-window-bg: rgba(255, 255, 255, 0.92);
+$light-color-window-border: rgba(0, 0, 0, 0.1);
+$light-color-window-header: rgba(245, 245, 247, 0.9);
+$light-color-scrollbar-thumb: rgba(0, 0, 0, 0.2);
+$light-color-scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);

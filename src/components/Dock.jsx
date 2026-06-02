@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, memo } from "react";
 import { APPS } from "./../constants/apps";
 import { AssetIcon } from "./AssetIcon";
 
@@ -10,62 +10,120 @@ const GITHUB_APP = {
   icon: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
 };
 
-export default function Dock({ onOpen, openApps, minimizedApps = new Set() }) {
-  const [hoverIdx, setHoverIdx] = useState(null);
+// Базовый размер иконки в Dock
+const BASE_ICON_SIZE = 58;
+// Максимальный коэффициент увеличения
+const MAX_SCALE = 1.4;
+
+const DockItem = memo(function DockItem({ 
+  app, 
+  isHovered,
+  onOpen, 
+  isOpen, 
+  isMinimized,
+  isLightTheme
+}) {
+  const itemRef = useRef(null);
+  const isGitHub = app.id === "github";
+  
+  const handleClick = useCallback(() => {
+    if (app.isLink) {
+      window.open(app.url, "_blank");
+    } else {
+      onOpen(app.id);
+    }
+  }, [app, onOpen]);
+  
+  const tooltip = app.name;
+  
+  return (
+    <div
+      ref={itemRef}
+      className={`dock__item ${isHovered ? "dock__item--hovered" : ""}`}
+      onClick={handleClick}
+      role="button"
+      aria-label={`Launch ${app.name} app`}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
+      {/* Tooltip */}
+      <div 
+        className={`dock__tooltip ${isHovered ? "dock__tooltip--visible" : ""}`}
+      >
+        {tooltip}
+      </div>
+
+      {/* Icon */}
+      {isGitHub ? (
+        <div className="dock__icon-wrapper dock__icon-wrapper--white-bg">
+          <img 
+            src={app.icon} 
+            alt={app.name}
+            draggable={false}
+            style={{ width: `${BASE_ICON_SIZE}px`, height: `${BASE_ICON_SIZE}px` }}
+          />
+        </div>
+      ) : (
+        <AssetIcon 
+          path={app.iconPath} 
+          pathLight={app.iconPathLight}
+          fallback={app.icon} 
+          size={BASE_ICON_SIZE} 
+          alt={app.name}
+          isLightTheme={isLightTheme}
+          imgStyle={{ width: `${BASE_ICON_SIZE}px`, height: `${BASE_ICON_SIZE}px` }}
+        />
+      )}
+
+      {/* Indicator dot */}
+      <div className="dock__indicator">
+        {isOpen && !app.isLink && (
+          <div 
+            className={`dock__indicator-dot ${isMinimized ? "dock__indicator-dot--minimized" : ""}`}
+          />
+        )}
+      </div>
+    </div>
+  );
+});
+
+export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLightTheme = false }) {
+  const [hoverIndex, setHoverIndex] = useState(null);
   const dockItems = [...APPS, GITHUB_APP];
-
-  const getScale = (i) => {
-    if (hoverIdx === null) return 1;
-    const d = Math.abs(i - hoverIdx);
-    if (d === 0) return 1.65;
-    if (d === 1) return 1.3;
-    if (d === 2) return 1.1;
-    return 1;
-  };
-
-  const getTranslate = (i) => {
-    if (hoverIdx === null) return 0;
-    const d = Math.abs(i - hoverIdx);
-    if (d === 0) return -10;
-    if (d === 1) return -6;
-    if (d === 2) return -2;
-    return 0;
-  };
+  const dockRef = useRef(null);
 
   return (
-    <div className="dock">
-      {dockItems.map((app, i) => {
-        const scale = getScale(i);
-        const ty = getTranslate(i);
-        const isOpen = openApps?.includes(app.id);
+    <div 
+      ref={dockRef}
+      className="dock"
+      onMouseLeave={() => setHoverIndex(null)}
+    >
+      {dockItems.map((app, index) => {
         const isGitHub = app.id === "github";
+        const isOpen = openApps?.includes(app.id);
+        const isMinimized = minimizedApps?.has(app.id);
         
-        // Убрал лишние переменные для isTrash, если они не определены в коде
         return (
           <React.Fragment key={app.id}>
             {isGitHub && <div className="dock__separator" aria-hidden="true" />}
             <div
-              className="dock__item"
-              style={{ transform: `scale(${scale}) translateY(${ty}px)` }}
-              onMouseEnter={() => setHoverIdx(i)}
-              onMouseLeave={() => setHoverIdx(null)}
-              onClick={() => app.isLink ? window.open(app.url, "_blank") : onOpen(app.id)}
+              className="dock__item-wrapper"
+              onMouseEnter={() => setHoverIndex(index)}
+              onMouseLeave={() => setHoverIndex(null)}
             >
-              <div className="dock__tooltip">{app.name}</div>
-
-              {isGitHub ? (
-                <div className="dock__icon-wrapper dock__icon-wrapper--white-bg">
-                  <img src={app.icon} alt={app.name} />
-                </div>
-              ) : (
-                <AssetIcon path={app.iconPath} fallback={app.icon} size={58} alt={app.name} />
-              )}
-
-              <div className="dock__indicator">
-                {isOpen && !app.isLink && (
-                  <div className={`dock__indicator-dot ${minimizedApps.has(app.id) ? "dock__indicator-dot--minimized" : ""}`} />
-                )}
-              </div>
+              <DockItem
+                app={app}
+                isHovered={hoverIndex === index}
+                onOpen={onOpen}
+                isOpen={isOpen}
+                isMinimized={isMinimized}
+                isLightTheme={isLightTheme}
+              />
             </div>
           </React.Fragment>
         );

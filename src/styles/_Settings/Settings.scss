@@ -1339,3 +1339,136 @@ $content-bg:      rgba(24, 24, 28, 0.96);
     background: rgba(0, 122, 255, 0.2);
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+//  NOTIFICATIONS SETTINGS extras
+// ═══════════════════════════════════════════════════════════════════
+.notifications-master-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.notifications-master-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notifications-master-label {
+  font-size: 13.5px;
+  color: $text-primary;
+  font-weight: 500;
+}
+
+.notifications-apps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notification-app-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  margin: 0 -12px;
+  border-radius: 8px;
+  transition: background 0.08s;
+  
+  &:hover {
+    background: $hover-bg;
+  }
+}
+
+.notification-app-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-app-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.notification-app-name {
+  font-size: 13.5px;
+  color: $text-primary;
+  font-weight: 400;
+}
+
+.notification-app-right {
+  flex-shrink: 0;
+}
+
+.notification-style-select {
+  min-width: 100px;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UNIMPLEMENTED PANEL
+// ═══════════════════════════════════════════════════════════════════
+.unimplemented-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  
+  .unimplemented-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+  
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 8px;
+  }
+  
+  p {
+    font-size: 13px;
+    color: $text-secondary;
+    margin: 0;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  STORAGE BAR
+// ═══════════════════════════════════════════════════════════════════
+.storage-bar {
+  width: 160px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+  
+  &-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #34c759 0%, #34c759 60%, #ff9500 60%, #ff9500 80%, #ff3b30 80%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+}
+
+.about-copyright {
+  font-size: 11px;
+  color: $text-tertiary;
+  margin-top: 4px;
+}

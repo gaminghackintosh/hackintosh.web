@@ -1,0 +1,106 @@
+@use "./variables" as *;
+
+// ===== LIGHT THEME MIXINS =====
+
+@mixin light-theme {
+  --text-primary: #{$light-color-text-primary};
+  --text-secondary: #{$light-color-text-secondary};
+  --text-tertiary: #{$light-color-text-tertiary};
+  --text-muted: #{$light-color-text-muted};
+  
+  --bg-body: #{$light-color-bg-body};
+  
+  --bg-sidebar: #{$light-color-bg-sidebar};
+  --bg-sidebar-hover: #{$light-color-bg-sidebar-hover};
+  --bg-sidebar-active: #{$light-color-bg-sidebar-active};
+  
+  --bg-input: #{$light-color-bg-input};
+  --bg-input-focus: #{$light-color-bg-input-focus};
+  --placeholder: #{$light-color-placeholder};
+  
+  --border-light: #{$light-color-border-light};
+  --border-lighter: #{$light-color-border-lighter};
+  --divider: #{$light-color-divider};
+  
+  --menubar-bg: #{$light-color-menubar-bg};
+  --menubar-border: #{$light-color-menubar-border};
+  --menubar-item: #{$light-color-menubar-item};
+  --menubar-item-hover: #{$light-color-menubar-item-hover};
+  --menubar-item-active: #{$light-color-menubar-item-active};
+  --dropdown-bg: #{$light-color-dropdown-bg};
+  --dropdown-border: #{$light-color-dropdown-border};
+  --dropdown-item-hover: #{$light-color-dropdown-item-hover};
+  
+  --cc-bg: #{$light-color-cc-bg};
+  --cc-border: #{$light-color-cc-border};
+  --cc-shadow: #{$light-color-cc-shadow};
+  --cc-card-bg: #{$light-color-cc-card-bg};
+  --cc-card-border: #{$light-color-cc-card-border};
+  --cc-network-item-hover: #{$light-color-cc-network-item-hover};
+  --cc-network-icon-bg: #{$light-color-cc-network-icon-bg};
+  --cc-network-icon-color: #{$light-color-cc-network-icon-color};
+  
+  --dock-bg: #{$light-color-dock-bg};
+  --dock-border: #{$light-color-dock-border};
+  --dock-shadow: #{$light-color-dock-shadow};
+  --dock-separator: #{$light-color-dock-separator};
+  
+  --window-bg: #{$light-color-window-bg};
+  --window-border: #{$light-color-window-border};
+  --window-header: #{$light-color-window-header};
+  
+  --scrollbar-thumb: #{$light-color-scrollbar-thumb};
+  --scrollbar-thumb-hover: #{$light-color-scrollbar-thumb-hover};
+}
+
+// ===== DARK THEME (DEFAULT) =====
+@mixin dark-theme {
+  --text-primary: #{$color-text-primary};
+  --text-secondary: #{$color-text-secondary};
+  --text-tertiary: #{$color-text-tertiary};
+  --text-muted: #{$color-text-muted};
+  
+  --bg-body: #{$color-bg-body};
+  
+  --bg-sidebar: #{$color-bg-sidebar};
+  --bg-sidebar-hover: #{$color-bg-sidebar-hover};
+  --bg-sidebar-active: #{$color-bg-sidebar-active};
+  
+  --bg-input: #{$color-bg-input};
+  --bg-input-focus: #{$color-bg-input-focus};
+  --placeholder: #{$color-placeholder};
+  
+  --border-light: #{$color-border-light};
+  --border-lighter: #{$color-border-lighter};
+  --divider: #{$color-divider};
+  
+  --menubar-bg: #{$color-menubar-bg};
+  --menubar-border: #{$color-menubar-border};
+  --menubar-item: #{$color-menubar-item};
+  --menubar-item-hover: #{$color-menubar-item-hover};
+  --menubar-item-active: #{$color-menubar-item-active};
+  --dropdown-bg: #{$color-dropdown-bg};
+  --dropdown-border: #{$color-dropdown-border};
+  --dropdown-item-hover: #{$color-dropdown-item-hover};
+  
+  --cc-bg: #{$color-cc-bg-gradient-start};
+  --cc-border: #{$color-cc-border};
+  --cc-shadow: #{$color-cc-shadow};
+  --cc-card-bg: #{$color-cc-network-group-bg-start};
+  --cc-card-border: #{$color-cc-network-group-border};
+  --cc-network-item-hover: #{$color-cc-network-item-hover};
+  --cc-network-icon-bg: rgba(255, 255, 255, 0.08);
+  --cc-network-icon-color: rgba(255, 255, 255, 0.5);
+  
+  --dock-bg: rgba(255, 255, 255, 0.2);
+  --dock-border: rgba(255, 255, 255, 0.25);
+  --dock-shadow: rgba(0, 0, 0, 0.35);
+  --dock-separator: rgba(255, 255, 255, 0.35);
+  
+  --window-bg: rgba(30, 30, 34, 0.92);
+  --window-border: rgba(255, 255, 255, 0.08);
+  --window-header: rgba(36, 36, 40, 0.95);
+  
+  --scrollbar-thumb: #{$color-scrollbar-thumb};
+  --scrollbar-thumb-hover: #{$color-scrollbar-thumb-hover};
+}

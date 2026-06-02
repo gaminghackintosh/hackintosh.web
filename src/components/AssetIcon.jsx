@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { resolveAssetUrl } from "../assets/resolveIcon"
-;
+import { resolveAssetUrl } from "../assets/resolveIcon";
 
 
-export function AssetIcon({ path, fallback = "", size = 24, alt = "", style, imgStyle, className }) {
-  const url = resolveAssetUrl(path);
+export function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "", isLightTheme = false, style, imgStyle, className }) {
   const [broken, setBroken] = useState(false);
+
+  // Выбираем путь к иконке в зависимости от темы
+  const iconPath = isLightTheme && pathLight ? pathLight : path;
+  const url = resolveAssetUrl(iconPath);
 
   if (!url || broken) {
     return (

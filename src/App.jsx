@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useCallback, useMemo } from "react";
+import React, { Suspense, useState, useCallback, useMemo, useEffect } from "react";
 import { useMobileCheck } from "./hooks/useMobileCheck";
 import { useWindowManager } from "./hooks/useWindowManager";
 import { useContextMenu } from "./hooks/useContextMenu";
@@ -14,14 +14,14 @@ import { renderAppContent } from "./utils/renderAppContent";
 import defaultWallpaper from "./assets/images/wallpapers/Tahoe/Tahoe Light.png";
 
 export default function App() {
-  const { 
-    windows, openApps, activeWin, minimizedApps, 
-    openApp, closeWindow, minimizeWindow, maximizeWindow, focusWindow 
-  } = useWindowManager();
-
+  const windowManager = useWindowManager();
   const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
   const isMobile = useMobileCheck();
   const [bootComplete, setBootComplete] = useState(false);
+  const [isLightTheme, setIsLightTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'light';
+  });
   
   const [wallpaper, setWallpaper] = useState({
     id: "sequoia_11",
@@ -29,33 +29,77 @@ export default function App() {
     value: defaultWallpaper,
   });
 
+  // Apply saved theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light-theme');
+    }
+  }, []);
+
+  // Listen for theme changes from MenuBar
+  useEffect(() => {
+    const handleThemeChange = (e) => {
+      setIsLightTheme(e.detail.isLight);
+    };
+    window.addEventListener('theme-change', handleThemeChange);
+    return () => window.removeEventListener('theme-change', handleThemeChange);
+  }, []);
+  
+  // Мемоизированный компонент окна
+  const MemoizedAppWindow = React.memo(AppWindow, (prevProps, nextProps) => {
+    // Кастомная проверка для предотвращения лишних ререндеров
+    return (
+      prevProps.win.x === nextProps.win.x &&
+      prevProps.win.y === nextProps.win.y &&
+      prevProps.win.width === nextProps.win.width &&
+      prevProps.win.height === nextProps.win.height &&
+      prevProps.isActive === nextProps.isActive &&
+      prevProps.isMinimized === nextProps.isMinimized &&
+      prevProps.win.zIndex === nextProps.win.zIndex
+    );
+  });
+
   const handleDesktopContextMenu = useCallback((e) => {
     openContextMenu(e, [
       { label: "New Folder", action: () => console.log("New Folder") },
       { type: "divider" },
-      { label: "Change Wallpaper", action: () => openApp("settings", "Settings") }
+      { label: "Change Wallpaper", action: () => windowManager.openApp("settings", "Settings") }
     ]);
-  }, [openContextMenu, openApp]);
+  }, [openContextMenu, windowManager.openApp]);
 
-  const windowComponents = useMemo(() => windows.map((win) => (
-    <AppWindow
-      key={win.id}
-      win={win}
-      isActive={activeWin === win.id}
-      isMinimized={minimizedApps.has(win.id)}
-      onClose={() => closeWindow(win.id)}
-      onMinimize={() => minimizeWindow(win.id)}
-      onFocus={() => focusWindow(win.id)}
-      onZoom={() => maximizeWindow(win.id)}
-    >
-      <Suspense fallback={<WindowLoading />}>
-        {renderAppContent(win.id, { 
-            closeWindow, minimizeWindow, maximizeWindow, 
+  // Рендерим окна только при изменении списка
+  const windowComponents = useMemo(() => {
+    return windowManager.windows.map((win) => (
+      <MemoizedAppWindow
+        key={win.id}
+        win={win}
+        isActive={windowManager.activeWin === win.id}
+        isMinimized={windowManager.minimizedApps.has(win.id)}
+        onClose={() => windowManager.closeWindow(win.id)}
+        onMinimize={() => windowManager.minimizeWindow(win.id)}
+        onFocus={() => windowManager.focusWindow(win.id)}
+        onZoom={() => windowManager.maximizeWindow(win.id)}
+      >
+        <Suspense fallback={<WindowLoading />}>
+          {renderAppContent(win.id, { 
+            closeWindow: windowManager.closeWindow, 
+            minimizeWindow: windowManager.minimizeWindow, 
+            maximizeWindow: windowManager.maximizeWindow, 
             setWallpaper 
-        })}
-      </Suspense>
-    </AppWindow>
-  )), [windows, activeWin, minimizedApps, closeWindow, minimizeWindow, maximizeWindow, focusWindow, renderAppContent]);
+          })}
+        </Suspense>
+      </MemoizedAppWindow>
+    ));
+  }, [
+    windowManager.windows,
+    windowManager.activeWin,
+    windowManager.minimizedApps,
+    windowManager.closeWindow,
+    windowManager.minimizeWindow,
+    windowManager.maximizeWindow,
+    windowManager.focusWindow,
+  ]);
 
   if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
   if (isMobile) return <MobileNotSupported />;
@@ -63,15 +107,20 @@ export default function App() {
   return (
     <Desktop wallpaper={wallpaper.value} onContextMenu={handleDesktopContextMenu}>
       <MenuBar 
-        activeApp={activeWin} 
-        onClose={() => closeWindow(activeWin)}
-        onMinimize={() => minimizeWindow(activeWin)}
-        onZoom={() => maximizeWindow(activeWin)}
+        activeApp={windowManager.activeWin} 
+        onClose={() => windowManager.closeWindow(windowManager.activeWin)}
+        onMinimize={() => windowManager.minimizeWindow(windowManager.activeWin)}
+        onZoom={() => windowManager.maximizeWindow(windowManager.activeWin)}
       />
 
       {windowComponents}
 
-      <Dock onOpen={openApp} openApps={openApps} minimizedApps={minimizedApps} />
+      <Dock 
+        onOpen={windowManager.openApp} 
+        openApps={windowManager.openApps} 
+        minimizedApps={windowManager.minimizedApps} 
+        isLightTheme={isLightTheme}
+      />
 
       {contextMenu && (
         <ContextMenu 

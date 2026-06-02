@@ -1,5 +1,6 @@
 @use "./variables" as vars;
 @use "./mixins" as *;
+@use "./theme" as *;
 @use "./globals";
 @use "./icons";
 
@@ -28,10 +29,20 @@
 @use "./_Safari/SafariPages";
 @use "./_Safari/SurprisePages";
 
+// Apply default dark theme
 body {
   margin: 0;
-  background: #05070f;
+  background: vars.$color-bg-body;
   font-family: system-ui, -apple-system, sans-serif;
+  
+  @include dark-theme;
+}
+
+// Light theme override
+body.light-theme {
+  background: vars.$light-color-bg-body;
+  
+  @include light-theme;
 }
 
 .resize-handle {

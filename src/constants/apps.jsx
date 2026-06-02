@@ -1,5 +1,6 @@
 import {
   APP_ICONS,
+  APP_ICONS_LIGHT,
   APP_ICON_FALLBACK,
 } from "./../assets/paths";
 
@@ -17,12 +18,14 @@ export const APPS = [
     id: "finder",
     name: "Finder",
     iconPath: APP_ICONS.finder,
+    iconPathLight: APP_ICONS_LIGHT.finder,
     icon: APP_ICON_FALLBACK.finder,
   },
   {
     id: "safari",
     name: "Safari",
     iconPath: APP_ICONS.safari,
+    iconPathLight: APP_ICONS_LIGHT.safari,
     icon: APP_ICON_FALLBACK.safari,
     color: "#ffffff",
   },
@@ -30,6 +33,7 @@ export const APPS = [
     id: "notes",
     name: "Notes",
     iconPath: APP_ICONS.notes,
+    iconPathLight: APP_ICONS_LIGHT.notes,
     icon: APP_ICON_FALLBACK.notes,
     color: "#FFD60A",
   },
@@ -37,6 +41,7 @@ export const APPS = [
     id: "terminal",
     name: "Terminal",
     iconPath: APP_ICONS.terminal,
+    iconPathLight: APP_ICONS_LIGHT.terminal,
     icon: APP_ICON_FALLBACK.terminal,
     color: "#1C1C1E",
   },
@@ -44,6 +49,7 @@ export const APPS = [
     id: "music",
     name: "Music",
     iconPath: APP_ICONS.music,
+    iconPathLight: APP_ICONS_LIGHT.music,
     icon: APP_ICON_FALLBACK.music,
     color: "#FF375F",
   },
@@ -51,6 +57,7 @@ export const APPS = [
     id: "settings",
     name: "Settings",
     iconPath: APP_ICONS.settings,
+    iconPathLight: APP_ICONS_LIGHT.settings,
     icon: APP_ICON_FALLBACK.settings,
     color: "#636366",
   },
