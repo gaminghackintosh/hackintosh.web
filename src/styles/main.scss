@@ -5,7 +5,7 @@
 
 // Components
 @use "./Dock";
-@use "./MenuBar";
+@use "./AppWindow/MenuBar";
 @use "./ContextMenu";
 
 // Settings_Components
@@ -23,7 +23,9 @@
 @use "./_NotesWindow/Notes";
 @use "./_Musics/Music";
 @use "./_Terminal/Terminal";
+// Safari
 @use "./_Safari/SafariBrowser";
+@use "./_Safari/SafariPages";
 
 body {
   margin: 0;

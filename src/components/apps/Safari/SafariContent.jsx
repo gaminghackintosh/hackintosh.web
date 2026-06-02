@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from "react";
+import React, { useContext, useState, useMemo, useEffect } from "react";
 import { WindowContext } from "../../AppWindow/AppWindow";
 import {
   FiArrowLeft, FiArrowRight, FiRefreshCw,
@@ -8,10 +8,10 @@ import { HiOutlineLockClosed, HiOutlineShieldCheck } from "react-icons/hi";
 import { TbLayoutSidebarLeftExpand } from "react-icons/tb";
 import { BsSliders2 } from "react-icons/bs";
 
-// import assets
 import safariBg from "./../../../assets/images/Safari_Wallpapers/Safari_Background.webp";
+import { AboutPage, HackintoshPage, CatsPage, SurprisePage } from "./Local_Pages/LocalPages";
 
-// ── Favicon SVGs для избранных ────────────────────────────────────
+// ── Favicon SVGs ─────────────────────────────────────────────
 const AppleFavicon = () => (
   <svg viewBox="0 0 60 60" width="30" height="30" fill="#1d1d1f">
     <path d="M42.56 46.5c-1.93 2.87-3.97 5.67-7.05 5.73-3.1.07-4.1-1.84-7.61-1.84-3.55 0-4.63 1.79-7.57 1.91-3.03.11-5.33-3.06-7.27-5.87C9.83 39.37 6.86 28.84 10.87 21.7c2.01-3.52 5.63-5.74 9.54-5.81 2.97-.05 5.78 2.01 7.62 2.01 1.8 0 5.23-2.48 8.82-2.1 1.5.06 5.71.6 8.42 4.58-.2.14-5.02 2.97-4.97 8.83.06 6.99 6.14 9.32 6.2 9.35-.06.16-.98 3.34-3.2 6.54M30.15 8.1c1.7-1.92 4.49-3.38 6.81-3.47.3 2.7-.78 5.44-2.4 7.38-1.6 1.97-4.24 3.5-6.83 3.29-.35-2.65.96-5.43 2.42-7.2"/>
@@ -36,7 +36,6 @@ const GoogleFavicon = () => (
   </svg>
 );
 
-// ── Список избранного (точно как на скриншоте) ────────────────────
 const FAVORITES = [
   { title: "Apple",  icon: <AppleFavicon />,  bg: "#fff",    url: "https://apple.com" },
   { title: "Yandex", icon: <YandexFavicon />, bg: "#FC3F1D", url: "https://ya.ru" },
@@ -45,13 +44,8 @@ const FAVORITES = [
   { title: "Apple",  icon: <AppleFavicon />,  bg: "#fff",    url: "https://apple.com" },
 ];
 
-// ── «From iPhone» — имитация открытых вкладок ─────────────────────
-const FROM_IPHONE = [
-  "INCY AI Helper",
-  "",
-];
+const FROM_IPHONE = ["INCY AI Helper", ""];
 
-// ── Грeetings по времени суток ──────────────────────────────────────
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 5)  return "Good Night";
@@ -60,38 +54,87 @@ function getGreeting() {
   return "Good Evening";
 }
 
+// ─── Определение, является ли URL локальной командой ──────────
+const LOCAL_COMMANDS = ["about", "hackintosh", "cats", "surprise"];
+
+function PageRenderer({ command, onNavigate }) {
+  switch (command) {
+    case "about":      return <AboutPage />;
+    case "hackintosh": return <HackintoshPage />;
+    case "cats":       return <CatsPage />;
+    case "surprise":   return <SurprisePage onNavigate={onNavigate} />;
+    default:           return null;
+  }
+}
+
 export function SafariContent({ onClose, onMinimize, onZoom }) {
   const { onTitleMouseDown } = useContext(WindowContext);
-  const [url, setUrl]           = useState("");
-  const [inputVal, setInputVal] = useState("");
+
+  const [tabs, setTabs] = useState([
+    { id: 1, title: "Start Page", url: "", isStart: true }
+  ]);
+  const [activeTabId, setActiveTabId] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [showStart, setShowStart] = useState(true);
-  const [canBack, setCanBack]   = useState(false);
-  const [canFwd,  setCanFwd]    = useState(false);
 
-  const greeting = useMemo(() => getGreeting(), []);
+  const [bookmarks, setBookmarks] = useState(() => {
+    try {
+      const saved = localStorage.getItem("safari_bookmarks");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
 
+  const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
+
+  // ── Работа с вкладками ─────────────────────────────────
+  const addTab = (url = "", title = "New Tab") => {
+    const newTab = { id: Date.now(), title, url, isStart: !url };
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTab.id);
+  };
+
+  const closeTab = (id, e) => {
+    e?.stopPropagation();
+    if (tabs.length === 1) return;
+    const newTabs = tabs.filter(t => t.id !== id);
+    setTabs(newTabs);
+    if (activeTabId === id) {
+      setActiveTabId(newTabs[0].id);
+    }
+  };
+
+  const updateTab = (id, updates) => {
+    setTabs(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+  };
+
+  // ── Навигация ───────────────────────────────────────────
   const navigate = (target) => {
     if (!target.trim()) return;
-    const dest = target.startsWith("http") ? target : `https://${target}`;
-    setUrl(dest);
-    setInputVal(dest);
-    setShowStart(false);
-    setCanBack(true);
+    const lowerTarget = target.toLowerCase().trim();
+
+    if (LOCAL_COMMANDS.includes(lowerTarget)) {
+      updateTab(activeTab.id, {
+        url: lowerTarget,
+        title: lowerTarget.charAt(0).toUpperCase() + lowerTarget.slice(1),
+        isStart: false,
+      });
+      return;
+    }
+
+    updateTab(activeTab.id, {
+      url: target.startsWith("http") ? target : `https://${target}`,
+      title: target,
+      isStart: false,
+    });
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 900);
   };
 
   const goHome = () => {
-    setShowStart(true);
-    setInputVal("");
-    setUrl("");
-    setCanBack(false);
-    setCanFwd(false);
+    updateTab(activeTab.id, { url: "", title: "Start Page", isStart: true });
   };
 
   const handleKey = (e) => {
-    if (e.key === "Enter") navigate(inputVal);
+    if (e.key === "Enter") navigate(activeTab.url || "");
   };
 
   const handleRefresh = () => {
@@ -99,137 +142,185 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
     setTimeout(() => setIsLoading(false), 800);
   };
 
-  return (
-    <div className="sf" style={{ backgroundImage: `url(${safariBg})` }}>
+  const addBookmark = () => {
+    if (!activeTab.url || activeTab.isStart) return;
+    const newBookmark = { title: activeTab.title, url: activeTab.url };
+    const updated = [...bookmarks, newBookmark];
+    setBookmarks(updated);
+    localStorage.setItem("safari_bookmarks", JSON.stringify(updated));
+  };
 
-      {/* ══ Background / Blur ══════════════════════════════════════════════════ */}
-      <div className="sf__bg-overlay" />
-      
-      {/* ══ TOOLBAR ══════════════════════════════════════════════════ */}
-      <div
-        className="sf__toolbar"
-        onMouseDown={(e) => {
-          if (!e.target.closest("button, input")) onTitleMouseDown(e);
-        }}
-      >
-        {/* Left: traffic lights + sidebar toggle */}
-        <div className="sf__toolbar-left">
-          <div className="sf__tl-group">
-            <button className="sf__tl sf__tl--close"    onClick={onClose}    title="Close"/>
-            <button className="sf__tl sf__tl--minimize" onClick={onMinimize} title="Minimize"/>
-            <button className="sf__tl sf__tl--zoom"     onClick={onZoom}     title="Zoom"/>
-          </div>
-          <button className="sf__icon-btn" title="Toggle Sidebar">
-            <TbLayoutSidebarLeftExpand size={16}/>
-          </button>
-        </div>
+  // ── Рендер контента текущей вкладки ─────────────────
+  const renderContent = () => {
+    if (activeTab.isStart) {
+      return (
+        <div className="sf__start">
+          <div className="sf__start-inner">
+            <section className="sf__section">
+              <h3 className="sf__section-title">Favorites</h3>
+              <div className="sf__favs">
+                {FAVORITES.map((f, i) => (
+                  <button key={i} className="sf__fav" onClick={() => navigate(f.url)}>
+                    <span className="sf__fav-icon" style={{ background: f.bg }}>{f.icon}</span>
+                    <span className="sf__fav-label">{f.title}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
 
-        {/* Center: nav + address bar */}
-        <div className="sf__toolbar-center">
-          <button className={`sf__nav-btn${canBack ? "" : " sf__nav-btn--disabled"}`}
-            onClick={() => canBack && goHome()} disabled={!canBack} title="Back">
-            <FiArrowLeft size={13}/>
-          </button>
-          <button className={`sf__nav-btn${canFwd ? "" : " sf__nav-btn--disabled"}`}
-            disabled={!canFwd} title="Forward">
-            <FiArrowRight size={13}/>
-          </button>
-
-          <div className="sf__address">
-            {showStart ? (
-              <FiSearch size={12} className="sf__address-icon"/>
-            ) : (
-              <HiOutlineLockClosed size={12} className="sf__address-icon sf__address-icon--lock"/>
+            {bookmarks.length > 0 && (
+              <section className="sf__section">
+                <h3 className="sf__section-title">Bookmarks</h3>
+                <div className="sf__bookmarks">
+                  {bookmarks.map((b, i) => (
+                    <button key={i} className="sf__bookmark-btn" onClick={() => navigate(b.url)}>
+                      {b.title}
+                    </button>
+                  ))}
+                </div>
+              </section>
             )}
-            <input
-              className="sf__address-input"
-              placeholder="Search or enter website name"
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              onKeyDown={handleKey}
-              onFocus={(e) => e.target.select()}
-              spellCheck={false}
-            />
-            <button className="sf__refresh-btn" onClick={handleRefresh} title="Reload">
-              <FiRefreshCw size={11} className={isLoading ? "sf--spin" : ""}/>
+
+            <section className="sf__section">
+              <h3 className="sf__section-title">Privacy Report</h3>
+              <div className="sf__privacy-card">
+                <span className="sf__privacy-icon"><HiOutlineShieldCheck size={20}/></span>
+                <p className="sf__privacy-text">
+                  Safari has not encountered any trackers in the last seven days.
+                  Safari can hide your IP address from known trackers.
+                </p>
+              </div>
+            </section>
+
+            <section className="sf__section">
+              <h3 className="sf__section-title">From iPhone</h3>
+              <div className="sf__iphone-grid">
+                {FROM_IPHONE.filter(t => t).map((t, i) => (
+                  <button key={i} className="sf__iphone-tab" onClick={() => navigate(t)}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <button className="sf__surprise-btn" onClick={() => navigate("surprise")}>
+              🎲 Surprise Me!
             </button>
           </div>
         </div>
+      );
+    }
 
-        {/* Right: share, new tab, view settings */}
-        <div className="sf__toolbar-right">
-          <button className="sf__icon-btn" title="Share"><FiShare2 size={14}/></button>
-          <button className="sf__icon-btn" title="New Tab"><FiPlus size={16}/></button>
-          <button className="sf__icon-btn" title="View Settings"><BsSliders2 size={14}/></button>
+    const isLocal = LOCAL_COMMANDS.includes(activeTab.url?.toLowerCase());
+    if (isLocal) {
+      return <PageRenderer command={activeTab.url.toLowerCase()} onNavigate={navigate} />;
+    }
+
+    return (
+      <div className="sf__blocked">
+        <div className="sf__blocked-icon">🧭</div>
+        <h2>Safari Can't Open the Page</h2>
+        <p>
+          Safari can't open <strong>"{activeTab.url}"</strong> because web content cannot be loaded in this environment.
+        </p>
+        <button className="sf__blocked-back" onClick={goHome}>
+          Go to Start Page
+        </button>
+      </div>
+    );
+  };
+
+   return (
+    <div className="sf" style={{ backgroundImage: `url(${safariBg})` }}>
+      <div className="sf__bg-overlay" />
+
+      <div className="sf__toolbar">
+        {/* Верхняя часть с огнями и адресной строкой */}
+        <div 
+          className="sf__toolbar-top"
+          onMouseDown={(e) => {
+            if (!e.target.closest("button, input")) onTitleMouseDown(e);
+          }}
+        >
+          <div className="sf__toolbar-left">
+            <div className="sf__tl-group">
+              <button className="sf__tl sf__tl--close" onClick={onClose} title="Close"/>
+              <button className="sf__tl sf__tl--minimize" onClick={onMinimize} title="Minimize"/>
+              <button className="sf__tl sf__tl--zoom" onClick={onZoom} title="Zoom"/>
+            </div>
+            <button className="sf__icon-btn" title="Toggle Sidebar">
+              <TbLayoutSidebarLeftExpand size={16}/>
+            </button>
+          </div>
+
+          <div className="sf__toolbar-center">
+            <div className="sf__nav-buttons">
+              <button className={`sf__nav-btn${!activeTab.isStart ? "" : " sf__nav-btn--disabled"}`}
+                onClick={() => !activeTab.isStart && goHome()} disabled={activeTab.isStart}>
+                <FiArrowLeft size={13}/>
+              </button>
+              <button className="sf__nav-btn sf__nav-btn--disabled" disabled>
+                <FiArrowRight size={13}/>
+              </button>
+            </div>
+
+            <div className="sf__address">
+              {activeTab.isStart ? (
+                <FiSearch size={12} className="sf__address-icon"/>
+              ) : (
+                <HiOutlineLockClosed size={12} className="sf__address-icon sf__address-icon--lock"/>
+              )}
+              <input
+                className="sf__address-input"
+                placeholder="Search or enter website name"
+                value={activeTab.url || ""}
+                onChange={(e) => updateTab(activeTab.id, { url: e.target.value })}
+                onKeyDown={handleKey}
+                onFocus={(e) => e.target.select()}
+                spellCheck={false}
+              />
+              <button className="sf__refresh-btn" onClick={handleRefresh} title="Reload">
+                <FiRefreshCw size={11} className={isLoading ? "sf--spin" : ""}/>
+              </button>
+            </div>
+          </div>
+
+          <div className="sf__toolbar-right">
+            <button className="sf__icon-btn" title="Share"><FiShare2 size={14}/></button>
+            <button className="sf__icon-btn" onClick={addBookmark} title="Bookmark">🔖</button>
+            <button className="sf__icon-btn" title="View Settings"><BsSliders2 size={14}/></button>
+          </div>
+        </div>
+
+        {/* Нижняя часть с вкладками */}
+        <div className="sf__tabs-bar">
+          {tabs.map(tab => (
+            <div 
+              key={tab.id} 
+              className={`sf__tab ${tab.id === activeTabId ? "active" : ""}`}
+              onClick={() => setActiveTabId(tab.id)}
+            >
+              <span className="sf__tab-title">{tab.title}</span>
+              {tabs.length > 1 && (
+                <button 
+                  className="sf__tab-close" 
+                  onClick={(e) => closeTab(tab.id, e)}
+                  title="Close"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+          <button className="sf__new-tab-btn" onClick={() => addTab()} title="New Tab">
+            <FiPlus size={14}/>
+          </button>
         </div>
       </div>
 
-      {/* ══ CONTENT ══════════════════════════════════════════════════ */}
+      {/* ── CONTENT ────────────────────────────────────────── */}
       <div className="sf__body">
-
-        {showStart ? (
-          /* ── START PAGE ─────────────────────────────────────────── */
-          <div className="sf__start">
-            <div className="sf__start-inner">
-
-              {/* Favorites */}
-              <section className="sf__section">
-                <h3 className="sf__section-title">Favorites</h3>
-                <div className="sf__favs">
-                  {FAVORITES.map((f, i) => (
-                    <button key={i} className="sf__fav" onClick={() => navigate(f.url)}>
-                      <span className="sf__fav-icon" style={{ background: f.bg }}>
-                        {f.icon}
-                      </span>
-                      <span className="sf__fav-label">{f.title}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              {/* Privacy Report */}
-              <section className="sf__section">
-                <h3 className="sf__section-title">Privacy Report</h3>
-                <div className="sf__privacy-card">
-                  <span className="sf__privacy-icon">
-                    <HiOutlineShieldCheck size={20}/>
-                  </span>
-                  <p className="sf__privacy-text">
-                    Safari has not encountered any trackers in the last seven days.
-                    Safari can hide your IP address from known trackers.
-                  </p>
-                </div>
-              </section>
-
-              {/* From iPhone */}
-              <section className="sf__section">
-                <h3 className="sf__section-title">From iPhone</h3>
-                <div className="sf__iphone-grid">
-                  {FROM_IPHONE.filter(t => t).map((t, i) => (
-                    <button key={i} className="sf__iphone-tab" onClick={() => navigate(t)}>
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-            </div>
-          </div>
-        ) : (
-          /* ── BLOCKED PAGE ───────────────────────────────────────── */
-          <div className="sf__blocked">
-            <div className="sf__blocked-icon">🧭</div>
-            <h2>Safari Can't Open the Page</h2>
-            <p>
-              Safari can't open <strong>"{url}"</strong> because the URL is invalid
-              or web content cannot be loaded in this environment.
-            </p>
-            <button className="sf__blocked-back" onClick={goHome}>
-              Go to Start Page
-            </button>
-          </div>
-        )}
-
+        {renderContent()}
       </div>
     </div>
   );

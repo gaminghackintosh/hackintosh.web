@@ -15,14 +15,15 @@
 
 // ── Фоновый оверлей (блюр + затемнение) ─────────────────────────
 .sf__bg-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    backdrop-filter: blur(5px) saturate(1);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    background: rgba(0, 0, 0, 0.28);
-    pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  backdrop-filter: blur(5px) saturate(1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(0, 0, 0, 0.28);
+  pointer-events: none;
 }
+
 .sf__toolbar,
 .sf__body {
   position: relative;
@@ -30,17 +31,26 @@
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  TOOLBAR  — dark frosted glass
+//  TOOLBAR — dark frosted glass (С ВКЛАДКАМИ)
 // ═══════════════════════════════════════════════════════════════════
 .sf__toolbar {
   display: flex;
-  align-items: center;
-  height: 52px;
-  padding: 0 12px;
+  flex-direction: column;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  position: relative;
+  background: rgba(30, 30, 35, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: default;
+  z-index: 10;
+}
+
+// Верхняя часть тулбара (огни, кнопки)
+.sf__toolbar-top {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 12px;
+  gap: 12px;
 }
 
 // Left section
@@ -49,7 +59,7 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  width: 120px;
+  width: 100px;
 }
 
 // Traffic lights
@@ -80,23 +90,34 @@
     background-repeat: no-repeat;
     background-position: center;
   }
-  &:hover::after { opacity: 1; }
+  
+  &:hover::after { 
+    opacity: 1; 
+  }
 
   &--close {
     background: #ff5f57;
-    &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
   }
+  
   &--minimize {
     background: #ffbd2e;
-    &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
   }
+  
   &--zoom {
     background: #28c840;
-    &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
   }
 }
 
-// Icon buttons (sidebar, share, +, sliders)
+// Icon buttons
 .sf__icon-btn {
   width: 28px;
   height: 26px;
@@ -116,17 +137,22 @@
   }
 }
 
-// Center: nav + address
+// Center section
 .sf__toolbar-center {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 0 12px;
 }
 
 // Nav buttons
+.sf__nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+}
+
 .sf__nav-btn {
   width: 26px;
   height: 26px;
@@ -143,37 +169,40 @@
   &:hover:not(.sf__nav-btn--disabled) {
     background: rgba(255, 255, 255, 0.10);
   }
+  
   &--disabled {
     color: rgba(255, 255, 255, 0.22);
     cursor: default;
   }
 }
 
-// Address bar — dark pill, centered
+// Address bar
 .sf__address {
   display: flex;
   align-items: center;
-  gap: 5px;
-  width: clamp(300px, 42%, 520px);
-  height: 28px;
-  background: rgba(255, 255, 255, 0.10);
-  border-radius: 7px;
+  gap: 6px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
   padding: 0 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  transition: all 0.15s;
+  width: clamp(300px, 50%, 500px);
 
   &:focus-within {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(10, 132, 255, 0.55);
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(10, 132, 255, 0.5);
+    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
   }
 }
 
 .sf__address-icon {
   color: rgba(255, 255, 255, 0.35);
   flex-shrink: 0;
-  &--lock { color: rgba(255, 255, 255, 0.45); }
+  
+  &--lock { 
+    color: rgba(255, 255, 255, 0.45); 
+  }
 }
 
 .sf__address-input {
@@ -191,8 +220,14 @@
     color: rgba(255, 255, 255, 0.32);
     text-align: center;
   }
-  &:focus::placeholder { opacity: 0; }
-  &:focus { text-align: left; }
+  
+  &:focus::placeholder { 
+    opacity: 0; 
+  }
+  
+  &:focus { 
+    text-align: left; 
+  }
 }
 
 .sf__refresh-btn {
@@ -215,7 +250,10 @@
   }
 }
 
-.sf--spin { animation: sf-spin 0.9s linear infinite; }
+.sf--spin { 
+  animation: sf-spin 0.9s linear infinite; 
+}
+
 @keyframes sf-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -226,8 +264,105 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  width: 120px;
+  width: 100px;
   justify-content: flex-end;
+  gap: 4px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TABS BAR (новая секция - вкладки отдельно под тулбаром)
+// ═══════════════════════════════════════════════════════════════════
+.sf__tabs-bar {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgba(30, 30, 35, 0.85);
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.sf__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 200px;
+  min-width: 100px;
+  color: rgba(255, 255, 255, 0.75);
+  transition: all 0.2s;
+  position: relative;
+  border: none;
+  white-space: nowrap;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
+    
+    .sf__tab-close {
+      opacity: 1;
+    }
+  }
+  
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .sf__tab-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .sf__tab-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 3px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+  }
+}
+
+// Кнопка добавления новой вкладки
+.sf__new-tab-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -238,158 +373,20 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+  background: rgba(0, 0, 0, 0.2);
 
-  &::-webkit-scrollbar       { width: 6px; }
-  &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 4px; }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  START PAGE
-// ═══════════════════════════════════════════════════════════════════
-.sf__start {
-  min-height: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 36px 24px 48px;
-}
-
-.sf__start-inner {
-  width: 100%;
-  max-width: 760px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-.sf__section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.90);
-  margin: 0 0 12px 2px;
-  letter-spacing: -0.2px;
-  // Subtle shadow so it reads over any wallpaper
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-}
-
-// ── Favorites ─────────────────────────────────────────────────────
-.sf__favs {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.sf__fav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 72px;
-  transition: transform 0.15s;
-
-  &:hover  { transform: translateY(-2px); }
-  &:active { transform: scale(0.95); }
-}
-
-.sf__fav-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.30),
-    0 6px 18px rgba(0, 0, 0, 0.20),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.10);
-  overflow: hidden;
-  flex-shrink: 0;
-  transition: box-shadow 0.15s;
-
-  .sf__fav:hover & {
-    box-shadow:
-      0 6px 16px rgba(0, 0, 0, 0.40),
-      0 12px 32px rgba(0, 0, 0, 0.25),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  &::-webkit-scrollbar { 
+    width: 6px; 
   }
-}
-
-.sf__fav-label {
-  font-size: 10.5px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.82);
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 72px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.50);
-}
-
-// ── Privacy Report ─────────────────────────────────────────────────
-.sf__privacy-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  background: rgba(40, 40, 46, 0.62);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 13px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.20);
-}
-
-.sf__privacy-icon {
-  color: rgba(255, 255, 255, 0.45);
-  flex-shrink: 0;
-  display: flex;
-}
-
-.sf__privacy-text {
-  font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.62);
-  line-height: 1.45;
-  margin: 0;
-}
-
-// ── From iPhone ───────────────────────────────────────────────────
-.sf__iphone-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.sf__iphone-tab {
-  display: flex;
-  align-items: center;
-  padding: 9px 13px;
-  background: rgba(40, 40, 46, 0.60);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 9px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  cursor: pointer;
-  text-align: left;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
-  font-family: inherit;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: background 0.12s, transform 0.10s;
-
-  &:hover {
-    background: rgba(55, 55, 62, 0.75);
-    transform: translateY(-1px);
+  
+  &::-webkit-scrollbar-track { 
+    background: transparent; 
   }
-  &:active { transform: scale(0.98); }
+  
+  &::-webkit-scrollbar-thumb { 
+    background: rgba(255, 255, 255, 0.14); 
+    border-radius: 4px; 
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -441,5 +438,7 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: rgba(10, 132, 255, 0.30); }
+  &:hover { 
+    background: rgba(10, 132, 255, 0.30); 
+  }
 }
