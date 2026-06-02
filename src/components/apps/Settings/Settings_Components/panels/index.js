@@ -10,7 +10,6 @@ export * from "./FocusSettings";
 export * from "./GameCenterSettings";
 export * from "./GameControllersSettings";
 export * from "./GeneralSettings";
-export * from "./ICloudSettings";
 export * from "./InternetAccountsSettings";
 export * from "./LockScreenSettings";
 export * from "./LoginPasswordSettings";

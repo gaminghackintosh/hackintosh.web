@@ -3,6 +3,15 @@ import {
   APP_ICON_FALLBACK,
 } from "./../assets/paths";
 
+export const INITIAL_POSITIONS = {
+  finder: { x: 80, y: 56, w: 940, h: 560 }, 
+  safari: { x: 100, y: 70, w: 900, h: 650 },
+  notes: { x: 120, y: 90, w: 850, h: 550 },  
+  terminal: { x: 140, y: 110, w: 700, h: 450 }, 
+  music: { x: 160, y: 130, w: 1000, h: 500 },
+  settings: { x: 180, y: 150, w: 700, h: 450 },
+};
+
 export const APPS = [
   {
     id: "finder",

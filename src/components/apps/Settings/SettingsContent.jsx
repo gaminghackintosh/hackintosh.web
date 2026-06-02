@@ -32,7 +32,6 @@ import {
   UsersGroupsIcon,
   PasswordsIcon,
   InternetAccountsIcon,
-  iCloudIcon,
   KeyboardIcon,
   MouseIcon,
   GameControllersIcon,
@@ -59,7 +58,6 @@ import {
   GameCenterSettings,
   GameControllersSettings,
   GeneralSettings,
-  iCloudSettings,
   InternetAccountsSettings,
   LockScreenSettings,
   LoginPasswordSettings,
@@ -132,7 +130,6 @@ const MENU_SECTIONS = [
     items: [
       { id: "passwords",         label: "Passwords",           icon: PasswordsIcon, iconType: "svg" },
       { id: "internetaccounts",  label: "Internet Accounts",   icon: InternetAccountsIcon, iconType: "svg" },
-      { id: "icloud",            label: "iCloud",              icon: iCloudIcon, iconType: "svg" },
       { id: "gamecenter",        label: "Game Center",         icon: GameCenter_Icon, iconType: "image" },
       { id: "wallet",            label: "Wallet & Apple Pay",  icon: "💳", iconType: "emoji" },
     ],
@@ -184,7 +181,6 @@ const renderTab = (activeTab, currentWallpaper, onWallpaperChange) => {
     case "battery":          return <BatterySettings />;
     case "touchid":          return <TouchIDSettings />;
     case "usersgroups":      return <UsersSettings />;
-    case "ICloud":           return <ICloudSettings />;
 
     // Неподдерживаемые разделы - показываем заглушку
     case "screentime":

@@ -64,6 +64,11 @@ function CcTile({ icon: Icon, label, active, onClick }) {
   );
 }
 
+const capitalizeFirstLetter = (string) => {
+  if (!string) return "";
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 // ═══════════════════════════════════════════════════════════════════
 export function MenuBar({ activeApp, openApp, onCloseWindow, onMinimizeWindow, onZoomWindow }) {
   const [time,      setTime]      = useState(new Date());
@@ -161,7 +166,7 @@ export function MenuBar({ activeApp, openApp, onCloseWindow, onMinimizeWindow, o
                   className={["menuBar__item", clickable?"isClickable":"", activeMenu===item?"isActive":"", i===0?"isApple":"", i<=1?"isBold":""].join(" ")}
                   onClick={(e) => { if(i===0) onApple(e); else if(clickable) setActiveMenu(activeMenu===item?null:item); }}
                 >
-                  {item===" " ? <AppleIcon/> : item}
+                  {item === " " ? <AppleIcon/> : (i === 1 ? capitalizeFirstLetter(item) : item)}
                 </span>
 
                 {activeMenu===" " && i===0 && (

@@ -1,0 +1,50 @@
+import React from "react";
+import FinderContent from "./../components/Finder/FinderContent"; 
+import { TerminalContent } from "./../components/apps/Terminal/Terminal";
+import { NotesContent } from "./../components/apps/Notes/NotesContent";
+import { SettingsContent } from "./../components/apps/Settings/SettingsContent";
+import { MusicContent } from "./../components/apps/MusicApp/MusicContent";
+import { SafariContent } from "./../components/apps/Safari/SafariContent";
+
+/**
+ * Функция-фабрика для рендеринга контента приложения.
+ * @param {string} appId - ID приложения.
+ * @param {object} props - Объект с функциями управления окном и состояниями.
+ */
+export const renderAppContent = (appId, { 
+  closeWindow, minimizeWindow, maximizeWindow, setWallpaper 
+}) => {
+  // Общие пропсы для всех приложений
+  const commonProps = {
+    onClose: () => closeWindow(appId),
+    onMinimize: () => minimizeWindow(appId),
+    onMaximize: () => maximizeWindow(appId),
+    onZoom: () => maximizeWindow(appId),
+  };
+
+  switch (appId) {
+    case "finder":
+      return <FinderContent {...commonProps} />;
+    case "terminal":
+      return <TerminalContent {...commonProps} />;
+    case "notes":
+      return <NotesContent {...commonProps} />;
+    case "settings":
+      return (
+        <SettingsContent
+          {...commonProps}
+          onWallpaperChange={setWallpaper}
+        />
+      );
+    case "safari":
+      return <SafariContent {...commonProps} />;
+    case "music":
+      return <MusicContent {...commonProps} />;
+    default:
+      return (
+        <div style={{ padding: 20, color: '#fff' }}>
+          Приложение {appId} не найдено.
+        </div>
+      );
+  }
+};
