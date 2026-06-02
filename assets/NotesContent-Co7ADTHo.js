@@ -1,4 +1,4 @@
-import{W as p,j as e}from"./index-CwpCi3E1.js";import{a}from"./vendor-DCyAW6GX.js";function y(){const{onClose:d,onMinimize:l,onZoom:c,onTitleMouseDown:r}=a.useContext(p),f=[{id:1,title:"Developer Life Plan",content:`# Roadmap 🚀
+import{W as p,j as e}from"./index-CICukKMi.js";import{a}from"./vendor-DCyAW6GX.js";function y(){const{onClose:d,onMinimize:l,onZoom:c,onTitleMouseDown:r}=a.useContext(p),f=[{id:1,title:"Developer Life Plan",content:`# Roadmap 🚀
 
 ✔ Learn React
 ✔ Understand useEffect (sometimes)
