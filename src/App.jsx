@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { Suspense, lazy, useState, useEffect, useMemo, useCallback } from "react";
 
 import {
   DESKTOP_ICONS,
@@ -12,20 +12,35 @@ import { useContextMenu } from "./hooks/useContextMenu";
 import BootScreen from "./components/Boot/BootScreen";
 import Dock from "./components/Dock";
 
-import FinderContent from "./components/Finder/FinderContent";
 import MobileNotSupported from "./components/MNS/MobileNotSupported";
 
 import { APPS } from "./constants/apps";
 import { AppWindow } from "./components/AppWindow/AppWindow";
 
 import { MenuBar } from "./components/apps/MenuBar/MenuBar";
-import { TerminalContent } from "./components/apps/Terminal/Terminal";
-import { NotesContent } from "./components/apps/Notes/NotesContent";
-import { SettingsContent } from "./components/apps/Settings/SettingsContent";
-import { MusicContent } from "./components/apps/MusicApp/MusicContent";
-import { SafariContent } from "./components/apps/Safari/SafariContent";
+import defaultWallpaper from "./assets/images/wallpapers/Sequoia/wallpaper_11.png";
 
-import { DEFAULT_WALLPAPER } from "./constants/wallpapers";
+const FinderContent = lazy(() => import("./components/Finder/FinderContent"));
+const TerminalContent = lazy(() =>
+  import("./components/apps/Terminal/Terminal").then((module) => ({ default: module.TerminalContent }))
+);
+const NotesContent = lazy(() =>
+  import("./components/apps/Notes/NotesContent").then((module) => ({ default: module.NotesContent }))
+);
+const SettingsContent = lazy(() =>
+  import("./components/apps/Settings/SettingsContent").then((module) => ({ default: module.SettingsContent }))
+);
+const MusicContent = lazy(() =>
+  import("./components/apps/MusicApp/MusicContent").then((module) => ({ default: module.MusicContent }))
+);
+const SafariContent = lazy(() =>
+  import("./components/apps/Safari/SafariContent").then((module) => ({ default: module.SafariContent }))
+);
+
+const DEFAULT_WALLPAPER = {
+  id: "sequoia_11",
+  image: defaultWallpaper,
+};
 
 const INITIAL_POSITIONS = {
   finder: { x: 80, y: 56, w: 740, h: 500 },
@@ -52,6 +67,22 @@ function PlaceholderContent({ appId }) {
       fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
     }}>
       <span style={{ fontSize: 24 }}>{appId}</span>
+    </div>
+  );
+}
+
+function WindowLoading() {
+  return (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100%",
+      color: "rgba(255,255,255,0.45)",
+      fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+      fontSize: 13,
+    }}>
+      Loading...
     </div>
   );
 }
@@ -268,7 +299,9 @@ export default function App() {
         onFocus={() => focusWindow(win.id)}
         onZoom={() => maximizeWindow(win.id)}
       >
-        {renderContent(win.id)}
+        <Suspense fallback={<WindowLoading />}>
+          {renderContent(win.id)}
+        </Suspense>
       </AppWindow>
     )),
     [windows, activeWin, minimizedApps, closeWindow, minimizeWindow, focusWindow, maximizeWindow, renderContent]

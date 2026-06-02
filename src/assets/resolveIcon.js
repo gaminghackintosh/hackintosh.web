@@ -1,7 +1,15 @@
-const assetModules = import.meta.glob("./**/*.{png,svg,webp,jpg,jpeg,ico}", {
-  eager: true,
-  import: "default",
-});
+const assetModules = import.meta.glob(
+  [
+    "./icons/apps/Dark_Themes/*.{png,svg,webp,jpg,jpeg,ico}",
+    "./icons/apps/macintosh_HD.ico",
+    "./icons/finder/*.{png,svg,webp,jpg,jpeg,ico}",
+    "./icons/menu/*.{png,svg,webp,jpg,jpeg,ico}",
+  ],
+  {
+    eager: true,
+    import: "default",
+  }
+);
 
 export function resolveAssetUrl(relativePath) {
   if (!relativePath) return null;

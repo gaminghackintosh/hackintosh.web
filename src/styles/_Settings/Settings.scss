@@ -143,13 +143,24 @@ $content-bg:      rgba(24, 24, 28, 0.96);
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, #3a8cff, #8f62ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+}
+
+.apple-id-avatar-fallback {
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .apple-id-info { min-width: 0; flex: 1; }

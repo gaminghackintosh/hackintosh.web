@@ -9,8 +9,6 @@ import Network_Icon   from "./../../../assets/icons/Settings_menuSections/Networ
 
 import GameCenter_Icon from "./../../../assets/icons/Settings_menuSections/Game_Center.png";
 
-import LogoType  from "./../../../assets/images/logo/logo_butterfly.png";
-
 // SVG icons for all other sections
 import {
   NotificationsIcon,
@@ -280,7 +278,7 @@ const renderTab = (activeTab, currentWallpaper, onWallpaperChange) => {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export const SettingsContent = memo(function SettingsContent({ currentWallpaper, onWallpaperChange }) {
-  const [activeTab,   setActiveTab]   = useState("wallpaper");
+  const [activeTab,   setActiveTab]   = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { onClose, onMinimize, onFocus, onTitleMouseDown, onZoom } = useContext(WindowContext);
@@ -346,7 +344,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
           onClick={() => handleItemClick("appleid")}
         >
           <div className="apple-id-avatar">
-            <img src={LogoType} alt="User Avatar" />
+            <span className="apple-id-avatar-fallback">g</span>
           </div>
           <div className="apple-id-info">
             <div className="apple-id-name">ghost</div>
