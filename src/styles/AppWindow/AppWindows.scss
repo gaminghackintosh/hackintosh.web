@@ -2,6 +2,8 @@
 @use "./../mixins" as *; 
 
 .app-window {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   @include glass-dark(rgba(25, 25, 28, 0.88), 40px, 0.1, true);
   border-radius: 12px;
@@ -26,6 +28,11 @@
   &--inactive {
     @include glass-dark(rgba(25, 25, 28, 0.75), 30px, 0.05, false);
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  &__content {
+    flex: 1;
+    overflow: hidden;
   }
 }
 
@@ -116,12 +123,16 @@
 /* ===== Resize Handle ===== */
 .resize-handle {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 14px;
-  height: 14px;
-  opacity: 0.35;
-  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  cursor: nwse-resize;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; // Должен быть выше контента
 }
 
 

@@ -34,7 +34,7 @@ export default function App() {
     openContextMenu(e, [
       { label: "New Folder", action: () => console.log("New Folder") },
       { type: "divider" },
-      { label: "Change Wallpaper", action: () => console.log("Wallpaper settings") }
+      { label: "Change Wallpaper", action: () => openApp("settings", "Settings") }
     ]);
   };
 

@@ -34,3 +34,15 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}

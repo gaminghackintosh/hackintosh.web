@@ -56,14 +56,6 @@ export const AppWindow = memo(function AppWindow({
     }
   }, [win.x, win.y, win.width, win.height]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // === Применение позиции и размера к DOM ===
-  useLayoutEffect(() => {
-    if (windowRef.current) {
-      windowRef.current.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-      windowRef.current.style.width = `${size.width}px`;
-      windowRef.current.style.height = `${size.height}px`;
-    }
-  }, [pos, size]);
 
   // ─── Mouse events ────────────────────────────────────────────────
 
@@ -107,6 +99,40 @@ export const AppWindow = memo(function AppWindow({
     onTitleMouseDown,
   }), [onClose, onMinimize, onZoom, onFocus, onTitleMouseDown]);
 
+  // Обработчик для редактирования размера окна
+  const onResizeMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onFocus();
+
+    const startW = size.width;
+    const startH = size.height;
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    const onMove = (ev) => {
+      // Используем rAF для плавности
+      requestAnimationFrame(() => {
+        const deltaX = ev.clientX - startX;
+        const deltaY = ev.clientY - startY;
+
+        setSize({ 
+          width: Math.max(250, startW + deltaX), 
+          height: Math.max(200, startH + deltaY) 
+        });
+      });
+    };
+
+    const onUp = () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  };
+
+
   return (
     <WindowContext.Provider value={contextValue}>
       <div
@@ -134,7 +160,7 @@ export const AppWindow = memo(function AppWindow({
       >
         <div className="app-window__content">{children}</div>
 
-        <div className="resize-handle">
+        <div className="resize-handle" onMouseDown={onResizeMouseDown}>
           <svg width="14" height="14" viewBox="0 0 14 14">
             <path d="M14 0 L14 14 L0 14" fill="none" stroke="white" strokeWidth="1" opacity="0.6" />
             <path d="M10 14 L14 10" stroke="white" strokeWidth="1" opacity="0.6" />
