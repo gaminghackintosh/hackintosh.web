@@ -43,7 +43,7 @@
 | Notes — editable markdown-ish notes | ✅ Done |
 | Desktop icons | ✅ Done |
 | Dark / Light mode & Wallpaper toggle | ✅ Done |
-| Safari browser | ❌ Do you seriously think that’s even possible? 😉 |
+| Safari browser | 🟡 02.06.2026 — It turned out to be possible... just not in the way you think. |
 | App Store | ❌ Stop thinking that it’s possible 🫢 |
 | Spotlight search (⌘ Space) | 🔲 Planned |
 | Mission Control | 🔲 Planned |
