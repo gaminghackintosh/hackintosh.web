@@ -1,5 +1,5 @@
-@use "./../variables" as vars;
-@use "./../mixins" as *;
+@use "../variables" as *;
+@use "../mixins" as *;
 
 .about-mac-backdrop {
   position: fixed;

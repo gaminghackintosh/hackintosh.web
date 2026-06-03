@@ -1,19 +1,19 @@
 // macOS Sequoia
-import Sequoia_1 from "./../assets/images/wallpapers/Sequoia/wallpaper_default.png";
-import Sequoia_2 from "./../assets/images/wallpapers/Sequoia/wallpaper_2.png";
-import Sequoia_3 from "./../assets/images/wallpapers/Sequoia/wallpaper_3.png";
-import Sequoia_4 from "./../assets/images/wallpapers/Sequoia/wallpaper_4.png";
-import Sequoia_5 from "./../assets/images/wallpapers/Sequoia/wallpaper_5.png";
-import Sequoia_6 from "./../assets/images/wallpapers/Sequoia/wallpaper_6.png";
-import Sequoia_7 from "./../assets/images/wallpapers/Sequoia/wallpaper_7.png";
-import Sequoia_8 from "./../assets/images/wallpapers/Sequoia/wallpaper_8.png";
-import Sequoia_9 from "./../assets/images/wallpapers/Sequoia/wallpaper_9.png";
-import Sequoia_10 from "./../assets/images/wallpapers/Sequoia/wallpaper_10.png";
-import Sequoia_11 from "./../assets/images/wallpapers/Sequoia/wallpaper_11.png";
+import Sequoia_1 from "@/assets/images/wallpapers/Sequoia/wallpaper_default.png";
+import Sequoia_2 from "@/assets/images/wallpapers/Sequoia/wallpaper_2.png";
+import Sequoia_3 from "@/assets/images/wallpapers/Sequoia/wallpaper_3.png";
+import Sequoia_4 from "@/assets/images/wallpapers/Sequoia/wallpaper_4.png";
+import Sequoia_5 from "@/assets/images/wallpapers/Sequoia/wallpaper_5.png";
+import Sequoia_6 from "@/assets/images/wallpapers/Sequoia/wallpaper_6.png";
+import Sequoia_7 from "@/assets/images/wallpapers/Sequoia/wallpaper_7.png";
+import Sequoia_8 from "@/assets/images/wallpapers/Sequoia/wallpaper_8.png";
+import Sequoia_9 from "@/assets/images/wallpapers/Sequoia/wallpaper_9.png";
+import Sequoia_10 from "@/assets/images/wallpapers/Sequoia/wallpaper_10.png";
+import Sequoia_11 from "@/assets/images/wallpapers/Sequoia/wallpaper_11.png";
 
 // macOS Tahoe
-import Tahoe_1 from "./../assets/images/wallpapers/Tahoe/Tahoe Light.png";
-import Tahoe_2 from "./../assets/images/wallpapers/Tahoe/Tahoe Dark.png";
+import Tahoe_1 from "@/assets/images/wallpapers/Tahoe/Tahoe Light.png";
+import Tahoe_2 from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 
 const SEQUOIA_GROUP = 0;
 const TAHOE_GROUP = 1;

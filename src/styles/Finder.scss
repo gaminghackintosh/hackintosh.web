@@ -1,13 +1,13 @@
-@use "./variables" as vars;
+@use "variables" as *;
 
 .finder {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: vars.$color-finder-bg;
+  background: $color-finder-bg;
   backdrop-filter: blur(20px);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: vars.$color-text-primary;
+  color: $color-text-primary;
   user-select: none;
   overflow: hidden;
 
@@ -50,8 +50,17 @@
     cursor: pointer;
     padding: 0;
     flex-shrink: 0;
-    transition: filter 0.12s;
+    transition: transform 0.12s ease-out, filter 0.12s;
     position: relative;
+    will-change: transform;
+
+    &:hover {
+      transform: scale(1.08);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
 
     &::after {
       content: "";
@@ -148,7 +157,7 @@
     display: flex;
     align-items: center;
     padding: 0 12px;
-    background: vars.$color-finder-toolbar-bg;
+    background: $color-finder-toolbar-bg;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     gap: 10px;
     flex-shrink: 0;
@@ -169,7 +178,7 @@
     text-align: center;
     font-size: 13px;
     font-weight: 600;
-    color: vars.$color-text-primary;
+    color: $color-text-primary;
     pointer-events: none;
   }
 
@@ -238,7 +247,7 @@
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 8px;
     padding: 6px 12px 6px 28px;
-    color: vars.$color-text-primary;
+    color: $color-text-primary;
     font-size: 13px;
     width: 160px;
     outline: none;
@@ -350,6 +359,53 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    // Оптимизация рендеринга
+    contain: layout style paint;
+  }
+
+  /* ===== SELECTION BOX ===== */
+  &-selection-box {
+    position: absolute;
+    border: 1px solid rgba(0, 122, 255, 0.6);
+    background: rgba(0, 122, 255, 0.12);
+    pointer-events: none;
+    z-index: 100;
+    border-radius: 4px;
+    // GPU acceleration
+    transform: translateZ(0);
+    will-change: left, top, width, height;
+  }
+
+  /* ===== GRID VIEW ===== */
+  &-grid-container {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+    padding: 20px;
+    align-content: flex-start;
+    // Оптимизация
+    contain: layout style;
+    transform: translateZ(0);
+  }
+
+  &-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.08s;
+    text-align: center;
+    // Оптимизация
+    contain: layout style paint;
+
+    &:hover { background: rgba(255, 255, 255, 0.04); }
+    &.selected { background: rgba(0, 122, 255, 0.2); }
   }
 
   /* ===== PATH BAR ===== */
@@ -403,6 +459,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 4px 0;
+    // Оптимизация скролла
+    transform: translateZ(0);
   }
 
   &-list-item {
@@ -413,6 +471,8 @@
     transition: background 0.08s;
     font-size: 13px;
     min-height: 28px;
+    // Оптимизация
+    contain: layout style paint;
 
     &:hover { background: rgba(255, 255, 255, 0.04); }
     &.selected { background: rgba(0, 122, 255, 0.2); }
@@ -478,11 +538,14 @@
   &-grid-icon {
     font-size: 44px;
     margin-bottom: 4px;
+    // Оптимизация изображений
     img {
       width: 48px;
       height: 48px;
       border-radius: 12px;
       object-fit: contain;
+      // GPU acceleration
+      transform: translateZ(0);
     }
   }
 
@@ -492,6 +555,8 @@
     word-break: break-word;
     max-width: 100%;
     line-height: 1.2;
+    // Оптимизация текста
+    contain: layout style;
   }
 
   /* ===== COLUMN VIEW ===== */
@@ -507,6 +572,8 @@
     overflow-y: auto;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
     padding: 4px 0;
+    // Оптимизация
+    transform: translateZ(0);
   }
 
   &-column-item {
@@ -518,6 +585,8 @@
     font-size: 13px;
     transition: background 0.08s;
     min-height: 28px;
+    // Оптимизация
+    contain: layout style paint;
 
     &:hover { background: rgba(255, 255, 255, 0.04); }
     &.selected { background: rgba(0, 122, 255, 0.2); }
@@ -530,6 +599,8 @@
     overflow-y: auto;
     padding: 24px;
     background: rgba(255, 255, 255, 0.02);
+    // Оптимизация
+    contain: layout style;
   }
 
   &-preview-panel {
@@ -561,7 +632,7 @@
   &-preview-title {
     font-size: 16px;
     font-weight: 600;
-    color: vars.$color-text-primary;
+    color: $color-text-primary;
     margin-bottom: 2px;
   }
 
@@ -608,6 +679,8 @@
     justify-content: flex-start;
     min-height: 22px;
     align-items: center;
+    // Оптимизация
+    contain: content;
   }
 
   /* ===== EMPTY STATE ===== */

@@ -1,0 +1,373 @@
+@use "variables" as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// macOS Sequoia Control Center
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── Design Tokens ──────────────────────────────────────────────────
+$cc-width: 320px;
+$cc-padding: 12px;
+$cc-radius: 20px;
+$cc-gap: 10px;
+$card-radius: 16px;
+
+// Vibrant translucent backgrounds (Sequoia)
+$cc-bg-dark: rgba(40, 40, 42, 0.55);
+$cc-bg-light: rgba(245, 245, 247, 0.6);
+
+// Card fills inside CC
+$card-dark: rgba(118, 118, 128, 0.24);
+$card-light: rgba(255, 255, 255, 0.5);
+$card-hover-dark: rgba(118, 118, 128, 0.36);
+$card-hover-light: rgba(255, 255, 255, 0.7);
+
+// Borders & Shadows
+$border-dark: rgba(255, 255, 255, 0.1);
+$border-light: rgba(0, 0, 0, 0.06);
+$shadow: 0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+
+// Accent
+$accent-blue: #007AFF;
+
+// Text
+$text-dark: rgba(255, 255, 255, 0.92);
+$text-light: rgba(0, 0, 0, 0.88);
+$sub-dark: rgba(255, 255, 255, 0.55);
+$sub-light: rgba(0, 0, 0, 0.5);
+
+// ═══════════════════════════════════════════════════════════════════
+// Panel
+// ═══════════════════════════════════════════════════════════════════
+.cc {
+  position: fixed;
+  top: 30px;
+  right: 8px;
+  width: $cc-width;
+  padding: $cc-padding;
+  display: flex;
+  flex-direction: column;
+  gap: $cc-gap;
+  border-radius: $cc-radius;
+
+  background: $cc-bg-dark;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+
+  border: 0.5px solid $border-dark;
+  box-shadow: $shadow;
+
+  z-index: 10001;
+  animation: cc-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top right;
+
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  color: $text-dark;
+
+  @keyframes cc-pop {
+    from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+}
+
+// ─── Layout rows ────────────────────────────────────────────────────
+.cc__row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: $cc-gap;
+  min-width: 0;
+}
+
+.cc__tiles-col {
+  display: flex;
+  flex-direction: column;
+  gap: $cc-gap;
+  min-width: 0;
+}
+
+// ─── Generic Card ───────────────────────────────────────────────────
+.cc-card {
+  background: $card-dark;
+  border-radius: $card-radius;
+  padding: 6px;
+  transition: background 0.18s ease;
+}
+
+.cc-card--connectivity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cc-card--wide {
+  padding: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cc-card--slider {
+  padding: 12px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cc-card--theme {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+
+  &:hover { background: $card-hover-dark; }
+  &:active { transform: scale(0.99); }
+}
+
+.cc-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-dark;
+  letter-spacing: -0.01em;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Connectivity Rows
+// ═══════════════════════════════════════════════════════════════════
+.cc-conn-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 11px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.08); }
+  &:active { transform: scale(0.985); }
+}
+
+.cc-conn-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: $text-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &--active {
+    background: $accent-blue;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+  }
+}
+
+.cc-conn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.cc-conn-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: $text-dark;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-conn-status {
+  font-size: 10.5px;
+  color: $sub-dark;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Tiles
+// ═══════════════════════════════════════════════════════════════════
+.cc-tile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 11px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0;
+
+  &:hover { background: rgba(255, 255, 255, 0.12); }
+  &:active { transform: scale(0.97); }
+
+  &--active {
+    background: var(--tile-accent, #{$accent-blue});
+
+    .cc-tile-icon { color: #fff; }
+    .cc-tile-title { color: #fff; }
+    .cc-tile-subtitle { color: rgba(255, 255, 255, 0.8); }
+  }
+}
+
+.cc-tile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: $text-dark;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+
+  .cc-tile--active & {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.cc-tile-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.cc-tile-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-dark;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-tile-subtitle {
+  font-size: 10px;
+  color: $sub-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Sliders (Sequoia vertical-fill style)
+// ═══════════════════════════════════════════════════════════════════
+.cc-slider-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cc-slider-bar {
+  position: relative;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  cursor: pointer;
+
+  // Inset border
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+}
+
+.cc-slider-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--fill, 50%);
+  background: #fff;
+  border-radius: 9px 0 0 9px;
+  pointer-events: none;
+  will-change: width;
+  transition: width 0.06s linear;
+}
+
+.cc-slider-glyph {
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+  display: flex;
+}
+
+.cc-slider-caption {
+  font-size: 11px;
+  color: $sub-dark;
+  font-weight: 500;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Light Theme
+// ═══════════════════════════════════════════════════════════════════
+.light-theme {
+  .cc {
+    background: $cc-bg-light;
+    border-color: $border-light;
+    color: $text-light;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  }
+
+  .cc-card { background: $card-light; }
+  .cc-card--theme:hover { background: $card-hover-light; }
+  .cc-card-title { color: $text-light; }
+
+  .cc-conn-item:hover { background: rgba(0, 0, 0, 0.05); }
+  .cc-conn-icon {
+    background: rgba(0, 0, 0, 0.1);
+    color: $text-light;
+    &--active { background: $accent-blue; color: #fff; }
+  }
+  .cc-conn-label { color: $text-light; }
+  .cc-conn-status { color: $sub-light; }
+
+  .cc-tile {
+    background: rgba(255, 255, 255, 0.65);
+    &:hover { background: rgba(255, 255, 255, 0.9); }
+  }
+  .cc-tile-icon {
+    background: rgba(0, 0, 0, 0.08);
+    color: $text-light;
+  }
+  .cc-tile-title { color: $text-light; }
+  .cc-tile-subtitle { color: $sub-light; }
+
+  .cc-slider-bar {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+  }
+  .cc-slider-fill { background: #fff; }
+  .cc-slider-caption { color: $sub-light; }
+}
+
+// ─── Responsive ─────────────────────────────────────────────────────
+@media (max-width: 360px) {
+  .cc { width: 290px; right: 6px; }
+}

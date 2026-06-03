@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { WindowContext } from "./../../../components/layout";
+import { WindowContext } from "@/windows";
 
 export function NotesContent() {
   const { onClose, onMinimize, onZoom, onTitleMouseDown } = useContext(WindowContext);

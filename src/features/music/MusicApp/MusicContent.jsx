@@ -7,7 +7,7 @@ import React, {
   useMemo,
   memo,
 } from "react";
-import { WindowContext } from "./../../../components/layout";
+import { WindowContext } from "@/windows";
 import {
   FaPlay, FaPause, FaStepForward, FaStepBackward,
   FaRandom, FaSearch, FaVolumeUp, FaVolumeMute,

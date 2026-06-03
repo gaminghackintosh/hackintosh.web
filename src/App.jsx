@@ -1,16 +1,16 @@
 import React, { useState, useCallback, useEffect, memo } from "react";
-import { useMobileCheck } from "./hooks/useMobileCheck";
-import { useContextMenu } from "./hooks/useContextMenu";
-import { WindowManagerProvider, useWindowManager } from "./hooks/WindowManagerProvider";
-import { ThemeProvider, useTheme } from "./hooks/ThemeProvider";
+import { useMobileCheck } from "@/core/hooks";
+import { useContextMenu } from "@/core/hooks";
+import { WindowManagerProvider, useWindowManager } from "@/core/providers";
+import { ThemeProvider, useTheme } from "@/core/providers";
 // UI компоненты
-import { BootScreen, MobileNotSupported, ContextMenu } from "./components/ui";
+import { BootScreen, MobileNotSupported, ContextMenu } from "@/ui";
 // Layout компоненты
-import { Desktop, Dock, WindowList } from "./components/layout";
-import { MenuBar } from "./features/menubar/MenuBar/MenuBar";
+import { Desktop, Dock, WindowList } from "@/windows";
+import { MenuBar } from "@/features/menubar/MenuBar/MenuBar";
 // Оптимизация: ленивая загрузка обоев
-import defaultWallpaperDark from "./assets/images/wallpapers/Tahoe/Tahoe Dark.png";
-import defaultWallpaperLight from "./assets/images/wallpapers/Tahoe/Tahoe Light.png";
+import defaultWallpaperDark from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.png";
+import defaultWallpaperLight from "@/assets/images/wallpapers/Tahoe/Tahoe Light.png";
 
 /**
  * AppContent — основной контент приложения (внутри WindowManagerProvider + ThemeProvider)

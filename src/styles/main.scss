@@ -1,47 +1,52 @@
-@use "./variables" as vars;
-@use "./mixins" as *;
-@use "./theme" as *;
-@use "./globals";
-@use "./icons";
+@use "variables" as *;
+@use "mixins" as *;
+@use "theme" as *;
+
+// Core (globals, icons)
+@use "globals";
+@use "icons";
 
 // Components
-@use "./Dock";
-@use "./AppWindow/MenuBar";
-@use "./ContextMenu";
+@use "Dock";
+@use "ControlCenter";
+@use "ContextMenu";
 
-// Settings_Components
-@use "./_Settings/Settings";
-@use "./_Settings/WiFiSettings";
-@use "./_Settings/BluetoothSetting";
+// Windows / Layout
+@use "AppWindow/AppWindows";
+@use "AppWindow/MenuBar";
 
-@use "./BootScreen";
-@use "./Finder";
-@use "./_ControlCenter";
-@use "./AppWindow/AppWindows";
-@use "./_AboutThisMac/ATM";
+// Boot & UI
+@use "BootScreen";
+@use "MobileNotSupported/main";
 
-// APP
-@use "./_NotesWindow/Notes";
-@use "./_Musics/Music";
-@use "./_Terminal/Terminal";
-// Safari
-@use "./_Safari/SafariBrowser";
-@use "./_Safari/SafariPages";
-@use "./_Safari/SurprisePages";
+// Apps
+@use "Finder";
+@use "NotesWindow/Notes";
+@use "Musics/Music";
+@use "Terminal/Terminal";
+@use "Safari/SafariBrowser";
+@use "Safari/SafariPages";
+@use "Safari/SurprisePages";
+
+// Settings
+@use "Settings/Settings";
+
+// About This Mac
+@use "AboutThisMac/ATM";
 
 // Apply default dark theme
 body {
   margin: 0;
-  background: vars.$color-bg-body;
+  background: $color-bg-body;
   font-family: system-ui, -apple-system, sans-serif;
-  overflow: hidden; // Оптимизация: предотвращаем скролл страницы
+  overflow: hidden;
   
   @include dark-theme;
 }
 
 // Light theme override
 body.light-theme {
-  background: vars.$light-color-bg-body;
+  background: $light-color-bg-body;
   
   @include light-theme;
 }
@@ -55,11 +60,10 @@ body.light-theme {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  // Оптимизация производительности
   will-change: auto;
-  transform: translateZ(0); // GPU acceleration
-  contain: layout style paint; // Изоляция ререндеров
-  content-visibility: auto; // Браузер оптимизирует рендеринг
+  transform: translateZ(0);
+  contain: layout style paint;
+  content-visibility: auto;
 }
 
 // Оптимизация для окон

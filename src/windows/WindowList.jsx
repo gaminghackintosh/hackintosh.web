@@ -1,13 +1,9 @@
-import { useWindowManager } from './../../hooks/WindowManagerProvider';
+import { useWindowManager } from "@/core/providers";
 import { AppWindow } from './AppWindow/AppWindow';
-import { renderAppContent } from './../../utils/renderAppContent';
+import { renderAppContent } from "@/utils/renderAppContent";
 import { Suspense, memo, useCallback } from 'react';
-import { WindowLoading } from './../ui';
+import { WindowLoading } from "@/ui";
 
-/**
- * WindowItem — индивидуальное окно с собственным селектором состояния
- * ✅ Рендерится только при изменении СВОИХ данных, а не всех окон
- */
 const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
   const { 
     windows, 
@@ -25,7 +21,6 @@ const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
   const isActive = activeWin === winId;
   const isMinimized = minimizedApps.has(winId);
   
-  // ✅ Стабильные функции для этого конкретного окна
   const handleClose = useCallback(() => closeWindow(winId), [closeWindow, winId]);
   const handleMinimize = useCallback(() => minimizeWindow(winId), [minimizeWindow, winId]);
   const handleFocus = useCallback(() => focusWindow(winId), [focusWindow, winId]);
@@ -52,14 +47,9 @@ const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
     </AppWindow>
   );
 }, (prev, next) => {
-  // ✅ Сравниваем только ID окна — остальное внутри компонента
   return prev.winId === next.winId && prev.setWallpaper === next.setWallpaper;
 });
 
-/**
- * WindowList — рендерит список окон
- * ✅ Не передаёт map в родитель, каждое окно независимо
- */
 export const WindowList = memo(function WindowList({ setWallpaper }) {
   const { windows } = useWindowManager();
   
@@ -71,6 +61,5 @@ export const WindowList = memo(function WindowList({ setWallpaper }) {
     </>
   );
 }, (prev, next) => {
-  // ✅ Сравниваем только количество окон и setWallpaper
   return prev.setWallpaper === next.setWallpaper;
 });

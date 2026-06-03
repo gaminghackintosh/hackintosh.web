@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { resolveAssetUrl } from "./../../assets/resolveIcon";
+import { resolveAssetUrl } from "@/assets/resolveIcon";
 
 
 export function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "", isLightTheme = false, style, imgStyle, className }) {

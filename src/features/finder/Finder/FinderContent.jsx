@@ -1,94 +1,116 @@
-import React, { useState, useEffect, useContext, memo, useCallback, useMemo } from "react";
-import { AssetIcon } from "./../../../components/ui";
-import { APPS } from "./../../../constants/apps";
+import React, { useState, useEffect, useContext, memo, useCallback, useMemo, useRef } from "react";
+import { AssetIcon } from "@/ui";
+import { APPS } from "@/core/constants/apps";
 import { SidebarIcon } from "./SidebarIcon";
-import { WindowContext } from "./../../../components/layout"; 
-import { useContextMenu } from "./../../../hooks/useContextMenu";
-import { ContextMenu } from "./../../../components/ui";
-// Import icons for the macOS Finder
-import folderIconPng from "./../../../assets/icons/desktop/folder_icon.png";
+import { WindowContext } from "@/windows";
+import { useContextMenu } from "@/core/hooks/useContextMenu";
+import { ContextMenu } from "@/ui";
+import folderIconPng from "@/assets/icons/desktop/folder_icon.png";
 
-// Набор встроенных векторных иконок в стиле macOS
+// Оптимизированный рендер SVG иконок (memoized индивидуально)
+const FinderSVGFolder = memo(({ size = "100%" }) => (
+  <img 
+    src={folderIconPng} 
+    alt="Folder" 
+    style={{ width: size, height: size, objectFit: 'contain' }}
+    draggable={false}
+    loading="lazy"
+  />
+));
+
+const FinderSVGFile = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H13.5L18 6.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#ffffff" fillOpacity="0.15" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+    <path d="M13.5 2V5.5C13.5 6.05228 13.9477 6.5 14.5 6.5H18" fill="rgba(255,255,255,0.3)" />
+    <line x1="9" y1="11" x2="15" y2="11" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="9" y1="14" x2="15" y2="14" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="9" y1="17" x2="13" y2="17" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+));
+
+const FinderSVGCodeFile = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H13.5L18 6.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#3a3a3c" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+    <path d="M13.5 2V5.5C13.5 6.05228 13.9477 6.5 14.5 6.5H18" fill="rgba(255,255,255,0.3)" />
+    <path d="M8.5 12L7 13.5L8.5 15" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M13.5 12L15 13.5L13.5 15" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="11.832" y1="11.5" x2="10.168" y2="15.5" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+));
+
+const FinderSVGDrive = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="14" width="18" height="6" rx="1.5" fill="#a2a2a7" />
+    <circle cx="17.5" cy="17" r="1" fill="#34c759" />
+    <path d="M5 14L7.5 5.5C7.75 4.5 8.5 4 9.5 4H14.5C15.5 4 16.25 4.5 16.5 5.5L19 14H5Z" fill="rgba(255,255,255,0.15)" stroke="#a2a2a7" strokeWidth="1" />
+  </svg>
+));
+
+const FinderSVGImage = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="16" height="16" rx="3" fill="#34c759" fillOpacity="0.2" stroke="#34c759" strokeWidth="1.5" />
+    <circle cx="8.5" cy="8.5" r="1.5" fill="#34c759" />
+    <path d="M4.5 18.5L9 13L13.5 17.5L16.5 14.5L19.5 17.5V18.5H4.5Z" fill="#34c759" />
+  </svg>
+));
+
+const FinderSGVArchive = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H16.5C17.3284 2 18 2.67157 18 3.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#ff9f0a" fillOpacity="0.2" stroke="#ff9f0a" strokeWidth="1.5" />
+    <rect x="10" y="5" width="4" height="10" rx="0.5" fill="#ff9f0a" />
+    <line x1="10" y1="7" x2="14" y2="7" stroke="#ffffff" strokeWidth="1" />
+    <line x1="10" y1="10" x2="14" y2="10" stroke="#ffffff" strokeWidth="1" />
+    <line x1="10" y1="13" x2="14" y2="13" stroke="#ffffff" strokeWidth="1" />
+  </svg>
+));
+
+const FinderSVGSystem = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H9.58579C9.98361 4 10.3652 4.15804 10.6464 4.43934L12.5607 6.35355C12.842 6.63485 13.2236 6.79289 13.6214 6.79289H18.5C19.3284 6.79289 20 7.46447 20 8.29289V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V5.5Z" fill="#ff453a" fillOpacity="0.2" stroke="#ff453a" strokeWidth="1.5" />
+    <circle cx="12" cy="13" r="2.5" stroke="#ff453a" strokeWidth="1.5" />
+  </svg>
+));
+
+const FinderSVGUsers = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H9.58579C9.98361 4 10.3652 4.15804 10.6464 4.43934L12.5607 6.35355C12.842 6.63485 13.2236 6.79289 13.6214 6.79289H18.5C19.3284 6.79289 20 7.46447 20 8.29289V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V5.5Z" fill="#bf5af2" fillOpacity="0.2" stroke="#bf5af2" strokeWidth="1.5" />
+    <circle cx="12" cy="11" r="2" fill="#bf5af2" />
+    <path d="M8 16.5C8 14.5 10 14 12 14C14 14 16 14.5 16 16.5V17H8V16.5Z" fill="#bf5af2" />
+  </svg>
+));
+
+const FinderSVGComputer = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="4" width="18" height="11" rx="1.5" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" />
+    <path d="M9 19H15L14 15H10L9 19Z" fill="rgba(255,255,255,0.4)" />
+    <line x1="7" y1="21" x2="17" y2="21" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+));
+
+const FinderSVGEmptyFolder = memo(() => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 6C4 4.89543 4.89543 4 6 4H10L12 6H18C19.1046 6 20 6.89543 20 8V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeDasharray="3 3"/>
+  </svg>
+));
+
+// Объект-обёртка для иконок
 const FinderSVG = {
-  Folder: ({ size = "100%" }) => (
-    <img 
-      src={folderIconPng} 
-      alt="Folder" 
-      style={{ width: size, height: size, objectFit: 'contain' }}
-      draggable={false}
-    />
-  ),
-  File: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H13.5L18 6.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#ffffff" fillOpacity="0.15" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
-      <path d="M13.5 2V5.5C13.5 6.05228 13.9477 6.5 14.5 6.5H18" fill="rgba(255,255,255,0.3)" />
-      <line x1="9" y1="11" x2="15" y2="11" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="9" y1="14" x2="15" y2="14" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="9" y1="17" x2="13" y2="17" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  ),
-  CodeFile: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H13.5L18 6.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#3a3a3c" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-      <path d="M13.5 2V5.5C13.5 6.05228 13.9477 6.5 14.5 6.5H18" fill="rgba(255,255,255,0.3)" />
-      <path d="M8.5 12L7 13.5L8.5 15" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M13.5 12L15 13.5L13.5 15" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <line x1="11.832" y1="11.5" x2="10.168" y2="15.5" stroke="#0a84ff" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  ),
-  Drive: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="14" width="18" height="6" rx="1.5" fill="#a2a2a7" />
-      <circle cx="17.5" cy="17" r="1" fill="#34c759" />
-      <path d="M5 14L7.5 5.5C7.75 4.5 8.5 4 9.5 4H14.5C15.5 4 16.25 4.5 16.5 5.5L19 14H5Z" fill="rgba(255,255,255,0.15)" stroke="#a2a2a7" strokeWidth="1" />
-    </svg>
-  ),
-  Image: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="4" width="16" height="16" rx="3" fill="#34c759" fillOpacity="0.2" stroke="#34c759" strokeWidth="1.5" />
-      <circle cx="8.5" cy="8.5" r="1.5" fill="#34c759" />
-      <path d="M4.5 18.5L9 13L13.5 17.5L16.5 14.5L19.5 17.5V18.5H4.5Z" fill="#34c759" />
-    </svg>
-  ),
-  Archive: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 3.5C6 2.67157 6.67157 2 7.5 2H16.5C17.3284 2 18 2.67157 18 3.5V20.5C18 21.3284 17.3284 22 16.5 22H7.5C6.67157 22 6 21.3284 6 20.5V3.5Z" fill="#ff9f0a" fillOpacity="0.2" stroke="#ff9f0a" strokeWidth="1.5" />
-      <rect x="10" y="5" width="4" height="10" rx="0.5" fill="#ff9f0a" />
-      <line x1="10" y1="7" x2="14" y2="7" stroke="#ffffff" strokeWidth="1" />
-      <line x1="10" y1="10" x2="14" y2="10" stroke="#ffffff" strokeWidth="1" />
-      <line x1="10" y1="13" x2="14" y2="13" stroke="#ffffff" strokeWidth="1" />
-    </svg>
-  ),
-  System: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H9.58579C9.98361 4 10.3652 4.15804 10.6464 4.43934L12.5607 6.35355C12.842 6.63485 13.2236 6.79289 13.6214 6.79289H18.5C19.3284 6.79289 20 7.46447 20 8.29289V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V5.5Z" fill="#ff453a" fillOpacity="0.2" stroke="#ff453a" strokeWidth="1.5" />
-      <circle cx="12" cy="13" r="2.5" stroke="#ff453a" strokeWidth="1.5" />
-    </svg>
-  ),
-  Users: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H9.58579C9.98361 4 10.3652 4.15804 10.6464 4.43934L12.5607 6.35355C12.842 6.63485 13.2236 6.79289 13.6214 6.79289H18.5C19.3284 6.79289 20 7.46447 20 8.29289V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V5.5Z" fill="#bf5af2" fillOpacity="0.2" stroke="#bf5af2" strokeWidth="1.5" />
-      <circle cx="12" cy="11" r="2" fill="#bf5af2" />
-      <path d="M8 16.5C8 14.5 10 14 12 14C14 14 16 14.5 16 16.5V17H8V16.5Z" fill="#bf5af2" />
-    </svg>
-  ),
-  Computer: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="4" width="18" height="11" rx="1.5" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" />
-      <path d="M9 19H15L14 15H10L9 19Z" fill="rgba(255,255,255,0.4)" />
-      <line x1="7" y1="21" x2="17" y2="21" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  ),
-  EmptyFolder: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 6C4 4.89543 4.89543 4 6 4H10L12 6H18C19.1046 6 20 6.89543 20 8V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeDasharray="3 3"/>
-    </svg>
-  )
+  Folder: FinderSVGFolder,
+  File: FinderSVGFile,
+  CodeFile: FinderSVGCodeFile,
+  Drive: FinderSVGDrive,
+  Image: FinderSVGImage,
+  Archive: FinderSGVArchive,
+  System: FinderSVGSystem,
+  Users: FinderSVGUsers,
+  Computer: FinderSVGComputer,
+  EmptyFolder: FinderSVGEmptyFolder
 };
 
 const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize, onMaximize }) {
   const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [currentFolder, setCurrentFolder] = useState("macos");
   const [viewMode, setViewMode] = useState("list");
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,11 +119,124 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
   const [tabs, setTabs] = useState([
     { id: 0, label: "Macintosh HD", folder: "macos" }
   ]);
+  
+  // Selection box state - оптимизировано
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionStart, setSelectionStart] = useState(null);
+  const selectionEndRef = useRef(null);
+  const fileAreaRef = useRef(null);
+  const fileItemsRef = useRef({});
+  const rAFRef = useRef(null);
+  const debouncedSearchRef = useRef(null);
   const columnWidths = useMemo(() => ({
     name: 300,
     size: 100,
     modified: 150
   }), []);
+
+  // ─── Selection Box Handlers (оптимизировано с requestAnimationFrame) ───────────────────────────────────────────────
+  const handleFileAreaMouseDown = useCallback((e) => {
+    if (e.button !== 0) return;
+    if (e.target !== fileAreaRef.current && !e.target.closest('.finder-grid-container, .finder-list-container')) {
+      return;
+    }
+    
+    if (!e.ctrlKey && !e.metaKey) {
+      setSelectedFile(null);
+      setSelectedFiles([]);
+    }
+    
+    setIsSelecting(true);
+    setSelectionStart({ x: e.clientX, y: e.clientY });
+    selectionEndRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  const handleFileAreaMouseMove = useCallback((e) => {
+    if (!isSelecting) return;
+    
+    selectionEndRef.current = { x: e.clientX, y: e.clientY };
+    
+    if (rAFRef.current) return;
+    
+    rAFRef.current = requestAnimationFrame(() => {
+      rAFRef.current = null;
+      
+      const start = selectionStart;
+      const end = selectionEndRef.current;
+      
+      if (!start || !end) return;
+      
+      const box = {
+        left: Math.min(start.x, end.x),
+        right: Math.max(start.x, end.x),
+        top: Math.min(start.y, end.y),
+        bottom: Math.max(start.y, end.y)
+      };
+      
+      const selectedItems = [];
+      
+      Object.entries(fileItemsRef.current).forEach(([filename, item]) => {
+        if (item) {
+          const rect = item.getBoundingClientRect();
+          
+          const intersects = !(
+            rect.right < box.left ||
+            rect.left > box.right ||
+            rect.bottom < box.top ||
+            rect.top > box.bottom
+          );
+          
+          if (intersects) {
+            selectedItems.push(filename);
+          }
+        }
+      });
+      
+      setSelectedFiles(selectedItems);
+    });
+  }, [isSelecting, selectionStart]);
+
+  const handleFileAreaMouseUp = useCallback(() => {
+    if (isSelecting) {
+      setIsSelecting(false);
+      setSelectionStart(null);
+      selectionEndRef.current = null;
+      
+      if (selectedFiles.length === 1) {
+        setSelectedFile(selectedFiles[0]);
+      } else if (selectedFiles.length === 0) {
+        setSelectedFile(null);
+      }
+    }
+  }, [isSelecting, selectedFiles]);
+
+  // Register file item refs
+  const registerFileItem = useCallback((filename, element) => {
+    if (element) {
+      fileItemsRef.current[filename] = element;
+    } else {
+      delete fileItemsRef.current[filename];
+    }
+  }, []);
+
+  // Global mouse up to catch selection end outside the area
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      if (isSelecting) {
+        setIsSelecting(false);
+        setSelectionStart(null);
+        selectionEndRef.current = null;
+      }
+    };
+    
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      if (rAFRef.current) {
+        cancelAnimationFrame(rAFRef.current);
+      }
+    };
+  }, [isSelecting]);
 
   const sidebar = useMemo(() => ({
     favourites: [
@@ -130,6 +265,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     ],
   }), []);
 
+  // Оптимизированные данные файловой системы (memoized)
   const filesystem = useMemo(() => ({
     macos: [
       { name: "Applications", type: "folder", iconType: "folder", size: "--", modified: "Today", path: "/Applications" },
@@ -184,6 +320,25 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     shared: [],
   }), []);
 
+  // Debounced search для оптимизации
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  
+  useEffect(() => {
+    if (debouncedSearchRef.current) {
+      clearTimeout(debouncedSearchRef.current);
+    }
+    
+    debouncedSearchRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 150);
+    
+    return () => {
+      if (debouncedSearchRef.current) {
+        clearTimeout(debouncedSearchRef.current);
+      }
+    };
+  }, [searchQuery]);
+
   const getRecents = useCallback(() => {
     const recent = [];
     const addIfRecent = (items) => {
@@ -217,11 +372,11 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
         }
       }
     }
-    if (searchQuery) {
-      files = files.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (debouncedSearchQuery) {
+      files = files.filter(f => f.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
     }
     return files;
-  }, [currentFolder, searchQuery, filesystem, getRecents]);
+  }, [currentFolder, debouncedSearchQuery, filesystem, getRecents]);
 
   const currentFiles = useMemo(() => getCurrentFiles(), [getCurrentFiles]);
   const selectedItem = useMemo(() => currentFiles.find(f => f.name === selectedFile), [currentFiles, selectedFile]);
@@ -329,6 +484,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
   }, []);
 
   const handleContextMenu = useCallback((e, file) => {
+    e.stopPropagation();
     const items = [
       { label: "Open", action: () => openApplication(file.exec) },
       { label: "Open with...", action: () => console.log("Open with...") },
@@ -342,18 +498,35 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
     ];
     openContextMenu(e, items);
   }, [openContextMenu, openApplication]);
-
-  const handleFileClick = useCallback((fileName) => {
-    setSelectedFile(fileName);
+    
+  const handleFileClick = useCallback((e, fileName) => {
+    e.stopPropagation();
+    
+    if (e.ctrlKey || e.metaKey) {
+      setSelectedFile(fileName);
+      setSelectedFiles(prev => {
+        if (prev.includes(fileName)) {
+          return prev.filter(f => f !== fileName);
+        } else {
+          return [...prev, fileName];
+        }
+      });
+    } else {
+      setSelectedFile(fileName);
+      setSelectedFiles([fileName]);
+    }
   }, []);
 
   const handleFileDoubleClick = useCallback((file) => {
     if (file.type === "folder") {
       navigateToFolder(file.name, file.path);
     } else if (file.type === "app") {
-      openApplication(file.exec);
+      // Оптимизированный запуск приложений
+      requestAnimationFrame(() => {
+        if (openApp) openApp(file.exec);
+      });
     }
-  }, [navigateToFolder, openApplication]);
+  }, [navigateToFolder, openApp]);
 
   return (
     <div className="finder">
@@ -459,7 +632,24 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
             </button>
           </div>
 
-          <div className="finder-file-area">
+          <div className="finder-file-area" 
+               ref={fileAreaRef}
+               onMouseDown={handleFileAreaMouseDown}
+               onMouseMove={handleFileAreaMouseMove}
+               onMouseUp={handleFileAreaMouseUp}>
+            
+            {/* Selection Box Overlay (оптимизировано) */}
+            {isSelecting && selectionStart && (
+              <div 
+                className="finder-selection-box"
+                style={{
+                  left: Math.min(selectionStart.x, selectionEndRef.current?.x || selectionStart.x) - (fileAreaRef.current?.getBoundingClientRect().left || 0),
+                  top: Math.min(selectionStart.y, selectionEndRef.current?.y || selectionStart.y) - (fileAreaRef.current?.getBoundingClientRect().top || 0),
+                  width: Math.abs((selectionEndRef.current?.x || selectionStart.x) - selectionStart.x),
+                  height: Math.abs((selectionEndRef.current?.y || selectionStart.y) - selectionStart.y)
+                }}
+              />
+            )}
             <div className="finder-path-bar">
               <span className="finder-path-item">{getFolderDisplayName()}</span>
             </div>
@@ -474,7 +664,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
 
             {/* Сетка */}
             {isGridView && (
-              <div className="finder-grid-container">
+              <div className="finder-grid-container" onMouseDown={(e) => e.stopPropagation()}>
                 {currentFiles.length === 0 ? (
                   <div className="finder-empty-state">
                     <div className="finder-empty-icon"><FinderSVG.EmptyFolder /></div>
@@ -482,7 +672,14 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
                   </div>
                 ) : (
                   currentFiles.map(file => (
-                    <div key={file.name} className={`finder-grid-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)}>
+                    <div 
+                      key={file.name} 
+                      ref={(el) => registerFileItem(file.name, el)}
+                      data-filename={file.name}
+                      className={`finder-grid-item ${selectedFiles.includes(file.name) ? "selected" : ""}`} 
+                      onClick={(e) => handleFileClick(e, file.name)} 
+                      onDoubleClick={() => handleFileDoubleClick(file)}
+                      onContextMenu={(e) => handleContextMenu(e, file)}>
                       <div className="finder-grid-icon">{renderIcon(file)}</div>
                       <span className="finder-grid-name">{file.name}</span>
                     </div>
@@ -496,7 +693,14 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
               <div className="finder-column-container">
                 <div className="finder-column-list">
                   {currentFiles.map(file => (
-                    <div key={file.name} className={`finder-column-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)}>
+                    <div 
+                      key={file.name} 
+                      ref={(el) => registerFileItem(file.name, el)}
+                      data-filename={file.name}
+                      className={`finder-column-item ${selectedFiles.includes(file.name) ? "selected" : ""}`} 
+                      onClick={(e) => handleFileClick(e, file.name)} 
+                      onDoubleClick={() => handleFileDoubleClick(file)}
+                      onContextMenu={(e) => handleContextMenu(e, file)}>
                       <span className="finder-column-item-icon">{renderIcon(file, 16)}</span>
                       <span>{file.name}</span>
                     </div>
@@ -533,7 +737,14 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
                     </div>
                   ) : (
                     currentFiles.map(file => (
-                      <div key={file.name} className={`finder-list-item ${selectedFile === file.name ? "selected" : ""}`} onClick={() => handleFileClick(file.name)} onDoubleClick={() => handleFileDoubleClick(file)} onContextMenu={(e) => handleContextMenu(e, file)}>
+                      <div 
+                        key={file.name} 
+                        ref={(el) => registerFileItem(file.name, el)}
+                        data-filename={file.name}
+                        className={`finder-list-item ${selectedFiles.includes(file.name) ? "selected" : ""}`} 
+                        onClick={(e) => handleFileClick(e, file.name)} 
+                        onDoubleClick={() => handleFileDoubleClick(file)}
+                        onContextMenu={(e) => handleContextMenu(e, file)}>
                         <span className="finder-list-icon" style={{ width: columnWidths.name }}>
                           <span className="finder-list-icon-wrapper">{renderIcon(file)}</span>
                           <span className="finder-list-text-name">{file.name}</span>
@@ -568,7 +779,7 @@ const FinderContent = memo(function FinderContent({ openApp, onClose, onMinimize
 
           <div className="finder-status-bar">
             {currentFiles.length} item{currentFiles.length !== 1 ? "s" : ""}
-            {selectedFile && ` • ${selectedFile} selected`}
+            {selectedFiles.length > 0 && ` • ${selectedFiles.length} selected`}
           </div>
         </div>
 

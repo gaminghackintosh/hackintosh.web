@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useCallback, useState, useRef } from "react";
-import { APPS } from "./../constants/apps";
-import { INITIAL_POSITIONS } from "./../constants/positions";
+import { APPS } from "@/core/constants/apps";
+import { INITIAL_POSITIONS } from "@/core/constants/positions";
 
 const WindowManagerContext = createContext(null);
 

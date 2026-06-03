@@ -2,7 +2,7 @@ import {
   APP_ICONS,
   APP_ICONS_LIGHT,
   APP_ICON_FALLBACK,
-} from "./../assets/paths";
+} from "@/assets/paths";
 
 export const INITIAL_POSITIONS = {
   finder: { x: 80, y: 56, w: 940, h: 560 }, 

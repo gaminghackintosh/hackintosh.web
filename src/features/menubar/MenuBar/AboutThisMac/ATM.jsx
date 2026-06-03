@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
-import { AssetIcon } from "./../../../../components/ui";
-import { APP_ICONS } from "./../../../../assets/paths";
+import { AssetIcon } from "@/ui";
+import { APP_ICONS } from "@/assets/paths";
 
 export default function AboutThisMac({ onClose }) {
   // Закрытие по клику вне окна

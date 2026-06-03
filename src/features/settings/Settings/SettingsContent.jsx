@@ -1,14 +1,15 @@
 import React, { useState, useContext, useMemo, useCallback, memo, useEffect } from "react";
-import { WALLPAPER_GROUPS } from "./../../../constants/wallpapers";
-import { WindowContext } from "./../../../components/layout";
+import { WALLPAPER_GROUPS } from "@/core/constants/wallpapers";
+import { WindowContext } from "@/windows";
+import appleIdAvatar from "@/assets/images/logo/logo_butterfly.png";
 
 // Icons - PNG images for network section
-import WiFi_Icon      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
-import Bluetooth_Icon from "./../../../assets/icons/Settings_menuSections/Bluetooth.png";
-import Network_Icon   from "./../../../assets/icons/Settings_menuSections/Network.ico";
-import GameCenter_Icon from "./../../../assets/icons/Settings_menuSections/Game_Center.png";
+import WiFi_Icon      from "@/assets/icons/Settings_menuSections/Wi-Fi.png";
+import Bluetooth_Icon from "@/assets/icons/Settings_menuSections/Bluetooth.png";
+import Network_Icon   from "@/assets/icons/Settings_menuSections/Network.ico";
+import GameCenter_Icon from "@/assets/icons/Settings_menuSections/Game_Center.png";
 
-// SVG icons for all other sections
+// SVG icons
 import {
   NotificationsIcon,
   SoundIcon,
@@ -153,6 +154,13 @@ const UnimplementedPanel = memo(({ title }) => (
       <p>This section is under development and will be available in a future update.</p>
     </div>
   </SettingsPanel>
+));
+
+// ─── Apple ID Avatar Component (memoized) ────────────────────────────────────
+const AppleIdAvatar = memo(() => (
+  <div className="apple-id-avatar">
+    <img src={appleIdAvatar} alt="Apple ID Avatar" loading="lazy" />
+  </div>
 ));
 
 // ─── Panel для обоев (memoized) ──────────────────────────────────────────────
@@ -373,9 +381,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
             }
           }}
         >
-          <div className="apple-id-avatar">
-            <span className="apple-id-avatar-fallback">g</span>
-          </div>
+          <AppleIdAvatar />
           <div className="apple-id-info">
             <div className="apple-id-name">ghost</div>
             <div className="apple-id-email">Apple ID</div>

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo, memo } from "react";
-import { WindowContext } from "./../../../components/layout";
+import { WindowContext } from "@/windows";
 import {
   FiArrowLeft, FiArrowRight, FiRefreshCw,
   FiShare2, FiPlus, FiSearch,
@@ -8,7 +8,7 @@ import { HiOutlineLockClosed, HiOutlineShieldCheck } from "react-icons/hi";
 import { TbLayoutSidebarLeftExpand } from "react-icons/tb";
 import { BsSliders2 } from "react-icons/bs";
 
-import safariBg from "./../../../assets/images/Safari_Wallpapers/Safari_Background.webp";
+import safariBg from "@/assets/images/Safari_Wallpapers/Safari_Background.webp";
 import { AboutPage, HackintoshPage, CatsPage, SurprisePage } from "./Local_Pages/LocalPages";
 import { MemoryGame } from "./Local_Pages/MemoryGame";
 

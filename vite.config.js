@@ -79,6 +79,15 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': '/src',
+      '@core': '/src/core',
+      '@features': '/src/features',
+      '@ui': '/src/ui',
+      '@windows': '/src/windows',
+      '@styles': '/src/styles',
+      '@assets': '/src/assets',
+      '@utils': '/src/utils',
+      '@hooks': '/src/hooks',
+      '@components': '/src/components',
     },
   },
   // ✅ Предзагрузка для критичных зависимостей

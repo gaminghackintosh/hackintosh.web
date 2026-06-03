@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { WindowContext } from "./../../../components/layout";
+import { WindowContext } from "@/windows";
 import { VscTerminalBash } from "react-icons/vsc";
 
 // Массив для команды fortune

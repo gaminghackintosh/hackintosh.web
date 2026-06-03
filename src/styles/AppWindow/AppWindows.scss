@@ -1,19 +1,16 @@
-@use "./../variables" as vars;
-@use "./../mixins" as *; 
+@use "../variables" as *;
+@use "../mixins" as *;
 
 .app-window {
+  position: fixed;
   display: flex;
   flex-direction: column;
-  position: fixed;
   @include glass-dark(rgba(25, 25, 28, 0.88), 40px, 0.1, true);
   border-radius: 12px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   will-change: transform;
   backface-visibility: hidden;
   transition: none !important;
-  
 
   &--active {
     border-color: rgba(255, 255, 255, 0.1);
@@ -33,6 +30,24 @@
   &__content {
     flex: 1;
     overflow: hidden;
+  }
+
+  // Анимация разворачивания/сворачивания
+  transition:
+    opacity .28s cubic-bezier(.16,1,.3,1),
+    scale .28s cubic-bezier(.16,1,.3,1);
+
+  &--minimized {
+    opacity: 0;
+    scale: 0.6;
+    pointer-events: none;
+  }
+
+  &--animating {
+    transition:
+      transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   }
 }
 
@@ -61,31 +76,102 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  transition: opacity 0.2s, filter 0.1s;
+  position: relative;
+  transition: background-color 0.15s ease-out, transform 0.1s ease-out;
+  will-change: transform;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
+  /* Базовые цвета */
   &--close {
     background: #ff5f57;
     cursor: pointer;
+    background-image: none;
+    background-size: 8px 8px;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   &--minimize {
     background: #ffbd2e;
     cursor: pointer;
+    background-image: none;
+    background-size: 8px 8px;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   &--zoom {
     background: #28c840;
-    cursor: default;
+    cursor: pointer;
+    background-image: none;
+    background-size: 8px 8px;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
+  /* Hover эффект — macOS style */
   &:hover {
-    filter: brightness(0.8);
+    transform: scale(1.08);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* Иконки при hover — как в macOS */
+  &--close::before,
+  &--minimize::before,
+  &--zoom::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: all 0.15s ease-out;
+    will-change: transform, opacity;
+  }
+
+  /* Close icon */
+  &--close::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='rgba(0,0,0,0.5)' d='M4 0L0 4l4 4 4-4L4 0zm3.2 1.2L1.2 7.2 0 6 4 2l4 4-1.2 1.2L0 6 4 2 8 6 4 0z'/%3E%3C/svg%3E");
+  }
+
+  /* Minimize icon */
+  &--minimize::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='rgba(0,0,0,0.5)' d='M0 4h8v1H0z'/%3E%3C/svg%3E");
+  }
+
+  /* Zoom icon */
+  &--zoom::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='rgba(0,0,0,0.5)' d='M2 0h4v1H2zM0 2h8v4H0z'/%3E%3C/svg%3E");
+  }
+
+  /* Показываем иконки при hover */
+  &:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Цвет при hover */
+  &--close:hover {
+    background-color: #ff6b64;
+  }
+  &--minimize:hover {
+    background-color: #ffc83d;
+  }
+  &--zoom:hover {
+    background-color: #34d052;
   }
 }
 
 .traffic-lights--inactive .traffic-light {
   opacity: 0.4;
   box-shadow: none;
+  pointer-events: none;
 }
 
 .traffic-lights--active .traffic-light {
