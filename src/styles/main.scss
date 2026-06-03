@@ -58,7 +58,14 @@ body.light-theme {
   // Оптимизация производительности
   will-change: auto;
   transform: translateZ(0); // GPU acceleration
-  contain: layout style paint; // Изоляция
+  contain: layout style paint; // Изоляция ререндеров
+  content-visibility: auto; // Браузер оптимизирует рендеринг
+}
+
+// Оптимизация для окон
+.window {
+  contain: layout style paint;
+  content-visibility: auto;
 }
 
 .resize-handle {

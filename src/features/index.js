@@ -1,5 +1,4 @@
 // Feature modules - приложения
-// Lazy loading для оптимизации начальной загрузки
 import { lazy } from 'react';
 
 export const Finder = lazy(() => import('../features/finder/FinderContent'));

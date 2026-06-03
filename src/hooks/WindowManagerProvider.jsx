@@ -1,8 +1,10 @@
-import { useState, useCallback, useRef, useMemo } from "react";
+import { createContext, useContext, useMemo, useCallback, useState, useRef } from "react";
 import { APPS } from "./../constants/apps";
-import { INITIAL_POSITIONS } from "./../constants/apps";
+import { INITIAL_POSITIONS } from "./../constants/positions";
 
-export function useWindowManager() {
+const WindowManagerContext = createContext(null);
+
+export function WindowManagerProvider({ children }) {
   const [windows, setWindows] = useState([]);
   const [openApps, setOpenApps] = useState([]);
   const [activeWin, setActiveWin] = useState(null);
@@ -16,7 +18,6 @@ export function useWindowManager() {
   const focusWindow = useCallback((appId) => {
     if (activeWin === appId) return;
     
-    // Очищаем предыдущий таймер
     if (focusTimeoutRef.current) {
       cancelAnimationFrame(focusTimeoutRef.current);
     }
@@ -141,27 +142,44 @@ export function useWindowManager() {
     });
   }, [windowStates]);
 
-  // Мемоизированный результат для предотвращения лишних ререндеров
-  return useMemo(() => ({
+  // Стабильный value объект для контекста
+  const value = useMemo(() => ({
     windows,
     openApps,
     activeWin,
     minimizedApps,
+    windowStates,
     openApp,
     closeWindow,
     minimizeWindow,
     maximizeWindow,
     focusWindow,
     setActiveWin,
+    setWindows,
   }), [
-    windows.length,
-    openApps.length,
+    windows,
+    openApps,
     activeWin,
-    minimizedApps.size,
+    minimizedApps,
+    windowStates,
     openApp,
     closeWindow,
     minimizeWindow,
     maximizeWindow,
     focusWindow,
   ]);
+
+  return (
+    <WindowManagerContext.Provider value={value}>
+      {children}
+    </WindowManagerContext.Provider>
+  );
 }
+
+export const useWindowManager = () => {
+  const context = useContext(WindowManagerContext);
+  if (!context) {
+    throw new Error('useWindowManager must be used within WindowManagerProvider');
+  }
+  return context;
+};

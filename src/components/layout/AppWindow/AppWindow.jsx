@@ -34,13 +34,27 @@ export const AppWindow = memo(function AppWindow({
   const startPos = useRef({ x: 0, y: 0 });
   const startSize = useRef({ width: 0, height: 0 });
 
+  // Ref для хранения текущих значений без ререндера
+  const posRef = useRef(pos);
+  const sizeRef = useRef(size);
+  
+  // Синхронизация ref с state
+  useLayoutEffect(() => {
+    posRef.current = pos;
+    sizeRef.current = size;
+  }, [pos, size]);
+
   // Синхронизация с пропсами только при внешних изменениях (максимизация)
   useLayoutEffect(() => {
-    if (win.x !== pos.x || win.y !== pos.y) {
+    if ((win.x !== posRef.current.x || win.y !== posRef.current.y) && !dragging.current) {
       setPos({ x: win.x, y: win.y });
       setIsMaximized(win.x === 0 && win.y === 28);
+      
+      if (windowRef.current && !dragging.current) {
+        windowRef.current.style.transform = `translate(${win.x}px, ${win.y}px)`;
+      }
     }
-    if (win.width !== size.width || win.height !== size.height) {
+    if ((win.width !== sizeRef.current.width || win.height !== sizeRef.current.height) && !resizing.current) {
       setSize({ width: win.width, height: win.height });
       setIsMaximized(win.width >= window.innerWidth - 2);
     }
@@ -52,25 +66,28 @@ export const AppWindow = memo(function AppWindow({
     
     onFocus();
     dragging.current = true;
-    offset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
-    startPos.current = { x: pos.x, y: pos.y };
+    offset.current = { x: e.clientX - posRef.current.x, y: e.clientY - posRef.current.y };
+    startPos.current = { x: posRef.current.x, y: posRef.current.y };
 
     // Визуальная обратная связь
     if (windowRef.current) {
       windowRef.current.style.cursor = 'grabbing';
       windowRef.current.style.transition = 'none';
+      windowRef.current.style.willChange = 'transform';
     }
 
     const onMove = (ev) => {
       if (!dragging.current) return;
       
-      const newX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
+      const newX = Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, ev.clientX - offset.current.x));
       const newY = Math.max(28, ev.clientY - offset.current.y);
 
-      // Прямая манипуляция DOM без state
-      if (windowRef.current) {
-        windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
-      }
+      // Прямая манипуляция DOM без state - используем requestAnimationFrame для batching
+      requestAnimationFrame(() => {
+        if (windowRef.current && dragging.current) {
+          windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+        }
+      });
     };
 
     const onUp = (ev) => {
@@ -81,13 +98,14 @@ export const AppWindow = memo(function AppWindow({
       if (windowRef.current) {
         windowRef.current.style.cursor = '';
         windowRef.current.style.transition = '';
+        windowRef.current.style.willChange = '';
       }
 
       // Вычисляем финальную позицию один раз
-      const finalX = Math.max(0, Math.min(window.innerWidth - size.width, ev.clientX - offset.current.x));
+      const finalX = Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, ev.clientX - offset.current.x));
       const finalY = Math.max(28, ev.clientY - offset.current.y);
       
-      // Обновляем state только в конце
+      // Обновляем state только в конце (один ререндер)
       setPos({ x: finalX, y: finalY });
       
       // Синхронизируем с windowRef
@@ -102,7 +120,7 @@ export const AppWindow = memo(function AppWindow({
     document.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseup", onUp, { passive: true });
     e.preventDefault();
-  }, [pos.x, pos.y, size.width, size.height, isMaximized, onFocus]);
+  }, [isMaximized, onFocus]);
 
   // Оптимизированный resize
   const onResizeMouseDown = useCallback((e) => {
@@ -111,12 +129,13 @@ export const AppWindow = memo(function AppWindow({
     onFocus();
 
     resizing.current = true;
-    startSize.current = { width: size.width, height: size.height };
+    startSize.current = { width: sizeRef.current.width, height: sizeRef.current.height };
     const startX = e.clientX;
     const startY = e.clientY;
 
     if (windowRef.current) {
       windowRef.current.style.transition = 'none';
+      windowRef.current.style.willChange = 'width, height';
     }
 
     const onMove = (ev) => {
@@ -127,11 +146,13 @@ export const AppWindow = memo(function AppWindow({
       const newWidth = Math.max(250, startSize.current.width + deltaX);
       const newHeight = Math.max(200, startSize.current.height + deltaY);
 
-      // Прямая манипуляция DOM
-      if (windowRef.current) {
-        windowRef.current.style.width = `${newWidth}px`;
-        windowRef.current.style.height = `${newHeight}px`;
-      }
+      // Прямая манипуляция DOM с requestAnimationFrame
+      requestAnimationFrame(() => {
+        if (windowRef.current && resizing.current) {
+          windowRef.current.style.width = `${newWidth}px`;
+          windowRef.current.style.height = `${newHeight}px`;
+        }
+      });
     };
 
     const onUp = () => {
@@ -139,9 +160,10 @@ export const AppWindow = memo(function AppWindow({
       
       if (windowRef.current) {
         windowRef.current.style.transition = '';
+        windowRef.current.style.willChange = '';
         setSize({ 
-          width: parseFloat(windowRef.current.style.width) || size.width, 
-          height: parseFloat(windowRef.current.style.height) || size.height 
+          width: parseFloat(windowRef.current.style.width) || sizeRef.current.width, 
+          height: parseFloat(windowRef.current.style.height) || sizeRef.current.height 
         });
       }
 
@@ -151,7 +173,7 @@ export const AppWindow = memo(function AppWindow({
 
     document.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseup", onUp, { passive: true });
-  }, [size.width, size.height, onFocus]);
+  }, [onFocus]);
 
   const contextValue = useMemo(() => ({
     onClose,
@@ -181,9 +203,10 @@ export const AppWindow = memo(function AppWindow({
           width: size.width,
           height: size.height,
           zIndex: win.zIndex,
-          willChange: "transform",
+          willChange: isActive ? "transform" : "auto",
           contain: "layout style paint",
           touchAction: "none",
+          contentVisibility: "auto",
         }}
       >
         <div ref={contentRef} className="app-window__content" style={{ contain: "content" }}>

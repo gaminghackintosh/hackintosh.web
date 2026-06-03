@@ -1,73 +1,40 @@
-import React, { Suspense, useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useEffect, memo } from "react";
 import { useMobileCheck } from "./hooks/useMobileCheck";
-import { useWindowManager } from "./hooks/useWindowManager";
 import { useContextMenu } from "./hooks/useContextMenu";
+import { WindowManagerProvider, useWindowManager } from "./hooks/WindowManagerProvider";
+import { ThemeProvider, useTheme } from "./hooks/ThemeProvider";
 // UI компоненты
-import { BootScreen, MobileNotSupported, WindowLoading, ContextMenu } from "./components/ui";
+import { BootScreen, MobileNotSupported, ContextMenu } from "./components/ui";
 // Layout компоненты
-import { Desktop, Dock, AppWindow } from "./components/layout";
+import { Desktop, Dock, WindowList } from "./components/layout";
 import { MenuBar } from "./features/menubar/MenuBar/MenuBar";
-import { renderAppContent } from "./utils/renderAppContent"; 
 // Оптимизация: ленивая загрузка обоев
 import defaultWallpaperDark from "./assets/images/wallpapers/Tahoe/Tahoe Dark.png";
 import defaultWallpaperLight from "./assets/images/wallpapers/Tahoe/Tahoe Light.png";
 
-// Мемоизированный компонент окна
-const MemoizedAppWindow = React.memo(AppWindow, (prevProps, nextProps) => {
-  return (
-    prevProps.win.x === nextProps.win.x &&
-    prevProps.win.y === nextProps.win.y &&
-    prevProps.win.width === nextProps.win.width &&
-    prevProps.win.height === nextProps.win.height &&
-    prevProps.isActive === nextProps.isActive &&
-    prevProps.isMinimized === nextProps.isMinimized &&
-    prevProps.win.zIndex === nextProps.win.zIndex
-  );
-});
-
-export default function App() {
+/**
+ * AppContent — основной контент приложения (внутри WindowManagerProvider + ThemeProvider)
+ */
+function AppContent() {
   const windowManager = useWindowManager();
+  const { isLightTheme } = useTheme();
   const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
-  const isMobile = useMobileCheck();
-  const [bootComplete, setBootComplete] = useState(false);
-  // Оптимизация: инициализация темы и обоев одним useEffect
-  const [isLightTheme, setIsLightTheme] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    return saved === 'light';
-  });
-  
+
+  // Состояние обоев с синхронизацией от темы
   const [wallpaper, setWallpaper] = useState(() => ({
     id: "tahoe_default",
     type: "image",
-    value: defaultWallpaperDark, // По умолчанию тёмная тема
+    value: defaultWallpaperDark,
   }));
 
-  // Apply saved theme on mount + обои
+  // Синхронизация обоев с темой
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const isLight = savedTheme === 'light';
-    
-    if (isLight) {
-      document.documentElement.classList.add('light-theme');
-      setWallpaper(prev => ({ ...prev, value: defaultWallpaperLight }));
-    }
-  }, []);
+    setWallpaper(prev => ({
+      ...prev,
+      value: isLightTheme ? defaultWallpaperLight : defaultWallpaperDark,
+    }));
+  }, [isLightTheme]);
 
-  // Listen for theme changes from MenuBar + смена обоев
-  useEffect(() => {
-    const handleThemeChange = (e) => {
-      const isLight = e.detail.isLight;
-      setIsLightTheme(isLight);
-      // Динамическая смена обоев
-      setWallpaper(prev => ({
-        ...prev,
-        value: isLight ? defaultWallpaperLight : defaultWallpaperDark,
-      }));
-    };
-    window.addEventListener('theme-change', handleThemeChange);
-    return () => window.removeEventListener('theme-change', handleThemeChange);
-  }, []);
-  
   const handleDesktopContextMenu = useCallback((e) => {
     openContextMenu(e, [
       { label: "New Folder", action: () => console.log("New Folder") },
@@ -75,43 +42,6 @@ export default function App() {
       { label: "Change Wallpaper", action: () => windowManager.openApp("settings", "Settings") }
     ]);
   }, [openContextMenu, windowManager.openApp]);
-
-  // Мемоизированный список окон с глубокой оптимизацией
-  const windowComponents = useMemo(() => {
-    return windowManager.windows.map((win) => (
-      <MemoizedAppWindow
-        key={win.id}
-        win={win}
-        isActive={windowManager.activeWin === win.id}
-        isMinimized={windowManager.minimizedApps.has(win.id)}
-        onClose={() => windowManager.closeWindow(win.id)}
-        onMinimize={() => windowManager.minimizeWindow(win.id)}
-        onFocus={() => windowManager.focusWindow(win.id)}
-        onZoom={() => windowManager.maximizeWindow(win.id)}
-      >
-        <Suspense fallback={<WindowLoading />}>
-          {renderAppContent(win.id, { 
-            closeWindow: windowManager.closeWindow, 
-            minimizeWindow: windowManager.minimizeWindow, 
-            maximizeWindow: windowManager.maximizeWindow, 
-            setWallpaper 
-          })}
-        </Suspense>
-      </MemoizedAppWindow>
-    ));
-  }, [
-    windowManager.windows.length,
-    windowManager.activeWin,
-    windowManager.minimizedApps.size,
-    windowManager.closeWindow,
-    windowManager.minimizeWindow,
-    windowManager.maximizeWindow,
-    windowManager.focusWindow,
-    setWallpaper,
-  ]);
-
-  if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
-  if (isMobile) return <MobileNotSupported />;
 
   return (
     <Desktop wallpaper={wallpaper.value} onContextMenu={handleDesktopContextMenu}>
@@ -122,7 +52,8 @@ export default function App() {
         onZoom={() => windowManager.maximizeWindow(windowManager.activeWin)}
       />
 
-      {windowComponents}
+      {/* ✅ Окна рендерятся независимо через WindowList */}
+      <WindowList setWallpaper={setWallpaper} />
 
       <Dock 
         onOpen={windowManager.openApp} 
@@ -142,3 +73,24 @@ export default function App() {
     </Desktop>
   );
 }
+
+/**
+ * AppInner — управляет boot screen и провайдерами
+ */
+function AppInner() {
+  const isMobile = useMobileCheck();
+  const [bootComplete, setBootComplete] = useState(false);
+  
+  if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
+  if (isMobile) return <MobileNotSupported />;
+
+  return (
+    <ThemeProvider>
+      <WindowManagerProvider>
+        <AppContent />
+      </WindowManagerProvider>
+    </ThemeProvider>
+  );
+}
+
+export default AppInner;

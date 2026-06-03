@@ -223,26 +223,26 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
   }, []);
 
   const navigate = useCallback((target) => {
-  if (!target?.trim()) return;
-  
-  const cleanTarget = target.toLowerCase().trim();
-  const isLocal = LOCAL_COMMANDS.has(cleanTarget);
+    if (!target?.trim()) return;
+    
+    const cleanTarget = target.toLowerCase().trim();
+    const isLocal = LOCAL_COMMANDS.has(cleanTarget);
 
     if (isLocal) {
       updateTab(activeTab.id, {
-      url: cleanTarget, // Устанавливаем именно команду (например, "surprise")
-      title: cleanTarget.charAt(0).toUpperCase() + cleanTarget.slice(1),
-      isStart: false,
+        url: cleanTarget,
+        title: cleanTarget.charAt(0).toUpperCase() + cleanTarget.slice(1),
+        isStart: false,
       });
-       return;
+      return;
     }
 
-  const url = target.startsWith("http") ? target : `https://${target}`;
-  updateTab(activeTab.id, {
+    const url = target.startsWith("http") ? target : `https://${target}`;
+    updateTab(activeTab.id, {
       url: url,
-      title: target,
+      title: url,
       isStart: false,
-  });
+    });
   }, [activeTab.id, updateTab]);
 
   const goHome = useCallback(() => {

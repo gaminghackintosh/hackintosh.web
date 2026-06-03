@@ -1,9 +1,15 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 
 export default defineConfig(({ mode }) => ({
   base: mode === "production" ? "/hackintosh.web/" : "/",
-  plugins: [react()],
+  plugins: [react({
+    // SWC быстрее Babel
+    devTarget: 'esnext',
+    tsDecorators: true,
+    // Оптимизации для production
+    loose: true,
+  })],
   css: {
     preprocessorOptions: {
       scss: {
@@ -18,37 +24,66 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           icons: ['react-icons'],
+          // ✅ Выделяем каждое приложение в отдельный чанк
+          finder: ['./src/features/finder/Finder/FinderContent'],
+          safari: ['./src/features/safari/Safari/SafariContent'],
+          notes: ['./src/features/notes/Notes/NotesContent'],
+          terminal: ['./src/features/terminal/Terminal/Terminal'],
+          music: ['./src/features/music/MusicApp/MusicContent'],
+          settings: ['./src/features/settings/Settings/SettingsContent'],
         },
+        // Оптимизация чанков
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
+      treeshake: true,
+      moduleContext: {},
     },
     // Отключение sourcemaps для production
     sourcemap: false,
     // Минимизация бандла
     minify: 'esbuild',
     // Ограничение размера чанка
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 1000, // Увеличили для lazy chunks
     // Оптимизация для production
     target: 'esnext',
     cssMinify: true,
     // Сжатие изображений
-    assetsInlineLimit: 4096, // 4kb
+    assetsInlineLimit: 4096,
   },
   // Оптимизация зависимостей
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-icons'],
-    // Кэширование зависимостей
     force: false,
+    exclude: [],
   },
   // Server оптимизации
   server: {
     open: false,
     hmr: {
-      overlay: false, // Отключить overlay для производительности
+      overlay: false,
+    },
+    watch: {
+      usePolling: false,
     },
   },
   // Production оптимизации
   esbuild: {
     drop: mode === 'production' ? ['console', 'debugger'] : [],
+    minifyIdentifiers: mode === 'production',
+    minifySyntax: true,
+    minifyWhitespace: mode === 'production',
+  },
+  // Оптимизация resolver
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
+  // ✅ Предзагрузка для критичных зависимостей
+  preview: {
+    port: 4173,
   },
 }));
 

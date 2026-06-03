@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, memo } from "react";
+import React, { useState, useRef, useCallback, memo, useMemo } from "react";
 import { APPS } from "./../../constants/apps";
 import { AssetIcon } from "./../ui/AssetIcon";
 
@@ -12,6 +12,9 @@ const GITHUB_APP = {
 
 // Базовый размер иконки в Dock
 const BASE_ICON_SIZE = 58;
+
+// Мемоизированный список приложений (никогда не меняется)
+const DOCK_ITEMS = [...APPS, GITHUB_APP];
 
 const DockItem = memo(function DockItem({ 
   app, 
@@ -30,7 +33,7 @@ const DockItem = memo(function DockItem({
     } else {
       onOpen(app.id);
     }
-  }, [app, onOpen]);
+  }, [app.isLink, app.url, app.id, onOpen]);
   
   return (
     <div
@@ -46,6 +49,7 @@ const DockItem = memo(function DockItem({
           handleClick();
         }
       }}
+      style={{ contain: "layout style" }}
     >
       {/* Icon */}
       {isGitHub ? (
@@ -54,6 +58,8 @@ const DockItem = memo(function DockItem({
             src={app.icon} 
             alt={app.name}
             draggable={false}
+            loading="lazy"
+            decoding="async"
             style={{ width: `${BASE_ICON_SIZE}px`, height: `${BASE_ICON_SIZE}px` }}
           />
         </div>
@@ -92,19 +98,22 @@ const DockItem = memo(function DockItem({
 
 export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLightTheme = false }) {
   const [hoverIndex, setHoverIndex] = useState(null);
-  const dockItems = [...APPS, GITHUB_APP];
   const dockRef = useRef(null);
+
+  // ✅ Используем напрямую: openApps — массив, minimizedApps — Set
+  // ✅ avoids unnecessary Set creation на каждый рендер
 
   return (
     <div 
       ref={dockRef}
       className="dock"
       onMouseLeave={() => setHoverIndex(null)}
+      style={{ contain: "layout paint" }}
     >
-      {dockItems.map((app, index) => {
+      {DOCK_ITEMS.map((app, index) => {
         const isGitHub = app.id === "github";
-        const isOpen = openApps?.includes(app.id);
-        const isMinimized = minimizedApps?.has(app.id);
+        const isOpen = openApps?.includes(app.id);  // ✅ Простая проверка для массива
+        const isMinimized = minimizedApps?.has(app.id);  // ✅ Set.has — O(1)
         
         return (
           <React.Fragment key={app.id}>
@@ -113,8 +122,9 @@ export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLi
               className="dock__item-wrapper"
               onMouseEnter={() => setHoverIndex(index)}
               onMouseLeave={() => setHoverIndex(null)}
+              style={{ contain: "layout" }}
             >
-              {/* Tooltip - moved to wrapper for stable positioning */}
+              {/* Tooltip */}
               <div 
                 className={`dock__tooltip ${hoverIndex === index ? "dock__tooltip--visible" : ""}`}
               >

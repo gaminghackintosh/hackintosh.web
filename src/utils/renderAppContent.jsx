@@ -1,15 +1,17 @@
-import React from "react";
-// Оптимизация: прямой импорт из features для tree-shaking
-import FinderContent from "./../features/finder/Finder/FinderContent"; 
-import { TerminalContent } from "./../features/terminal/Terminal/Terminal";
-import { NotesContent } from "./../features/notes/Notes/NotesContent";
-import { SettingsContent } from "./../features/settings/Settings/SettingsContent";
-import { MusicContent } from "./../features/music/MusicApp/MusicContent";
-import { SafariContent } from "./../features/safari/Safari/SafariContent";
+import React, { lazy, Suspense } from "react";
+import { WindowLoading } from "./../components/ui";
+
+// ✅ Ленивая загрузка каждого приложения — code splitting по чанкам
+const FinderContent = lazy(() => import("./../features/finder/Finder/FinderContent"));
+const TerminalContent = lazy(() => import("./../features/terminal/Terminal/Terminal").then(m => ({ default: m.TerminalContent })));
+const NotesContent = lazy(() => import("./../features/notes/Notes/NotesContent").then(m => ({ default: m.NotesContent })));
+const SettingsContent = lazy(() => import("./../features/settings/Settings/SettingsContent").then(m => ({ default: m.SettingsContent })));
+const MusicContent = lazy(() => import("./../features/music/MusicApp/MusicContent").then(m => ({ default: m.MusicContent })));
+const SafariContent = lazy(() => import("./../features/safari/Safari/SafariContent").then(m => ({ default: m.SafariContent })));
 
 /**
  * Функция-фабрика для рендеринга контента приложения.
- * Оптимизирована для tree-shaking и code-splitting.
+ * ✅ Оптимизирована для lazy loading + code-splitting.
  * @param {string} appId - ID приложения.
  * @param {object} props - Объект с функциями управления окном и состояниями.
  */
@@ -24,24 +26,47 @@ export const renderAppContent = (appId, {
     onZoom: () => maximizeWindow(appId),
   };
 
+  // ✅ Оборачиваем каждое приложение в Suspense для lazy loading
   switch (appId) {
     case "finder":
-      return <FinderContent {...commonProps} />;
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <FinderContent {...commonProps} />
+        </Suspense>
+      );
     case "terminal":
-      return <TerminalContent {...commonProps} />;
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <TerminalContent {...commonProps} />
+        </Suspense>
+      );
     case "notes":
-      return <NotesContent {...commonProps} />;
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <NotesContent {...commonProps} />
+        </Suspense>
+      );
     case "settings":
       return (
-        <SettingsContent
-          {...commonProps}
-          onWallpaperChange={setWallpaper}
-        />
+        <Suspense fallback={<WindowLoading />}>
+          <SettingsContent
+            {...commonProps}
+            onWallpaperChange={setWallpaper}
+          />
+        </Suspense>
       );
     case "safari":
-      return <SafariContent {...commonProps} />;
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <SafariContent {...commonProps} />
+        </Suspense>
+      );
     case "music":
-      return <MusicContent {...commonProps} />;
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <MusicContent {...commonProps} />
+        </Suspense>
+      );
     default:
       return (
         <div style={{ padding: 20, color: '#fff' }}>

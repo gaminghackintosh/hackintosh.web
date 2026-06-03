@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { AppleIcon } from "../../../components/ui";
+import { useTheme } from "../../../hooks/ThemeProvider";
 
 import { FiWifi } from "react-icons/fi";
 import { BiBluetooth } from "react-icons/bi";
@@ -161,10 +162,9 @@ export const MenuBar = memo(function MenuBar({ activeApp, openApp, onCloseWindow
   const [activeMenu,setActiveMenu]= useState(null);
   const [showCC,    setShowCC]    = useState(false);
   const [showAbout, setShowAbout] = useState(false);
-  const [isLightTheme, setIsLightTheme] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    return saved === 'light';
-  });
+  
+  // ✅ Используем ThemeProvider вместо локального состояния
+  const { isLightTheme, toggleTheme } = useTheme();
 
   const [wifi,         setWifi]         = useState(true);
   const [bluetooth,    setBluetooth]    = useState(true);
@@ -177,26 +177,8 @@ export const MenuBar = memo(function MenuBar({ activeApp, openApp, onCloseWindow
   const ccRef    = useRef(null);
   const ccBtnRef = useRef(null);
 
-  // Apply theme to document
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isLightTheme) {
-      root.classList.add('light-theme');
-      localStorage.setItem('theme', 'light');
-    } else {
-      root.classList.remove('light-theme');
-      localStorage.setItem('theme', 'dark');
-    }
-  }, [isLightTheme]);
-
-  const toggleTheme = useCallback(() => {
-    setIsLightTheme(prev => {
-      const newValue = !prev;
-      // Dispatch custom event for App.jsx
-      window.dispatchEvent(new CustomEvent('theme-change', { detail: { isLight: newValue } }));
-      return newValue;
-    });
-  }, []);
+  // ✅ Убрали useEffect с применением темы — теперь это в ThemeProvider
+  // ✅ Убрали dispatch события — toggleTheme из контекста
 
   const appleMenuOptions = [
     { id:"about",    label:"About This Mac" },
