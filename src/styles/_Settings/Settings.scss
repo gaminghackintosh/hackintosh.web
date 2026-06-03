@@ -1472,3 +1472,426 @@ $content-bg:      rgba(24, 24, 28, 0.96);
   color: $text-tertiary;
   margin-top: 4px;
 }
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .settings-container {
+    background: #f5f5f7;
+  }
+
+  .settings-sidebar {
+    background: rgba(245, 245, 247, 0.92);
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .traffic-light {
+    &--close    { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+    &--minimize { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+    &--zoom     { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+  }
+
+  .sidebar-search {
+    input {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.9);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.35)' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
+
+      &::placeholder { color: rgba(0, 0, 0, 0.3); }
+      
+      &:focus {
+        background-color: rgba(0, 0, 0, 0.08);
+        border-color: rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+
+  .sidebar-apple-id {
+    &:hover { background: rgba(0, 0, 0, 0.04); }
+    &.active { background: rgba(0, 0, 0, 0.08); }
+  }
+
+  .apple-id-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .apple-id-email {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-divider,
+  .section-divider {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .tabs-list {
+    .tab-item {
+      color: rgba(0, 0, 0, 0.68);
+
+      &:hover:not(.active) { 
+        background: rgba(0, 0, 0, 0.04); 
+        color: rgba(0, 0, 0, 0.9); 
+      }
+      
+      &.active {
+        background: rgba(0, 0, 0, 0.08);
+        color: rgba(0, 0, 0, 0.95);
+      }
+    }
+  }
+
+  .settings-content {
+    background: #f5f5f7;
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      
+      &:hover { 
+        background: rgba(0, 0, 0, 0.25); 
+      }
+    }
+  }
+
+  .settings-panel {
+    .panel-title {
+      color: rgba(0, 0, 0, 0.95);
+    }
+
+    .panel-description {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .sg-label,
+  .sg-footer {
+    color: rgba(0, 0, 0, 0.35);
+  }
+
+  .sg-card {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .sg-divider {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .sr-row {
+    &--clickable {
+      &:hover { background: rgba(0, 0, 0, 0.04); }
+      &:active { background: rgba(0, 0, 0, 0.08); }
+    }
+  }
+
+  .sr-label {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .sr-desc {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .sr-value {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .sr-chevron {
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  .sr-badge {
+    &--blue {
+      background: rgba(0, 122, 255, 0.12);
+      color: #007aff;
+    }
+    &--gray {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.5);
+    }
+    &--red {
+      background: rgba(255, 59, 48, 0.12);
+      color: #ff3b30;
+    }
+  }
+
+  .toggle__track {
+    background: rgba(0, 0, 0, 0.15);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .ctrl-select {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+
+    &:focus {
+      border-color: rgba(0, 122, 255, 0.4);
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    option {
+      background: #f5f5f7;
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .ctrl-button {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+
+    &:hover { 
+      background: rgba(0, 0, 0, 0.1); 
+    }
+  }
+
+  .ctrl-spinner {
+    border-color: rgba(0, 0, 0, 0.15);
+    border-top-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .mode-btn {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.5);
+
+    &:hover:not(&--active) {
+      background: rgba(255, 255, 255, 0.8);
+      color: rgba(0, 0, 0, 0.9);
+    }
+
+    &--active {
+      border-color: #007aff;
+      background: rgba(0, 122, 255, 0.12);
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .mode-icon {
+    border-color: rgba(0, 0, 0, 0.1);
+
+    &--light { background: linear-gradient(135deg, #e8e8ee 40%, #c8c8d4); }
+    &--dark  { background: linear-gradient(135deg, #1c1c22 40%, #2c2c36); }
+    &--auto  { background: linear-gradient(90deg, #e8e8ee 50%, #1c1c22 50%); }
+  }
+
+  .accent-swatch {
+    &--active {
+      border-color: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.8);
+    }
+  }
+
+  .about-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .about-version {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .wallpaper-group-title {
+    color: rgba(0, 0, 0, 0.9);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .wallpaper-thumbnail {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .wallpaper-title {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .bt-icon-circle,
+  .wifi-icon-circle {
+    background: rgba(0, 122, 255, 0.12);
+  }
+
+  .bt-header-label,
+  .wifi-header-label {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .bt-device-name,
+  .network-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .bt-device-status,
+  .network-icons,
+  .bt-scanning-text,
+  .searching-text {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .bt-device-status.connected,
+  .status-text {
+    color: #34c759;
+  }
+
+  .bt-action-btn,
+  .details-btn,
+  .other-btn {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+
+    &:hover { background: rgba(0, 122, 255, 0.2); }
+  }
+
+  .bt-advanced-btn,
+  .advanced-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+
+    &:hover { background: rgba(0, 0, 0, 0.1); }
+  }
+
+  .toggle-label {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .toggle-desc {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .privacy-app-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .privacy-app-status {
+    &.allowed { color: #34c759; }
+    &.denied { color: rgba(0, 0, 0, 0.3); }
+  }
+
+  .volume-control {
+    svg {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .battery-icon-large,
+  .battery-percentage {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .battery-status-text {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .fingerprint-icon,
+  .fingerprint-default {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .fingerprint-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .fingerprint-delete-btn {
+    color: #ff3b30;
+
+    &:hover {
+      background: rgba(255, 59, 48, 0.1);
+    }
+  }
+
+  .add-fingerprint-btn {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+
+    &:hover { background: rgba(0, 122, 255, 0.2); }
+  }
+
+  .user-avatar-large {
+    color: white;
+  }
+
+  .user-name,
+  .user-list-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .user-type,
+  .user-list-type {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .unlock-btn,
+  .lock-btn {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+
+    &:hover { background: rgba(0, 122, 255, 0.2); }
+  }
+
+  .logged-in-badge {
+    color: #34c759;
+  }
+
+  .locked-notice {
+    background: rgba(255, 149, 0, 0.1);
+    color: #ff9500;
+  }
+
+  .apple-id-avatar-large {
+    background: rgba(0, 122, 255, 0.1);
+  }
+
+  .apple-id-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .apple-id-email {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .storage-bar-container {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .manage-storage-btn {
+    background: rgba(0, 122, 255, 0.12);
+    color: #007aff;
+
+    &:hover { background: rgba(0, 122, 255, 0.2); }
+  }
+
+  .notifications-master-label,
+  .notification-app-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .notification-app-row {
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .unimplemented-placeholder {
+    h3 {
+      color: rgba(0, 0, 0, 0.9);
+    }
+
+    p {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .unimplemented-icon {
+      opacity: 0.4;
+    }
+  }
+
+  .storage-bar {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .about-copyright {
+    color: rgba(0, 0, 0, 0.35);
+  }
+}

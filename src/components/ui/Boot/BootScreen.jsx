@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AppleLogo from "./../../assets/icons/preloader/Apple_Logo_Test.svg";
+import AppleLogo from "./../../../assets/icons/preloader/Apple_Logo_Test.svg";
 
 // ════════════════════════════════════════════════════════════
 //  BootScreen — Realistic macOS boot animation

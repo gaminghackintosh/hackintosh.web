@@ -34,6 +34,7 @@ body {
   margin: 0;
   background: vars.$color-bg-body;
   font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden; // Оптимизация: предотвращаем скролл страницы
   
   @include dark-theme;
 }
@@ -43,6 +44,21 @@ body.light-theme {
   background: vars.$light-color-bg-body;
   
   @include light-theme;
+}
+
+// Оптимизация Desktop
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  // Оптимизация производительности
+  will-change: auto;
+  transform: translateZ(0); // GPU acceleration
+  contain: layout style paint; // Изоляция
 }
 
 .resize-handle {

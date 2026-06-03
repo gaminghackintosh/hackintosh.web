@@ -312,3 +312,117 @@
 
 @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .sf-local-page {
+    color: rgba(0, 0, 0, 0.9);
+    
+    &.sf-surprise-bg {
+      background: radial-gradient(circle at top right, rgba(94, 92, 230, 0.08), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(10, 132, 255, 0.08), transparent 50%);
+    }
+  }
+
+  .sf-glass-card {
+    background: rgba(245, 245, 247, 0.75);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .sf-title {
+    color: rgba(0, 0, 0, 0.95);
+  }
+
+  .sf-subtitle {
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .sf-description {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .sf-btn-primary {
+    background: #0a84ff;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #0070df;
+    }
+  }
+
+  .sf-btn-secondary {
+    background: rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+    
+    &:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .sf-specs-list {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .sf-spec-label { 
+    color: rgba(0, 0, 0, 0.5); 
+  }
+  
+  .sf-spec-value { 
+    color: rgba(0, 0, 0, 0.9); 
+  }
+
+  .cat-image-container {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .sf-spinner {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-top-color: #0a84ff;
+  }
+
+  .memory-card-front {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.4);
+    
+    &:hover { 
+      background: rgba(0, 0, 0, 0.1); 
+    }
+  }
+
+  .memory-card-back {
+    background: rgba(0, 0, 0, 0.12);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .equation-display {
+    &.status-correct { color: #34c759; }
+    &.status-wrong { color: #ff3b30; }
+  }
+
+  .math-option-btn {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+    
+    &:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    
+    &.correct {
+      background: #34c759;
+      border-color: #34c759;
+      color: white;
+    }
+  }
+
+  .error-text {
+    color: #ff3b30;
+  }
+}

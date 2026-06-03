@@ -563,3 +563,223 @@ $text-tertiary:   rgba(255, 255, 255, 0.25);
     transform: translateX(-50%) translateY(-50%);
   }
 }
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .music {
+    background: #fafafa;
+  }
+
+  .music-header {
+    background: rgba(245, 245, 247, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .music-tl {
+    &--close    { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+    &--minimize { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+    &--zoom     { &::after { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
+  }
+
+  .music-toolbar-center,
+  .music-toolbar-right {
+    .music-ctrl-btn {
+      color: rgba(0, 0, 0, 0.5);
+
+      &:hover { 
+        color: rgba(0, 0, 0, 0.9); 
+        background: rgba(0, 0, 0, 0.06); 
+      }
+      
+      &--play { 
+        color: rgba(0, 0, 0, 0.9); 
+        background: rgba(0, 0, 0, 0.08);
+        
+        &:hover { 
+          background: rgba(0, 0, 0, 0.14); 
+        }
+      }
+      
+      &--active { 
+        color: #fa233b; 
+        
+        &:hover { 
+          color: #ff6b81; 
+        }
+      }
+    }
+  }
+
+  .music-volume-slider {
+    background: rgba(0, 0, 0, 0.15);
+
+    &::-webkit-slider-thumb {
+      background: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  }
+
+  .music-sidebar {
+    background: #f5f5f7;
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .music-sidebar-search {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+
+    &:focus-within {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    &-icon {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    input {
+      color: rgba(0, 0, 0, 0.9);
+      
+      &::placeholder { 
+        color: rgba(0, 0, 0, 0.3); 
+      }
+    }
+  }
+
+  .music-sidebar-section-title {
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  .music-sidebar-item {
+    color: rgba(0, 0, 0, 0.65);
+
+    &:hover { 
+      background: rgba(0, 0, 0, 0.04); 
+      color: rgba(0, 0, 0, 0.9); 
+    }
+    
+    &.active { 
+      background: rgba(0, 0, 0, 0.08); 
+      color: rgba(0, 0, 0, 0.9); 
+    }
+  }
+
+  .music-sidebar-icon {
+    color: #fa233b;
+  }
+
+  .music-main {
+    background: #fafafa;
+  }
+
+  .music-table-header {
+    background: #fafafa;
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  .music-table-body {
+    &::-webkit-scrollbar-thumb { 
+      background: rgba(0, 0, 0, 0.15); 
+    }
+  }
+
+  .music-row {
+    color: rgba(0, 0, 0, 0.75);
+
+    &:hover { 
+      background: rgba(0, 0, 0, 0.04); 
+    }
+
+    &--active {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.95);
+
+      .music-col-title-text { 
+        color: #fa233b; 
+      }
+    }
+  }
+
+  .music-col-num {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .music-row-num { 
+    color: rgba(0, 0, 0, 0.3); 
+  }
+
+  .music-active-icon { 
+    color: #fa233b; 
+  }
+
+  .music-col-title-text {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .music-col-title-artist,
+  .music-col-album,
+  .music-col-genre {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .music-col-time {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .music-playing-bars {
+    span {
+      background: #fa233b;
+    }
+  }
+
+  .music-empty {
+    color: rgba(0, 0, 0, 0.3);
+
+    p { 
+      color: rgba(0, 0, 0, 0.35); 
+    }
+
+    &-sub { 
+      color: rgba(0, 0, 0, 0.25); 
+    }
+  }
+
+  .music-now-playing {
+    background: rgba(245, 245, 247, 0.96);
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .music-now-playing-info {
+    .music-now-playing-title {
+      color: rgba(0, 0, 0, 0.9);
+    }
+
+    .music-now-playing-artist {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .music-progress {
+    &-time {
+      color: rgba(0, 0, 0, 0.35);
+    }
+
+    &-track {
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    &-fill {
+      background: #fa233b;
+    }
+
+    &-thumb {
+      background: #333;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+  }
+}

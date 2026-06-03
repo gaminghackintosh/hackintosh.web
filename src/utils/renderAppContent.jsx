@@ -1,13 +1,15 @@
 import React from "react";
-import FinderContent from "./../components/Finder/FinderContent"; 
-import { TerminalContent } from "./../components/apps/Terminal/Terminal";
-import { NotesContent } from "./../components/apps/Notes/NotesContent";
-import { SettingsContent } from "./../components/apps/Settings/SettingsContent";
-import { MusicContent } from "./../components/apps/MusicApp/MusicContent";
-import { SafariContent } from "./../components/apps/Safari/SafariContent";
+// Оптимизация: прямой импорт из features для tree-shaking
+import FinderContent from "./../features/finder/Finder/FinderContent"; 
+import { TerminalContent } from "./../features/terminal/Terminal/Terminal";
+import { NotesContent } from "./../features/notes/Notes/NotesContent";
+import { SettingsContent } from "./../features/settings/Settings/SettingsContent";
+import { MusicContent } from "./../features/music/MusicApp/MusicContent";
+import { SafariContent } from "./../features/safari/Safari/SafariContent";
 
 /**
  * Функция-фабрика для рендеринга контента приложения.
+ * Оптимизирована для tree-shaking и code-splitting.
  * @param {string} appId - ID приложения.
  * @param {object} props - Объект с функциями управления окном и состояниями.
  */

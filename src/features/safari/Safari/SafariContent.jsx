@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo, memo } from "react";
-import { WindowContext } from "../../AppWindow/AppWindow";
+import { WindowContext } from "./../../../components/layout";
 import {
   FiArrowLeft, FiArrowRight, FiRefreshCw,
   FiShare2, FiPlus, FiSearch,
@@ -288,7 +288,7 @@ export function SafariContent({ onClose, onMinimize, onZoom }) {
         {/* Весь верхний блок тулбара становится перетаскиваемой областью */}
         <div 
           className="sf__toolbar-top"
-          onMouseDown={onTitleMouseDown}  // ← ключевая строка для перетаскивания
+          onMouseDown={(e) => !e.target.closest('.sf__tl, .sf__icon-btn, .sf__nav-btn, .sf__address-input, .sf__refresh-btn') && onTitleMouseDown(e)}
         >
           <div className="sf__toolbar-left">
             <div className="sf__tl-group">

@@ -2,16 +2,15 @@ import React, { Suspense, useState, useCallback, useMemo, useEffect } from "reac
 import { useMobileCheck } from "./hooks/useMobileCheck";
 import { useWindowManager } from "./hooks/useWindowManager";
 import { useContextMenu } from "./hooks/useContextMenu";
-import BootScreen from "./components/Boot/BootScreen";
-import MobileNotSupported from "./components/MNS/MobileNotSupported";
-import Dock from "./components/Dock";
-import { AppWindow } from "./components/AppWindow/AppWindow";
-import { MenuBar } from "./components/apps/MenuBar/MenuBar";
-import { ContextMenu } from "./components/ContextMenu/ContextMenu";
-import { Desktop } from "./components/Desktop";
-import { WindowLoading } from "./components/Loaders/WindowLoading"; 
+// UI компоненты
+import { BootScreen, MobileNotSupported, WindowLoading, ContextMenu } from "./components/ui";
+// Layout компоненты
+import { Desktop, Dock, AppWindow } from "./components/layout";
+import { MenuBar } from "./features/menubar/MenuBar/MenuBar";
 import { renderAppContent } from "./utils/renderAppContent"; 
-import defaultWallpaper from "./assets/images/wallpapers/Tahoe/Tahoe Light.png";
+// Оптимизация: ленивая загрузка обоев
+import defaultWallpaperDark from "./assets/images/wallpapers/Tahoe/Tahoe Dark.png";
+import defaultWallpaperLight from "./assets/images/wallpapers/Tahoe/Tahoe Light.png";
 
 // Мемоизированный компонент окна
 const MemoizedAppWindow = React.memo(AppWindow, (prevProps, nextProps) => {
@@ -31,29 +30,39 @@ export default function App() {
   const { contextMenu, openContextMenu, closeContextMenu } = useContextMenu();
   const isMobile = useMobileCheck();
   const [bootComplete, setBootComplete] = useState(false);
+  // Оптимизация: инициализация темы и обоев одним useEffect
   const [isLightTheme, setIsLightTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
     return saved === 'light';
   });
   
-  const [wallpaper, setWallpaper] = useState({
-    id: "sequoia_11",
+  const [wallpaper, setWallpaper] = useState(() => ({
+    id: "tahoe_default",
     type: "image",
-    value: defaultWallpaper,
-  });
+    value: defaultWallpaperDark, // По умолчанию тёмная тема
+  }));
 
-  // Apply saved theme on mount
+  // Apply saved theme on mount + обои
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
+    const isLight = savedTheme === 'light';
+    
+    if (isLight) {
       document.documentElement.classList.add('light-theme');
+      setWallpaper(prev => ({ ...prev, value: defaultWallpaperLight }));
     }
   }, []);
 
-  // Listen for theme changes from MenuBar
+  // Listen for theme changes from MenuBar + смена обоев
   useEffect(() => {
     const handleThemeChange = (e) => {
-      setIsLightTheme(e.detail.isLight);
+      const isLight = e.detail.isLight;
+      setIsLightTheme(isLight);
+      // Динамическая смена обоев
+      setWallpaper(prev => ({
+        ...prev,
+        value: isLight ? defaultWallpaperLight : defaultWallpaperDark,
+      }));
     };
     window.addEventListener('theme-change', handleThemeChange);
     return () => window.removeEventListener('theme-change', handleThemeChange);

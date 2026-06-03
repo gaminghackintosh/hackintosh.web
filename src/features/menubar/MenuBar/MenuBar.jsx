@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
-import AppleIcon from "../../AppleIcon";
+import { AppleIcon } from "../../../components/ui";
 
 import { FiWifi } from "react-icons/fi";
 import { BiBluetooth } from "react-icons/bi";

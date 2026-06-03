@@ -441,3 +441,157 @@
     background: rgba(10, 132, 255, 0.30); 
   }
 }
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .sf {
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .sf__bg-overlay {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .sf__toolbar {
+    background: rgba(245, 245, 247, 0.85);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .sf__toolbar-top,
+  .sf__tabs-bar {
+    background: rgba(245, 245, 247, 0.85);
+  }
+
+  .sf__icon-btn {
+    color: rgba(0, 0, 0, 0.50);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  .sf__nav-btn {
+    color: rgba(0, 0, 0, 0.65);
+
+    &:hover:not(.sf__nav-btn--disabled) {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    
+    &--disabled {
+      color: rgba(0, 0, 0, 0.22);
+    }
+  }
+
+  .sf__address {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+
+    &:focus-within {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(10, 132, 255, 0.4);
+      box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.15);
+    }
+  }
+
+  .sf__address-icon {
+    color: rgba(0, 0, 0, 0.35);
+    
+    &--lock { 
+      color: rgba(0, 0, 0, 0.45); 
+    }
+  }
+
+  .sf__address-input {
+    color: rgba(0, 0, 0, 0.90);
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.32);
+    }
+  }
+
+  .sf__refresh-btn {
+    color: rgba(0, 0, 0, 0.38);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.75);
+    }
+  }
+
+  .sf__tabs-bar {
+    background: rgba(245, 245, 247, 0.85);
+  }
+
+  .sf__tab {
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.75);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.10);
+      color: rgba(0, 0, 0, 0.95);
+      
+      .sf__tab-close {
+        color: rgba(0, 0, 0, 0.6);
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.15);
+          color: rgba(0, 0, 0, 0.9);
+        }
+      }
+    }
+    
+    &.active {
+      background: rgba(0, 0, 0, 0.12);
+      color: rgba(0, 0, 0, 0.95);
+    }
+    
+    .sf__tab-close {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .sf__new-tab-btn {
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.7);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.12);
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .sf__body {
+    background: rgba(255, 255, 255, 0.5);
+
+    &::-webkit-scrollbar-thumb { 
+      background: rgba(0, 0, 0, 0.2); 
+    }
+  }
+
+  .sf__blocked {
+    background: rgba(245, 245, 247, 0.75);
+
+    h2 {
+      color: rgba(0, 0, 0, 0.90);
+    }
+
+    p {
+      color: rgba(0, 0, 0, 0.50);
+    }
+  }
+
+  .sf__blocked-back {
+    background: rgba(10, 132, 255, 0.12);
+    border-color: rgba(10, 132, 255, 0.3);
+    color: #0A84FF;
+
+    &:hover { 
+      background: rgba(10, 132, 255, 0.20); 
+    }
+  }
+}

@@ -50,7 +50,8 @@ export const WALLPAPER_GROUPS = [
 // wallpapers[0] — Tahoe Light
 // wallpapers[1] — Tahoe Dark
 
-export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[0].wallpapers[10];
+// По умолчанию тёмная тема (Tahoe Dark)
+export const DEFAULT_WALLPAPER = WALLPAPER_GROUPS[1].wallpapers[1];
 export const WALLPAPERS = WALLPAPER_GROUPS.flatMap(g => g.wallpapers);
 export function getWallpaperById(id) {
   return WALLPAPERS.find(w => w.id === id) || DEFAULT_WALLPAPER;

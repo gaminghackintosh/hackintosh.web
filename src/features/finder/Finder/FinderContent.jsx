@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useContext, memo, useCallback, useMemo } from "react";
-import { AssetIcon } from "../AssetIcon";
-import { APPS } from "../../constants/apps";
+import { AssetIcon } from "./../../../components/ui";
+import { APPS } from "./../../../constants/apps";
 import { SidebarIcon } from "./SidebarIcon";
-import { WindowContext } from "../AppWindow/AppWindow"; 
-
-import { useContextMenu } from "./../../hooks/useContextMenu";
-import { ContextMenu } from "./../ContextMenu/ContextMenu";
+import { WindowContext } from "./../../../components/layout"; 
+import { useContextMenu } from "./../../../hooks/useContextMenu";
+import { ContextMenu } from "./../../../components/ui";
+// Import icons for the macOS Finder
+import folderIconPng from "./../../../assets/icons/desktop/folder_icon.png";
 
 // Набор встроенных векторных иконок в стиле macOS
 const FinderSVG = {
-  Folder: () => (
-    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 5.5C4 4.67157 4.67157 4 5.5 4H9.58579C9.98361 4 10.3652 4.15804 10.6464 4.43934L12.5607 6.35355C12.842 6.63485 13.2236 6.79289 13.6214 6.79289H18.5C19.3284 6.79289 20 7.46447 20 8.29289V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V5.5Z" fill="#2eb0ff" />
-      <path opacity="0.2" d="M4 8H20V18.5C20 19.3284 19.3284 20 18.5 20H5.5C4.67157 20 4 19.3284 4 18.5V8Z" fill="#007aff" />
-    </svg>
+  Folder: ({ size = "100%" }) => (
+    <img 
+      src={folderIconPng} 
+      alt="Folder" 
+      style={{ width: size, height: size, objectFit: 'contain' }}
+      draggable={false}
+    />
   ),
   File: () => (
     <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

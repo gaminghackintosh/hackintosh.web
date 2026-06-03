@@ -138,3 +138,58 @@
     resize: none;
   }
 }
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .notes {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .notes-titlebar {
+    background: rgba(245, 245, 247, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .notes-title {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .notes-sidebar {
+    background: rgba(245, 245, 247, 0.95);
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .notes-sidebar-header {
+    color: rgba(0, 0, 0, 0.35);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .notes-list-item {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+
+    &.active {
+      background: rgba(255, 190, 0, 0.2);
+      border-left-color: #ff9f0a;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .notes-item-title {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .notes-item-modified {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .notes-editor {
+    background: rgba(255, 255, 255, 0.96);
+    color: rgba(0, 0, 0, 0.85);
+  }
+}

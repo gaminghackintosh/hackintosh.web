@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, memo } from "react";
-import { APPS } from "./../constants/apps";
-import { AssetIcon } from "./AssetIcon";
+import { APPS } from "./../../constants/apps";
+import { AssetIcon } from "./../ui/AssetIcon";
 
 const GITHUB_APP = {
   id: "github",

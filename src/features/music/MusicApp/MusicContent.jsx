@@ -7,7 +7,7 @@ import React, {
   useMemo,
   memo,
 } from "react";
-import { WindowContext } from "../../AppWindow/AppWindow";
+import { WindowContext } from "./../../../components/layout";
 import {
   FaPlay, FaPause, FaStepForward, FaStepBackward,
   FaRandom, FaSearch, FaVolumeUp, FaVolumeMute,
@@ -293,7 +293,7 @@ export function MusicContent() {
       {/* СКРЫТЫЙ AUDIO ТЕГ ДЛЯ ПРАВИЛЬНОЙ РАБОТЫ REACT */}
       <audio ref={audioRef} style={{ display: "none" }} />
 
-      <div className="music-header" onMouseDown={onTitleMouseDown}>
+      <div className="music-header" onMouseDown={(e) => !e.target.closest('.music-tl, .music-ctrl-btn') && onTitleMouseDown(e)}>
         <div className="music-traffic-lights">
           <button className="music-tl music-tl--close"    onClick={onClose} />
           <button className="music-tl music-tl--minimize" onClick={onMinimize} />

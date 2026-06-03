@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { WindowContext } from "./../../AppWindow/AppWindow";
+import { WindowContext } from "./../../../components/layout";
 
 export function NotesContent() {
   const { onClose, onMinimize, onZoom, onTitleMouseDown } = useContext(WindowContext);
@@ -61,7 +61,7 @@ export function NotesContent() {
   return (
     <div className="notes">
       {/* ── Custom Title Bar ── */}
-      <div className="notes-titlebar" onMouseDown={onTitleMouseDown}>
+      <div className="notes-titlebar" onMouseDown={(e) => !e.target.closest('.notes-traffic-light') && onTitleMouseDown(e)}>
         <div className="notes-traffic-lights">
           <button
             className="notes-traffic-light notes-traffic-light--close"

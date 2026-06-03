@@ -237,3 +237,105 @@
     background: rgba(10, 132, 255, 0.3);
   }
 }
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .sf__section-title {
+    color: rgba(0, 0, 0, 0.90);
+    text-shadow: none;
+  }
+
+  .sf__fav-label {
+    color: rgba(0, 0, 0, 0.82);
+    text-shadow: none;
+  }
+
+  .sf__fav-icon {
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.15),
+      0 6px 18px rgba(0, 0, 0, 0.10),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+
+    .sf__fav:hover & {
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.20),
+        0 12px 32px rgba(0, 0, 0, 0.15),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .sf__bookmark-btn {
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.9);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .sf__privacy-card {
+    background: rgba(245, 245, 247, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .sf__privacy-icon {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .sf__privacy-text {
+    color: rgba(0, 0, 0, 0.62);
+  }
+
+  .sf__iphone-tab {
+    background: rgba(245, 245, 247, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.75);
+
+    &:hover {
+      background: rgba(235, 235, 240, 0.9);
+    }
+  }
+
+  .sf__surprise-btn {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.9);
+    
+    &:hover { 
+      background: rgba(0, 0, 0, 0.1); 
+    }
+  }
+
+  .sf-local-page {
+    color: rgba(0, 0, 0, 0.9);
+    
+    h1 { 
+      color: rgba(0, 0, 0, 0.95); 
+    }
+    
+    .sf-local-card {
+      background: rgba(245, 245, 247, 0.8);
+      border-color: rgba(0, 0, 0, 0.1);
+      
+      a { 
+        color: #0A84FF; 
+      }
+    }
+  }
+
+  .sf-cat-btn {
+    background: rgba(10, 132, 255, 0.12);
+    border-color: rgba(10, 132, 255, 0.3);
+    color: #0A84FF;
+    
+    &:hover {
+      background: rgba(10, 132, 255, 0.2);
+    }
+  }
+}

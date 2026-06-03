@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { WindowContext } from "../../AppWindow/AppWindow";
+import { WindowContext } from "./../../../components/layout";
 import { VscTerminalBash } from "react-icons/vsc";
 
 // Массив для команды fortune
@@ -589,7 +589,7 @@ export function TerminalContent({ openApp }) {
   return (
     <div className="terminal-container">
       {/* Шапка окна macOS */}
-      <div className="terminal-window-header" onMouseDown={onTitleMouseDown}>
+      <div className="terminal-window-header" onMouseDown={(e) => !e.target.closest('.terminal-btn') && onTitleMouseDown(e)}>
         <div className="terminal-traffic-lights">
           <button className="terminal-btn terminal-btn--close" onClick={onClose} />
           <button className="terminal-btn terminal-btn--minimize" onClick={onMinimize} />

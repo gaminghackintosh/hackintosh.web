@@ -1,6 +1,6 @@
 import React, { useState, useContext, useMemo, useCallback, memo, useEffect } from "react";
-import { WALLPAPER_GROUPS } from "../../../constants/wallpapers";
-import { WindowContext } from "../../AppWindow/AppWindow";
+import { WALLPAPER_GROUPS } from "./../../../constants/wallpapers";
+import { WindowContext } from "./../../../components/layout";
 
 // Icons - PNG images for network section
 import WiFi_Icon      from "./../../../assets/icons/Settings_menuSections/Wi-Fi.png";
@@ -307,7 +307,7 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
   }, []);
 
   const handleSidebarMouseDown = useCallback((e) => {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+    if (e.target.closest('button, input')) return;
     onFocus();
     onTitleMouseDown(e);
   }, [onFocus, onTitleMouseDown]);
