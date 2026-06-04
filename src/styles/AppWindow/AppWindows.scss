@@ -240,3 +240,24 @@
     width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// Drag & Resize — прозрачность для производительности
+// ═══════════════════════════════════════════════════════════════════
+.app-window--dragging,
+.app-window--resizing {
+  opacity: 0.85;
+  pointer-events: none;
+
+  // Упрощаем рендеринг контента
+  .app-window__content {
+    filter: blur(1px);
+  }
+
+  // Убираем тени для производительности
+  box-shadow: none !important;
+}
+
+.app-window--dragging {
+  cursor: grabbing !important;
+}

@@ -69,8 +69,9 @@ export const AppWindow = memo(function AppWindow({
     offset.current = { x: e.clientX - posRef.current.x, y: e.clientY - posRef.current.y };
     startPos.current = { x: posRef.current.x, y: posRef.current.y };
 
-    // Визуальная обратная связь
+    // Визуальная обратная связь + класс прозрачности для производительности
     if (windowRef.current) {
+      windowRef.current.classList.add('app-window--dragging');
       windowRef.current.style.cursor = 'grabbing';
       windowRef.current.style.transition = 'none';
       windowRef.current.style.willChange = 'transform';
@@ -94,8 +95,9 @@ export const AppWindow = memo(function AppWindow({
       if (!dragging.current) return;
       dragging.current = false;
 
-      // Восстанавливаем стили
+      // Восстанавливаем стили и убираем класс прозрачности
       if (windowRef.current) {
+        windowRef.current.classList.remove('app-window--dragging');
         windowRef.current.style.cursor = '';
         windowRef.current.style.transition = '';
         windowRef.current.style.willChange = '';
@@ -134,6 +136,7 @@ export const AppWindow = memo(function AppWindow({
     const startY = e.clientY;
 
     if (windowRef.current) {
+      windowRef.current.classList.add('app-window--resizing');
       windowRef.current.style.transition = 'none';
       windowRef.current.style.willChange = 'width, height';
     }
@@ -159,6 +162,7 @@ export const AppWindow = memo(function AppWindow({
       resizing.current = false;
       
       if (windowRef.current) {
+        windowRef.current.classList.remove('app-window--resizing');
         windowRef.current.style.transition = '';
         windowRef.current.style.willChange = '';
         setSize({ 
