@@ -20,7 +20,7 @@ export const AppWindow = memo(function AppWindow({
   children,
   onZoom = null,
 }) {
-  // Инициализируем только один раз
+
   const [pos, setPos] = useState(() => ({ x: win.x, y: win.y }));
   const [size, setSize] = useState(() => ({ width: win.width, height: win.height }));
   const [isMaximized, setIsMaximized] = useState(false);
@@ -69,24 +69,38 @@ export const AppWindow = memo(function AppWindow({
     offset.current = { x: e.clientX - posRef.current.x, y: e.clientY - posRef.current.y };
     startPos.current = { x: posRef.current.x, y: posRef.current.y };
 
-    // Визуальная обратная связь + класс прозрачности для производительности
+    // Визуальная обратная связь + класс производительности
     if (windowRef.current) {
       windowRef.current.classList.add('app-window--dragging');
       windowRef.current.style.cursor = 'grabbing';
-      windowRef.current.style.transition = 'none';
       windowRef.current.style.willChange = 'transform';
     }
 
+    let rafId = null;
+    let lastX = posRef.current.x;
+    let lastY = posRef.current.y;
+    
     const onMove = (ev) => {
       if (!dragging.current) return;
       
       const newX = Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, ev.clientX - offset.current.x));
       const newY = Math.max(28, ev.clientY - offset.current.y);
 
-      // Прямая манипуляция DOM без state - используем requestAnimationFrame для batching
-      requestAnimationFrame(() => {
+      // Throttle: обновляем только если позиция изменилась
+      if (newX === lastX && newY === lastY) return;
+      lastX = newX;
+      lastY = newY;
+      
+      // Отменяем предыдущий frame, если он ещё не выполнен
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+
+      // Прямая манипуляция DOM без state - используем requestAnimationFrame
+      rafId = requestAnimationFrame(() => {
         if (windowRef.current && dragging.current) {
           windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+          rafId = null;
         }
       });
     };
@@ -95,15 +109,20 @@ export const AppWindow = memo(function AppWindow({
       if (!dragging.current) return;
       dragging.current = false;
 
-      // Восстанавливаем стили и убираем класс прозрачности
+      // Отменяем pending frame
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      
+      // Восстанавливаем стили
       if (windowRef.current) {
         windowRef.current.classList.remove('app-window--dragging');
         windowRef.current.style.cursor = '';
-        windowRef.current.style.transition = '';
         windowRef.current.style.willChange = '';
       }
 
-      // Вычисляем финальную позицию один раз
+      // Вычисляем финальную позицию
       const finalX = Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, ev.clientX - offset.current.x));
       const finalY = Math.max(28, ev.clientY - offset.current.y);
       
@@ -137,23 +156,28 @@ export const AppWindow = memo(function AppWindow({
 
     if (windowRef.current) {
       windowRef.current.classList.add('app-window--resizing');
-      windowRef.current.style.transition = 'none';
       windowRef.current.style.willChange = 'width, height';
     }
 
+    let rafId = null;
+    
     const onMove = (ev) => {
       if (!resizing.current) return;
+      
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       
       const deltaX = ev.clientX - startX;
       const deltaY = ev.clientY - startY;
       const newWidth = Math.max(250, startSize.current.width + deltaX);
       const newHeight = Math.max(200, startSize.current.height + deltaY);
 
-      // Прямая манипуляция DOM с requestAnimationFrame
-      requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
         if (windowRef.current && resizing.current) {
           windowRef.current.style.width = `${newWidth}px`;
           windowRef.current.style.height = `${newHeight}px`;
+          rafId = null;
         }
       });
     };
@@ -161,9 +185,13 @@ export const AppWindow = memo(function AppWindow({
     const onUp = () => {
       resizing.current = false;
       
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      
       if (windowRef.current) {
         windowRef.current.classList.remove('app-window--resizing');
-        windowRef.current.style.transition = '';
         windowRef.current.style.willChange = '';
         setSize({ 
           width: parseFloat(windowRef.current.style.width) || sizeRef.current.width, 

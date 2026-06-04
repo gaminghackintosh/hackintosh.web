@@ -314,12 +314,6 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
     setActiveTab(id === "appleid" ? "about" : id);
   }, []);
 
-  const handleSidebarMouseDown = useCallback((e) => {
-    if (e.target.closest('button, input')) return;
-    onFocus();
-    onTitleMouseDown(e);
-  }, [onFocus, onTitleMouseDown]);
-
   const handleWallpaperChange = useCallback((wp) => {
     onWallpaperChange?.(wp);
   }, [onWallpaperChange]);
@@ -348,13 +342,23 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
   return (
     <div className="settings-container">
       {/* ── SIDEBAR ── */}
-      <div className="settings-sidebar" onMouseDown={handleSidebarMouseDown}>
+      <div className="settings-sidebar">
 
-        {/* Traffic lights */}
-        <div className="sidebar-traffic-lights">
-          <button className="traffic-light traffic-light--close"    onClick={onClose} aria-label="Close" />
-          <button className="traffic-light traffic-light--minimize" onClick={onMinimize} aria-label="Minimize" />
-          <button className="traffic-light traffic-light--zoom" onClick={onZoom} aria-label="Zoom" />
+        {/* Drag handle (верхняя часть для перетаскивания) */}
+        <div
+          className="sidebar-drag-handle"
+          onMouseDown={(e) => {
+            if (e.target.closest('button, input')) return;
+            onFocus();
+            onTitleMouseDown(e);
+          }}
+        >
+          {/* Traffic lights */}
+          <div className="sidebar-traffic-lights">
+            <button className="traffic-light traffic-light--close"    onClick={onClose} aria-label="Close" />
+            <button className="traffic-light traffic-light--minimize" onClick={onMinimize} aria-label="Minimize" />
+            <button className="traffic-light traffic-light--zoom" onClick={onZoom} aria-label="Zoom" />
+          </div>
         </div>
 
         {/* Search */}

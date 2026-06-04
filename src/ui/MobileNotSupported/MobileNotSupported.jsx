@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// Styles are already imported via src/styles/main.scss in src/main.jsx
 
 const FEATURES = [
   {

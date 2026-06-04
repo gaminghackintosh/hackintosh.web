@@ -8,9 +8,12 @@
   @include glass-dark(rgba(25, 25, 28, 0.88), 40px, 0.1, true);
   border-radius: 12px;
   overflow: hidden;
-  will-change: transform;
   backface-visibility: hidden;
   transition: none !important;
+
+  // GPU acceleration
+  transform: translateZ(0);
+  will-change: transform;
 
   &--active {
     border-color: rgba(255, 255, 255, 0.1);
@@ -30,6 +33,8 @@
   &__content {
     flex: 1;
     overflow: hidden;
+    // Оптимизация контента
+    contain: layout style paint;
   }
 
   // Анимация разворачивания/сворачивания
@@ -49,6 +54,36 @@
       width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   }
+}
+  
+// ═══════════════════════════════════════════════════════════════════
+// Drag & Resize — оптимизация производительности
+// ═══════════════════════════════════════════════════════════════════
+.app-window--dragging {
+  // Убираем тени для производительности
+  box-shadow: none !important;
+  
+  // GPU acceleration
+  will-change: transform;
+  
+  // Контент остаётся видимым, но упрощаем рендеринг
+  .app-window__content {
+    // Лёгкое уменьшение непрозрачности для визуального эффекта drag
+    opacity: 0.92;
+  }
+}
+
+.app-window--resizing {
+  opacity: 0.85;
+  pointer-events: none;
+
+  // Упрощаем рендеринг контента
+  .app-window__content {
+    filter: blur(0.5px);
+  }
+
+  // Убираем тени для производительности
+  box-shadow: none !important;
 }
 
 .title-bar {
@@ -218,46 +253,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999; // Должен быть выше контента
-}
-
-
-.app-window {
-  transition:
-    opacity .28s cubic-bezier(.16,1,.3,1),
-    scale .28s cubic-bezier(.16,1,.3,1);
-}
-
-.app-window--minimized {
-  opacity: 0;
-  scale: 0.6;
-  pointer-events: none;
-}
-// Анимация разворачивания/сворачивания
-.app-window--animating {
-  transition:
-    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Drag & Resize — прозрачность для производительности
-// ═══════════════════════════════════════════════════════════════════
-.app-window--dragging,
-.app-window--resizing {
-  opacity: 0.85;
-  pointer-events: none;
-
-  // Упрощаем рендеринг контента
-  .app-window__content {
-    filter: blur(1px);
-  }
-
-  // Убираем тени для производительности
-  box-shadow: none !important;
-}
-
-.app-window--dragging {
-  cursor: grabbing !important;
+  z-index: 999;
 }

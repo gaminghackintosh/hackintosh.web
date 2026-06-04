@@ -14,7 +14,7 @@ $divider:         rgba(255, 255, 255, 0.06);
 $card-bg:         rgba(255, 255, 255, 0.055);
 $card-border:     rgba(255, 255, 255, 0.07);
 $hover-bg:        rgba(255, 255, 255, 0.06);
-$active-bg:       rgba(255, 255, 255, 0.11);
+$active-bg:       rgb(20, 92, 184);
 $sidebar-bg:      rgba(30, 30, 34, 0.72);
 $content-bg:      rgba(24, 24, 28, 0.96);
 
@@ -26,210 +26,6 @@ $content-bg:      rgba(24, 24, 28, 0.96);
   color: $text-primary;
   background: $content-bg;
   overflow: hidden;
-  contain: layout style paint;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  LIGHT THEME SUPPORT
-// ═══════════════════════════════════════════════════════════════════
-.light-theme {
-  .settings-container {
-    color: rgba(0, 0, 0, 0.85);
-    background: rgba(245, 245, 247, 0.96);
-  }
-
-  .settings-sidebar {
-    background: rgba(245, 245, 247, 0.85);
-    border-right-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .sidebar-search input {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.08);
-    color: rgba(0, 0, 0, 0.85);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.35)' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
-    
-    &::placeholder { color: rgba(0, 0, 0, 0.3); }
-    &:focus {
-      background-color: rgba(0, 0, 0, 0.08);
-      border-color: rgba(0, 0, 0, 0.12);
-    }
-  }
-
-  .sidebar-apple-id {
-    &:hover { background: rgba(0, 0, 0, 0.05); }
-    &.active { background: rgba(10, 132, 255, 0.12); }
-  }
-
-  .tab-item {
-    color: rgba(0, 0, 0, 0.6);
-    
-    &:hover:not(.active) { 
-      background: rgba(0, 0, 0, 0.05); 
-      color: rgba(0, 0, 0, 0.85);
-    }
-    &.active {
-      background: rgba(10, 132, 255, 0.12);
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  .sidebar-divider,
-  .section-divider,
-  .sg-divider {
-    background: rgba(0, 0, 0, 0.08);
-  }
-
-  .sg-card {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .sr-label {
-    color: rgba(0, 0, 0, 0.85);
-  }
-
-  .sr-desc,
-  .sr-value {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .toggle__track {
-    background: rgba(0, 0, 0, 0.12);
-    border-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .ctrl-select,
-  .ctrl-button {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.85);
-    
-    &:hover { background: rgba(0, 0, 0, 0.08); }
-    
-    option {
-      background: rgba(255, 255, 255, 0.98);
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  .mode-btn {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.6);
-    
-    &:hover:not(&--active) {
-      background: rgba(0, 0, 0, 0.06);
-      color: rgba(0, 0, 0, 0.85);
-    }
-
-    &--active {
-      border-color: $accent;
-      background: rgba(0, 122, 255, 0.08);
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  .mode-icon--light { background: linear-gradient(135deg, #e8e8ee 40%, #c8c8d4); }
-  .mode-icon--dark  { background: linear-gradient(135deg, #1c1c22 40%, #2c2c36); }
-  .mode-icon--auto {
-    background: linear-gradient(90deg, #e8e8ee 50%, #1c1c22 50%);
-  }
-
-  .wallpaper-group-title {
-    color: rgba(0, 0, 0, 0.85);
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .wallpaper-title {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .about-name {
-    color: rgba(0, 0, 0, 0.85);
-  }
-
-  .about-version,
-  .about-copyright {
-    color: rgba(0, 0, 0, 0.45);
-  }
-
-  .panel-title {
-    color: rgba(0, 0, 0, 0.85);
-  }
-
-  .panel-description {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .sr-badge--blue {
-    background: rgba(0, 122, 255, 0.08);
-    color: #0a84ff;
-  }
-  .sr-badge--gray {
-    background: rgba(0, 0, 0, 0.06);
-    color: rgba(0, 0, 0, 0.5);
-  }
-  .sr-badge--red {
-    background: rgba(255, 59, 48, 0.08);
-    color: #ff3b30;
-  }
-
-  .bt-device-status.disconnected,
-  .network-name,
-  .searching-text,
-  .toggle-desc {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .bt-device-status.connected {
-    color: #34c759;
-  }
-
-  .status-text {
-    color: #34c759;
-  }
-
-  .details-btn,
-  .other-btn,
-  .bt-action-btn {
-    background: rgba(0, 122, 255, 0.08);
-    color: #0a84ff;
-    
-    &:hover { background: rgba(0, 122, 255, 0.12); }
-  }
-
-  .advanced-btn,
-  .bt-advanced-btn {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.85);
-    
-    &:hover { background: rgba(0, 0, 0, 0.08); }
-  }
-
-  .unimplemented-placeholder {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .unimplemented-icon {
-    opacity: 0.5;
-  }
-
-  .control-center-toggle {
-    color: rgba(0, 0, 0, 0.5);
-  }
-}
-
-// ─── Root container ───────────────────────────────────────────────────────────
-.settings-container {
-  display: flex;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: $text-primary;
-  background: $content-bg;
-  overflow: hidden;
-  // Оптимизация производительности
   contain: layout style paint;
 }
 
@@ -249,6 +45,18 @@ $content-bg:      rgba(24, 24, 28, 0.96);
   // Оптимизация производительности
   contain: layout style;
   will-change: auto;
+}
+
+// Drag handle - верхняя часть для перетаскивания
+.sidebar-drag-handle {
+  flex-shrink: 0;
+  cursor: grab;
+  user-select: none;
+  -webkit-app-region: drag;
+  
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 // Traffic lights
@@ -1719,7 +1527,6 @@ $content-bg:      rgba(24, 24, 28, 0.96);
 
   .sidebar-search {
     input {
-      background: rgba(0, 0, 0, 0.05);
       border-color: rgba(0, 0, 0, 0.08);
       color: rgba(0, 0, 0, 0.9);
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.35)' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
@@ -1759,14 +1566,9 @@ $content-bg:      rgba(24, 24, 28, 0.96);
         background: rgba(0, 0, 0, 0.04); 
         color: rgba(0, 0, 0, 0.9); 
       }
-      
-      &.active {
-        background: rgba(0, 0, 0, 0.08);
-        color: rgba(0, 0, 0, 0.95);
-      }
     }
   }
-
+      
   .settings-content {
     background: #f5f5f7;
 
@@ -2116,5 +1918,12 @@ $content-bg:      rgba(24, 24, 28, 0.96);
 
   .about-copyright {
     color: rgba(0, 0, 0, 0.35);
+  }
+
+  // Active tab item - переопределяем для корректного отображения
+  .tabs-list .tab-item.active {
+    background: rgb(20, 92, 184);
+    color: #ffffff;
+    font-weight: 500;
   }
 }

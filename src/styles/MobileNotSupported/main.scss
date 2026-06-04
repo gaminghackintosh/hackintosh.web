@@ -1,121 +1,124 @@
 // ════════════════════════════════════════════════════════
-//  MobileNotSupported — улучшенный дизайн кнопки
+//  MobileNotSupported 
 // ════════════════════════════════════════════════════════
+@use "../variables" as *;
+@use "../mixins" as *;
 
-$win-w           : 92%;
-$max-win-w       : 440px;
-$titlebar-h      : 38px;
-$radius          : 12px;
-$font-ui         : -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif;
+$win-w      : 92%;
+$max-win-w  : 440px;
+$titlebar-h : 40px;
+$radius     : 12px;
+$font-ui    : -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
 
-// Цвета
-$window-bg       : rgba(255, 255, 255, 0.82);
-$window-border   : rgba(255, 255, 255, 0.5);
-$inner-stroke    : rgba(0, 0, 0, 0.04);
-$btn-radius      : 12px;
-$apple-blue      : #007aff;
-$apple-blue-hover: #0055d4;
-$apple-blue-active: #0040a0;
-$apple-blue-shadow: rgba(0, 122, 255, 0.35);
-$apple-green     : #34c759;
-$apple-green-hover: #28a745;
-$apple-green-active: #1e7e34;
-$apple-green-shadow: rgba(52, 199, 89, 0.35);
-
-// Traffic Lights
-$tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
-
-// ── Задний фон: горы Sierra ──
+// ── Задний фон: macOS-style градиент ──
 .mns-backdrop {
-  position         : fixed;
-  inset            : 0;
-  z-index          : 10000;
-  display          : flex;
-  align-items      : center;
-  justify-content  : center;
-  overflow         : hidden;
-  font-family      : $font-ui;
-
-  background:
-    linear-gradient(to bottom, #1b2c4c 0%, #3b5b8c 30%, #a1c4e5 70%, #d4e3f5 100%);
+  position        : fixed;
+  inset           : 0;
+  z-index         : 10000;
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  overflow        : hidden;
+  font-family     : $font-ui;
+  background      : $color-bg-body;
+  
+  // Градиент в стиле macOS Big Sur / Monterey
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    #2a4a7a 0%,
+    #1a2a4a 40%,
+    #0a0f1a 100%
+  );
 }
 
 .mns-desktop-bg {
   position       : absolute;
   inset          : 0;
-  backdrop-filter: blur(18px) saturate(1.5); 
+  backdrop-filter: blur(20px) saturate(1.4);
   pointer-events : none;
-  opacity        : 0.4;
+  opacity        : 0.5;
 }
 
-// ── Окно-материал ───────────────────────────────────────
+// ── Окно в стиле проекта (glass-dark) ───────────────────
 .mns-window {
   position       : relative;
   width          : $win-w;
   max-width      : $max-win-w;
   border-radius  : $radius;
   overflow       : hidden;
-  background     : $window-bg;
-  backdrop-filter: blur(25px) saturate(180%);
-  border         : 1px solid $window-border;
-  box-shadow:
-    0 0 0 1px $inner-stroke,
-    0 8px 32px rgba(0,0,0,0.12),
-    0 2px 8px rgba(0,0,0,0.06);
-  animation: mns-sierra-open 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  @include glass-dark(rgba(25, 25, 28, 0.88), 40px, 0.12, true);
+  animation      : mns-open 0.4s $easing-ease-out both;
 }
 
-@keyframes mns-sierra-open {
+@keyframes mns-open {
   from { opacity: 0; transform: scale(0.96) translateY(10px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-// ── Заголовок ───────────────────────────────────────────
+// ── Заголовок в стиле AppWindow ─────────────────────────
 .mns-titlebar {
   height         : $titlebar-h;
   display        : flex;
   align-items    : center;
   padding        : 0 14px;
-  background     : rgba(255,255,255,0.4);
-  backdrop-filter: blur(10px);
-  border-bottom  : 0.5px solid rgba(0,0,0,0.08);
+  background     : rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(15px);
+  border-bottom  : 1px solid $color-border-light;
   user-select    : none;
 }
 
 .mns-titlebar-label {
-  position       : absolute;
-  left           : 50%;
-  transform      : translateX(-50%);
-  font-size      : 12px;
-  font-weight    : 600;
-  color          : rgba(0, 0, 0, 0.55);
-  letter-spacing : -0.1px;
+  position    : absolute;
+  left        : 50%;
+  transform   : translateX(-50%);
+  font-size   : 13px;
+  font-weight : 500;
+  color       : $color-menubar-item;
+  letter-spacing : 0.15px;
 }
 
 .mns-titlebar-spacer {
-  width          : 52px;
-  margin-left    : auto;
+  width       : 52px;
+  margin-left : auto;
 }
 
-// ── Точки (traffic lights) ────────────────────────────
+// ── Traffic Lights в стиле проекта ──────────────────────
 .mns-traffic {
-  display        : flex;
-  align-items    : center;
-  gap            : 7px;
-  z-index        : 2;
+  display     : flex;
+  gap         : 7px;
+  z-index     : 2;
 }
 
 .tl {
-  width          : 12px;
-  height         : 12px;
-  border-radius  : 50%;
-  background     : rgba(0,0,0,0.12);
-  transition     : background 0.15s;
+  width            : 12px;
+  height           : 12px;
+  border-radius    : 50%;
+  position         : relative;
+  transition       : background-color 0.15s ease-out, transform 0.1s;
+  
+  &.tl-close {
+    background     : #ff5f57;
+    cursor         : pointer;
+  }
+  
+  &.tl-min {
+    background     : #ffbd2e;
+    cursor         : pointer;
+  }
+  
+  &.tl-max {
+    background     : #28c840;
+    cursor         : pointer;
+  }
+  
+  &:hover {
+    transform: scale(1.08);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 }
-
-.mns-window:hover .tl-close { background: $tl-r; }
-.mns-window:hover .tl-min   { background: $tl-y; }
-.mns-window:hover .tl-max   { background: $tl-g; }
 
 // ── Тело окна ───────────────────────────────────────────
 .mns-body {
@@ -136,8 +139,9 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   width          : 60px;
   height         : 60px;
   border-radius  : 14px;
-  background     : white;
-  box-shadow     : 0 4px 12px rgba(0,0,0,0.05), inset 0 -0.5px 0 rgba(0,0,0,0.08);
+  background     : rgba(255, 255, 255, 0.1);
+  border         : 1px solid $color-border-lighter;
+  box-shadow     : 0 4px 12px rgba(0, 0, 0, 0.2);
   display        : flex;
   align-items    : center;
   justify-content: center;
@@ -150,7 +154,7 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 .mns-title {
   font-size      : 19px;
   font-weight    : 650;
-  color          : #1c1c1e;
+  color          : $color-text-primary;
   letter-spacing : -0.3px;
   margin         : 0 0 2px 0;
 }
@@ -158,7 +162,7 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 .mns-subtitle {
   font-size      : 11px;
   font-weight    : 500;
-  color          : rgba(0,0,0,0.45);
+  color          : $color-text-secondary;
   text-transform : uppercase;
   letter-spacing : 0.6px;
   margin         : 0 0 6px 0;
@@ -167,17 +171,16 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 .mns-description {
   font-size      : 13px;
   line-height    : 1.5;
-  color          : #5a5a5e;
+  color          : $color-text-tertiary;
   margin         : 0;
   max-width      : 320px;
 }
 
 // ── Блок с характеристиками ──────────────────────────
 .mns-features-box {
-  background     : rgba(255,255,255,0.5);
+  background     : rgba(255, 255, 255, 0.04);
   border-radius  : 10px;
-  backdrop-filter: blur(10px);
-  border         : 0.5px solid rgba(255,255,255,0.6);
+  border         : 1px solid $color-border-light;
   margin-bottom  : 18px;
   overflow       : hidden;
 }
@@ -190,10 +193,10 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   transition     : background 0.2s;
   
   &:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.06);
   }
   
-  & + & { border-top: 1px solid rgba(0,0,0,0.04); }
+  & + & { border-top: 1px solid $color-border-light; }
 }
 
 .mns-feature-icon {
@@ -213,17 +216,17 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 .mns-feature-title {
   font-size      : 12px;
   font-weight    : 600;
-  color          : #1c1c1e;
+  color          : $color-text-primary;
   line-height    : 1.4;
 }
 
 .mns-feature-desc {
   font-size      : 11px;
-  color          : #8e8e93;
+  color          : $color-text-secondary;
   line-height    : 1.4;
 }
 
-// ── Улучшенная кнопка ──────────────────────────────────
+// ── Кнопка в стиле проекта ──────────────────────────────
 .mns-actions {
   margin-bottom: 12px;
 }
@@ -232,7 +235,7 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   position       : relative;
   width          : 100%;
   height         : 44px;
-  border-radius  : $btn-radius;
+  border-radius  : 12px;
   font-family    : $font-ui;
   font-size      : 14px;
   font-weight    : 500;
@@ -242,7 +245,7 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
   align-items    : center;
   justify-content: center;
   gap            : 8px;
-  transition     : all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition     : all 0.2s $easing-ease-out;
   padding        : 0 20px;
   letter-spacing : -0.2px;
   
@@ -258,39 +261,39 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 
 // ── Primary кнопка ──────────────────────────────────────
 .mns-btn--primary {
-  background     : $apple-blue;
+  background     : $color-accent;
   color          : white;
-  box-shadow     : 0 2px 12px rgba(0, 122, 255, 0.25);
+  box-shadow     : 0 2px 12px $color-accent-shadow;
   border         : 0.5px solid rgba(255, 255, 255, 0.15);
   
   &:hover {
-    background: $apple-blue-hover;
-    box-shadow: 0 4px 20px rgba(0, 122, 255, 0.35);
+    background: #0a74e6;
+    box-shadow: 0 4px 20px $color-accent-shadow;
     transform: translateY(-1px);
   }
   
   &:active {
-    background: $apple-blue-active;
+    background: #0066cc;
     transform: scale(0.97);
-    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+    box-shadow: 0 2px 8px $color-accent-shadow;
   }
 }
 
 // ── Success кнопка ──────────────────────────────────────
 .mns-btn--success {
-  background     : $apple-green;
+  background     : $color-wifi-success;
   color          : white;
-  box-shadow     : 0 2px 12px rgba(52, 199, 89, 0.25);
+  box-shadow     : 0 2px 12px rgba(52, 199, 89, 0.3);
   border         : 0.5px solid rgba(255, 255, 255, 0.15);
   
   &:hover {
-    background: $apple-green-hover;
+    background: #2db34f;
     box-shadow: 0 4px 20px rgba(52, 199, 89, 0.35);
     transform: translateY(-1px);
   }
   
   &:active {
-    background: $apple-green-active;
+    background: #1e8f3a;
     transform: scale(0.97);
     box-shadow: 0 2px 8px rgba(52, 199, 89, 0.2);
   }
@@ -300,7 +303,7 @@ $tl-r: #ff5f56; $tl-y: #ffbd2e; $tl-g: #27c93f;
 .mns-footer {
   text-align     : center;
   font-size      : 10px;
-  color          : rgba(0,0,0,0.25);
+  color          : $color-text-muted;
   margin-top     : 12px;
   letter-spacing : 0.3px;
 }
