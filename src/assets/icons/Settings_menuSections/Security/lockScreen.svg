@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<defs>
+<!-- Градиент для фона иконки -->
+<linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#3a3a3c" />
+<stop offset="100%" stop-color="#1c1c1e" />
+</linearGradient>
+
+<!-- Тень для замка -->
+<filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+<feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3" />
+</filter>
+
+<!-- Свечение для точек -->
+<filter id="glow">
+<feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+<feMerge>
+<feMergeNode in="coloredBlur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+</defs>
+
+<!-- Фон иконки -->
+<rect x="0" y="0" width="200" height="200" rx="45" fill="url(#bgGrad)" />
+
+<!-- Замок (Дужка) -->
+<path d="M88 82 L88 68 
+C 88 52, 112 52, 112 68 
+L112 82" 
+fill="none" stroke="#f0f0f0" stroke-width="12" stroke-linecap="round" filter="url(#shadow)" />
+
+<!-- Замок (Корпус) -->
+<rect x="80" y="78" width="40" height="38" rx="6" fill="#f0f0f0" filter="url(#shadow)" />
+
+<!-- Деталь замка (скважина) -->
+<rect x="95" y="92" width="10" height="14" rx="2" fill="#2c2c2e" opacity="0.6" />
+
+<!-- 4 Точки внизу -->
+<g filter="url(#glow)">
+<circle cx="74" cy="142" r="6" fill="#ffffff" />
+<circle cx="92" cy="142" r="6" fill="#ffffff" />
+<circle cx="110" cy="142" r="6" fill="#ffffff" />
+<circle cx="128" cy="142" r="6" fill="#ffffff" />
+</g>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Градиент для фона иконки (оранжевый) -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffb74d" />
+      <stop offset="100%" stop-color="#ff9800" />
+    </linearGradient>
+  </defs>
+
+  <!-- Фон иконки (скругленный квадрат) -->
+  <rect x="0" y="0" width="200" height="200" rx="45" fill="url(#bgGrad)" />
+
+  <!-- Лампочка (основная колба) -->
+  <path d="M100 50 
+           C 130 50, 135 85, 125 110 
+           C 118 125, 112 130, 112 140 
+           L 88 140 
+           C 88 130, 82 125, 75 110 
+           C 65 85, 70 50, 100 50 Z" 
+        fill="white" />
+
+  <!-- Цоколь лампочки (полоски) -->
+  <!-- Нижняя часть корпуса цоколя -->
+  <rect x="89" y="140" width="22" height="20" rx="4" fill="white" />
+  
+  <!-- Разделительные линии на цоколе -->
+  <line x1="89" y1="146" x2="111" y2="146" stroke="#ff9800" stroke-width="2.5" />
+  <line x1="89" y1="152" x2="111" y2="152" stroke="#ff9800" stroke-width="2.5" />
+  <line x1="89" y1="158" x2="111" y2="158" stroke="#ff9800" stroke-width="2.5" />
+
+  <!-- Блик на колбе (для объема) -->
+  <path d="M92 65 C 78 65, 75 90, 80 105 C 82 100, 85 70, 96 70 Z" fill="#ffe0b2" opacity="0.5" />
+</svg>

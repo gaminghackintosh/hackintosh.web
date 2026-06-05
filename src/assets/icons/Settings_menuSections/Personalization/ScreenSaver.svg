@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5fc3f5" />
+      <stop offset="100%" stop-color="#2ba9ea" />
+    </linearGradient>
+    
+    <mask id="moonMask">
+      <rect width="200" height="200" fill="white" />
+      <circle cx="102" cy="88" r="18" fill="black" />
+    </mask>
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" rx="45" fill="url(#bgGrad)" />
+
+  <rect x="40" y="55" width="120" height="90" rx="6" fill="none" stroke="white" stroke-width="8" />
+
+  <circle cx="90" cy="95" r="18" fill="white" mask="url(#moonMask)" />
+
+  <path d="M125 92 L127 96 L131 98 L127 100 L125 104 L123 100 L119 98 L123 96 Z" fill="white" />
+  <path d="M140 85 L141 87 L143 88 L141 89 L140 91 L139 89 L137 88 L139 87 Z" fill="white" />
+  <path d="M145 105 L146 106 L147 107 L146 108 L145 109 L144 108 L143 107 L144 106 Z" fill="white" />
+  <path d="M115 118 L116 119 L116.5 119.5 L116 120 L115 121 L114 120 L113.5 119.5 L114 119 Z" fill="white" />
+</svg>

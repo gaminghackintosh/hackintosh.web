@@ -23,9 +23,18 @@ import Security_Icon from "@/assets/icons/Settings_menuSections/General/security
 
 import DesktopAndDock_Icon from "@/assets/icons/Settings_menuSections/Personalization/DesktopAndDock.png";
 import Displays_Icon from "@/assets/icons/Settings_menuSections/Personalization/Displays.png";
+import Wallpapers_Icon from "@/assets/icons/Settings_menuSections/Personalization/Wallpapers.png";
+import ScreenSaver_Icon from "@/assets/icons/Settings_menuSections/Personalization/ScreenSaver.svg";
+import EnergySaver_Icon from "@/assets/icons/Settings_menuSections/Personalization/Energy_Saver.svg";
 
+import LockScreen_Icon from "@/assets/icons/Settings_menuSections/Security/lockScreen.svg";
+import LoginPass_Icon from "@/assets/icons/Settings_menuSections/Security/LoginPass.svg";
+import Users_Icon from "@/assets/icons/Settings_menuSections/Security/Users.png";
 
-import GameCenter_Icon from "@/assets/icons/Settings_menuSections/Game_Center.png";
+import Passwords_Icon from "@/assets/icons/Settings_menuSections/6_part/Passwords_dark.webp";
+import Mail_Icon from "@/assets/icons/Settings_menuSections/6_part/mail.png";
+import GameCenter_Icon from "@/assets/icons/Settings_menuSections/6_Part/Game_Center.png";
+import Wallet_Icon from "@/assets/icons/Settings_menuSections/6_part/Wallet.png";
 
 
 // Shared components
@@ -98,26 +107,26 @@ const MENU_SECTIONS = [
     items: [
       { id: "desktopdock",  label: "Desktop & Dock", icon: DesktopAndDock_Icon, iconType: "image" },
       { id: "displays",     label: "Displays",        icon: Displays_Icon, iconType: "image" },
-      { id: "wallpaper",    label: "Wallpaper",       icon: "🖼️", iconType: "emoji" },
-      { id: "screensaver",  label: "Screen Saver",    icon: "🌌", iconType: "emoji" },
-      { id: "energysaver",  label: "Energy Saver",    icon: "🌿", iconType: "emoji" },
+      { id: "wallpaper",    label: "Wallpaper",       icon: Wallpapers_Icon, iconType: "image" },
+      { id: "screensaver",  label: "Screen Saver",    icon: ScreenSaver_Icon, iconType: "image" },
+      { id: "energysaver",  label: "Energy Saver",    icon: EnergySaver_Icon, iconType: "image" },
     ],
   },
   {
     id: "security",
     items: [
-      { id: "lockscreen",    label: "Lock Screen",    icon: "🔒", iconType: "emoji" },
-      { id: "loginpassword", label: "Login Password", icon: "🔑", iconType: "emoji" },
-      { id: "usersgroups",   label: "Users & Groups", icon: "👥", iconType: "emoji" },
+      { id: "lockscreen",    label: "Lock Screen",    icon: LockScreen_Icon, iconType: "image" },
+      { id: "loginpassword", label: "Login Password", icon: LoginPass_Icon, iconType: "image" },
+      { id: "usersgroups",   label: "Users & Groups", icon: Users_Icon, iconType: "image" },
     ],
   },
   {
     id: "accounts",
     items: [
-      { id: "passwords",         label: "Passwords",           icon: "🔐", iconType: "emoji" },
-      { id: "internetaccounts",  label: "Internet Accounts",   icon: "📧", iconType: "emoji" },
+      { id: "passwords",         label: "Passwords",           icon: Passwords_Icon, iconType: "image" },
+      { id: "internetaccounts",  label: "Internet Accounts",   icon: Mail_Icon, iconType: "image" },
       { id: "gamecenter",        label: "Game Center",         icon: GameCenter_Icon, iconType: "image" },
-      { id: "wallet",            label: "Wallet & Apple Pay",  icon: "💳", iconType: "emoji" },
+      { id: "wallet",            label: "Wallet & Apple Pay",  icon: Wallet_Icon, iconType: "image" },
     ],
   },
   {

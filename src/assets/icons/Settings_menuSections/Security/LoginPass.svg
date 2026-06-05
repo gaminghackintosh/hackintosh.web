@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<defs>
+<!-- Градиент для светло-серого фона иконки -->
+<linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#c5c5c9" />
+<stop offset="100%" stop-color="#9a9aa0" />
+</linearGradient>
+<!-- Мягкая тень для замка -->
+<filter id="softShadow">
+<feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.15" />
+</filter>
+</defs>
+<!-- Фон иконки -->
+<rect x="0" y="0" width="200" height="200" rx="45" fill="url(#bgGrad)" />
+<!-- Замок (Дужка) -->
+<path d="M74 84 L74 60 
+C 74 42, 126 42, 126 60 
+L126 84" 
+fill="none" stroke="white" stroke-width="16" stroke-linecap="round" filter="url(#softShadow)" />
+<!-- Замок (Корпус) -->
+<rect x="66" y="82" width="68" height="52" rx="9" fill="white" filter="url(#softShadow)" />
+</svg>
