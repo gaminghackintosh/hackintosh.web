@@ -7,6 +7,7 @@ export const Notes = lazy(() => import('../features/notes/NotesContent'));
 export const Music = lazy(() => import('../features/music/MusicContent'));
 export const Terminal = lazy(() => import('../features/terminal/Terminal'));
 export const Settings = lazy(() => import('../features/settings/SettingsContent'));
+export const Calendar = lazy(() => import('../features/calendar/Calendar/CalendarContent'));
 export const MenuBar = lazy(() => import('../features/menubar/MenuBar'));
 
 // Константы приложений для импорта

@@ -8,6 +8,7 @@ const NotesContent = lazy(() => import("@/features/notes/Notes/NotesContent").th
 const SettingsContent = lazy(() => import("@/features/settings/Settings/SettingsContent").then(m => ({ default: m.SettingsContent })));
 const MusicContent = lazy(() => import("@/features/music/MusicApp/MusicContent").then(m => ({ default: m.MusicContent })));
 const SafariContent = lazy(() => import("@/features/safari/Safari/SafariContent").then(m => ({ default: m.SafariContent })));
+const CalendarContent = lazy(() => import("@/features/calendar/Calendar/CalendarContent").then(m => ({ default: m.CalendarContent })));
 
 /**
  * Функция-фабрика для рендеринга контента приложения.
@@ -65,6 +66,12 @@ export const renderAppContent = (appId, {
       return (
         <Suspense fallback={<WindowLoading />}>
           <MusicContent {...commonProps} />
+        </Suspense>
+      );
+    case "calendar":
+      return (
+        <Suspense fallback={<WindowLoading />}>
+          <CalendarContent {...commonProps} />
         </Suspense>
       );
     default:

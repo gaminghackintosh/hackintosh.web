@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => ({
           terminal: ['./src/features/terminal/Terminal/Terminal'],
           music: ['./src/features/music/MusicApp/MusicContent'],
           settings: ['./src/features/settings/Settings/SettingsContent'],
+          calendar: ['./src/features/calendar/Calendar/CalendarContent'],
         },
         // Оптимизация чанков
         chunkFileNames: 'assets/[name]-[hash].js',

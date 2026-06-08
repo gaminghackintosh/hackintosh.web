@@ -11,6 +11,7 @@ export const INITIAL_POSITIONS = {
   terminal: { x: 140, y: 110, w: 700, h: 450 }, 
   music: { x: 160, y: 130, w: 1000, h: 500 },
   settings: { x: 180, y: 150, w: 700, h: 450 },
+  calendar: { x: 200, y: 120, w: 900, h: 580 },
 };
 
 export const APPS = [
@@ -60,5 +61,13 @@ export const APPS = [
     iconPathLight: APP_ICONS_LIGHT.settings,
     icon: APP_ICON_FALLBACK.settings,
     color: "#636366",
+  },
+  {
+    id: "calendar",
+    name: "Calendar",
+    iconPath: APP_ICONS.calendar,
+    iconPathLight: APP_ICONS_LIGHT.calendar,
+    icon: APP_ICON_FALLBACK.calendar,
+    color: "#FF3B30",
   },
 ];

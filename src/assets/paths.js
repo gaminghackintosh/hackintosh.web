@@ -16,6 +16,7 @@ export const APP_ICONS = {
   terminal: `${ASSET_DIRS.apps}/Dark_Themes/Terminal_Dark.png`,
   music: `${ASSET_DIRS.apps}/Dark_Themes/Music_Dark.png`,
   settings: `${ASSET_DIRS.apps}/Dark_Themes/Settings_Dark.png`,
+  calendar: `${ASSET_DIRS.apps}/Dark_Themes/Calendrier_Dark.png`,
 };
 
 /**===== Светлые иконки приложений для светлой темы =====**/
@@ -26,6 +27,7 @@ export const APP_ICONS_LIGHT = {
   terminal: `${ASSET_DIRS.apps}/Light_Themes/Terminal.ico`,
   music: `${ASSET_DIRS.apps}/Light_Themes/apple_music.ico`,
   settings: `${ASSET_DIRS.apps}/Light_Themes/settings_1.png`,
+  calendar: `${ASSET_DIRS.apps}/Light_Themes/Calendrier.png`,
 };
 
 /* Emoji, пока нет картинки */
@@ -36,6 +38,7 @@ export const APP_ICON_FALLBACK = {
   terminal: "🖥",
   music: "🎵",
   settings: "⚙️",
+  calendar: "📅",
 };
 
 /**===== Боковое меню Finder (Favourites / Locations) =====**/
