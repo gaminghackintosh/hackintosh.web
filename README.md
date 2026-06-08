@@ -1,3 +1,5 @@
+![hackintosh.web preview](assets/img/preview.png)
+
 # hackintosh.web 🍎
 
 > A web-native macOS experience — pixel-faithful, zero hardware required.
