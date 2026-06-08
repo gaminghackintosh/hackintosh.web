@@ -85,19 +85,19 @@ body.light-theme {
 // =========================================================
 
 // Firefox
-* {
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list) {
   scrollbar-width: none;
 }
 
 // Chrome, Safari, Edge
-*::-webkit-scrollbar {
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list)::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;
 }
 
 // Разрешаем скролл, но скрываем полосу
-* {
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list) {
   -webkit-overflow-scrolling: touch;
   overflow-scrolling: touch;
 }
