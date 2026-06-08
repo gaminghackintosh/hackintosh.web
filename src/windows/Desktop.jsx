@@ -1,12 +1,11 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 
-/**
- * Оптимизированный Desktop компонент
- * - Мемоизация стилей
- * - Ленивая загрузка обоев
- * - CSS transitions для плавной смены
- */
-export const Desktop = memo(function Desktop({ children, wallpaper, onContextMenu }) {
+
+export const Desktop = memo(function Desktop({ 
+  children, 
+  wallpaper, 
+  onContextMenu,
+}) {
   const [isLoaded, setIsLoaded] = useState(false);
   
   // Предзагрузка обоев
@@ -19,6 +18,7 @@ export const Desktop = memo(function Desktop({ children, wallpaper, onContextMen
       img.onload = null;
     };
   }, [wallpaper]);
+
 
   // Мемоизация стилей
   const desktopStyle = {

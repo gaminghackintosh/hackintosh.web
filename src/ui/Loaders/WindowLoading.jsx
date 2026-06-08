@@ -16,23 +16,6 @@ export const WindowLoading = () => {
       gap: "12px",
       userSelect: "none"
     }}>
-      {/* Спиннер в стиле macOS */}
-      <div style={{
-        width: "24px",
-        height: "24px",
-        border: "2.5px solid rgba(255, 255, 255, 0.15)",
-        borderTop: "2.5px solid rgba(255, 255, 255, 0.6)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite"
-      }} />
-      <span>Loading...</span>
-
-      {/* Анимация */}
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };

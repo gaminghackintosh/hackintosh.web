@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { WindowLoading } from "@/ui";
 
-// ✅ Ленивая загрузка каждого приложения — code splitting по чанкам
 const FinderContent = lazy(() => import("@/features/finder/Finder/FinderContent"));
 const TerminalContent = lazy(() => import("@/features/terminal/Terminal/Terminal").then(m => ({ default: m.TerminalContent })));
 const NotesContent = lazy(() => import("@/features/notes/Notes/NotesContent").then(m => ({ default: m.NotesContent })));

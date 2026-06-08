@@ -38,13 +38,23 @@ export const ContextMenu = ({ x, y, items, onClose }) => {
           <div
             key={index}
             className="context-menu__item"
+            className={`context-menu__item ${item.disabled ? 'context-menu__item--disabled' : ''}`}
             onClick={() => {
               item.action?.();
               onClose();
+              if (!item.disabled) {
+                item.action?.();
+                onClose();
+              }
             }}
           >
             <span className="context-menu__label">{item.label}</span>
             {item.shortcut && <span className="context-menu__shortcut">{item.shortcut}</span>}
+            {item.submenu && (
+              <svg className="context-menu__arrow" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M6 4l4 4-4 4V4z"/>
+              </svg>
+            )}
           </div>
         );
       })}

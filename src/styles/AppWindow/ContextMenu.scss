@@ -1,0 +1,89 @@
+@use "./../variables" as *;
+
+.context-menu {
+  position: fixed;
+  z-index: 100000;
+  min-width: 240px;
+  padding: 6px;
+  background: rgba(30, 30, 40, 0.85);
+  backdrop-filter: blur(80px) saturate(1.8);
+  -webkit-backdrop-filter: blur(80px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: contextFade 0.12s ease-out;
+  overflow: hidden;
+}
+
+@keyframes contextFade {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(-4px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+.context-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.1s ease;
+  margin: 0;
+
+  &:hover {
+    background: rgba(0, 122, 255, 0.2);
+  }
+
+  &:active {
+    background: rgba(0, 122, 255, 0.3);
+  }
+}
+
+.context-menu__label {
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+
+.context-menu__shortcut {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 16px;
+  font-weight: 400;
+}
+
+.context-menu__arrow {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.context-menu__divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 12px;
+}
+
+// Disabled state
+.context-menu__item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  
+  &:hover {
+    background: transparent;
+  }
+}

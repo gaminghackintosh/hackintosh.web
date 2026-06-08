@@ -278,12 +278,7 @@
   padding: 0 8px;
   gap: 4px;
   overflow-x: auto;
-  scrollbar-width: none;
   background: rgba(30, 30, 35, 0.85);
-  
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 .sf__tab {
@@ -370,22 +365,7 @@
 .sf__body {
   flex: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
   background: rgba(0, 0, 0, 0.2);
-
-  &::-webkit-scrollbar { 
-    width: 6px; 
-  }
-  
-  &::-webkit-scrollbar-track { 
-    background: transparent; 
-  }
-  
-  &::-webkit-scrollbar-thumb { 
-    background: rgba(255, 255, 255, 0.14); 
-    border-radius: 4px; 
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -567,11 +547,8 @@
 
   .sf__body {
     background: rgba(255, 255, 255, 0.5);
-
-    &::-webkit-scrollbar-thumb { 
-      background: rgba(0, 0, 0, 0.2); 
-    }
   }
+
 
   .sf__blocked {
     background: rgba(245, 245, 247, 0.75);

@@ -9,11 +9,12 @@
 // Components
 @use "Dock";
 @use "ControlCenter";
-@use "ContextMenu";
 
 // Windows / Layout
 @use "AppWindow/AppWindows";
 @use "AppWindow/MenuBar";
+@use "AppWindow/ContextMenu";
+
 
 // Boot & UI
 @use "BootScreen";
@@ -30,7 +31,8 @@
 @use "Safari/SurprisePages";
 // Calendar
 @use "Calendar/Calendar";
-@use "Calendar/_calendar_dark";
+@use "Calendar/calendar_dark";
+@use "CalendarWidget/calendar_widget";
 // Settings
 @use "Settings/Settings";
 
@@ -75,6 +77,36 @@ body.light-theme {
 .window {
   contain: layout style paint;
   content-visibility: auto;
+}
+
+// =========================================================
+// Скрытие скроллбаров во всех приложениях (macOS style)
+// Скролл работает, но полоса прокрутки не видна
+// =========================================================
+
+// Firefox
+* {
+  scrollbar-width: none;
+}
+
+// Chrome, Safari, Edge
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+// Разрешаем скролл, но скрываем полосу
+* {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+
+// Исключение: когда ховерим — показываем тонкую полосу (опционально)
+// Можно убрать если нужно полное скрытие
+.window:hover::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .resize-handle {

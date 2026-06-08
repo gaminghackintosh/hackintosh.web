@@ -1,0 +1,138 @@
+// =========================================================
+// Calendar Widget Container
+// Контейнер для виджета на рабочем столе
+// =========================================================
+
+.calendar-widget-container {
+  position: absolute;
+  top: 80px;
+  right: 80px;
+  z-index: 100;
+  animation: widgetFadeIn 0.3s ease-out;
+}
+
+@keyframes widgetFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// =========================================================
+// Calendar Widget Styles
+// Виджет календаря для рабочего стола (macOS Big Sur+ style)
+// =========================================================
+
+.calendar-widget {
+  width: 260px;
+  height: 260px;
+  background: rgba(44, 44, 46, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 22px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  padding: 18px 20px 22px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  display: flex;
+  flex-direction: column;
+
+  /* ── Month Header ── */
+  &-header {
+    margin-bottom: 14px;
+  }
+
+  &-month {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ff453a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Weekday Names ── */
+  &-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+
+  &-weekday {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  /* ── Calendar Grid ── */
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    flex: 1;
+  }
+
+  &-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    transition: all 0.12s;
+
+    &.other-month {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    &.today {
+      background: #ff453a;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+}
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .calendar-widget {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.1);
+
+    &-month {
+      color: #ff3b30;
+    }
+
+    &-weekday {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    &-day {
+      color: rgba(0, 0, 0, 0.9);
+
+      &.other-month {
+        color: rgba(0, 0, 0, 0.3);
+      }
+
+      &.today {
+        background: #ff3b30;
+        color: #fff;
+      }
+    }
+  }
+}
+

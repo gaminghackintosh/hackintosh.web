@@ -115,7 +115,6 @@
   transition: background-color 0.15s ease-out, transform 0.1s ease-out;
   will-change: transform;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
   /* Базовые цвета */
   &--close {

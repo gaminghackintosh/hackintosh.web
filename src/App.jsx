@@ -39,7 +39,16 @@ function AppContent() {
     openContextMenu(e, [
       { label: "New Folder", action: () => console.log("New Folder") },
       { type: "divider" },
-      { label: "Change Wallpaper", action: () => windowManager.openApp("settings", "Settings") }
+      { label: "Get Info", action: () => console.log("Get Info") },
+      { label: "Change Wallpaper...", action: () => windowManager.openApp("settings", "Settings") },
+      { label: "Edit Widgets...", action: () => console.log("Edit Widgets") },
+      { type: "divider" },
+      { label: "Use Stacks", action: () => console.log("Use Stacks") },
+      { label: "Sort By", submenu: true, action: () => console.log("Sort By") },
+      { label: "Clean Up", action: () => console.log("Clean Up") },
+      { label: "Clean Up By", submenu: true, action: () => console.log("Clean Up By") },
+      { type: "divider" },
+      { label: "Show View Options", action: () => console.log("Show View Options") },
     ]);
   }, [openContextMenu, windowManager.openApp]);
 
