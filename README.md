@@ -1,4 +1,4 @@
-![hackintosh.web preview](assets/img/preview.jpg)
+![hackintosh.web preview](assets/img/preview.png)
 
 # hackintosh.web 🍎
 
