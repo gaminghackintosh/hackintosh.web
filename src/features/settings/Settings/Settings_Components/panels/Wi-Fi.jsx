@@ -51,7 +51,7 @@ export const WiFiSettings = () => {
   const [askToJoinHotspots, setAskToJoinHotspots] = useState(false);
 
   const knownNetworks = [
-    { id: 1, name: "MERCUSYS_5G", secured: true, signal: 3, connected: true },
+    { id: 1, name: "Kernel Panic Network", secured: true, signal: 3, connected: true },
     { id: 2, name: "MERCUSYS_B939", secured: true, signal: 2, connected: false },
   ];
 
@@ -77,7 +77,7 @@ export const WiFiSettings = () => {
                 <div className="connected-card-left">
                   <span className="apple-status-dot-green" />
                   <div className="connected-meta">
-                    <span className="network-title-bold">MERCUSYS_5G</span>
+                    <span className="network-title-bold">Kernel Panic Network</span>
                     <span className="network-subtitle-status">Connected</span>
                   </div>
                 </div>
