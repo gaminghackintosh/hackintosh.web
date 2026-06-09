@@ -94,8 +94,8 @@ export const WallpaperFactory = {
   getForTheme: (theme = 'dark') => {
     const isLight = theme === 'light';
     return isLight 
-      ? require('../assets/images/wallpapers/Tahoe/Tahoe Light.png')
-      : require('../assets/images/wallpapers/Tahoe/Tahoe Dark.png');
+      ? require('../assets/images/wallpapers/Tahoe/Tahoe Light.webp')
+      : require('../assets/images/wallpapers/Tahoe/Tahoe Dark.webp');
   },
   
   // Кэш для часто используемых обоев

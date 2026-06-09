@@ -12,8 +12,8 @@ import Sequoia_10 from "@/assets/images/wallpapers/Sequoia/wallpaper_10.png";
 import Sequoia_11 from "@/assets/images/wallpapers/Sequoia/wallpaper_11.png";
 
 // macOS Tahoe
-import Tahoe_1 from "@/assets/images/wallpapers/Tahoe/Tahoe Light.png";
-import Tahoe_2 from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.png";
+import Tahoe_1 from "@/assets/images/wallpapers/Tahoe/Tahoe Light.webp";
+import Tahoe_2 from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.webp";
 
 const SEQUOIA_GROUP = 0;
 const TAHOE_GROUP = 1;

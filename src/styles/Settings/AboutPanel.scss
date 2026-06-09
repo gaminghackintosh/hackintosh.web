@@ -1,7 +1,3 @@
-// ═══════════════════════════════════════════════════════════════════
-//  macOS System Settings — Enhanced About Panel
-// ═══════════════════════════════════════════════════════════════════
-
 .apple-about-container {
   padding: 4px 0;
 
@@ -10,7 +6,7 @@
     font-size: 11px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.4);
-    text-transform: none; // В macOS заголовок "Operating System" пишется как в предложении
+    text-transform: none;
     letter-spacing: -0.01em;
     padding: 16px 0 6px 4px;
   }

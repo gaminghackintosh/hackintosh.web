@@ -74,6 +74,8 @@ export const AppWindow = memo(function AppWindow({
       windowRef.current.classList.add('app-window--dragging');
       windowRef.current.style.cursor = 'grabbing';
       windowRef.current.style.willChange = 'transform';
+      // ✅ Важно: отключаем pointer-events на время drag для всех элементов внутри
+      windowRef.current.style.pointerEvents = 'none';
     }
 
     let rafId = null;
@@ -86,8 +88,8 @@ export const AppWindow = memo(function AppWindow({
       const newX = Math.max(0, Math.min(window.innerWidth - sizeRef.current.width, ev.clientX - offset.current.x));
       const newY = Math.max(28, ev.clientY - offset.current.y);
 
-      // Throttle: обновляем только если позиция изменилась
-      if (newX === lastX && newY === lastY) return;
+      // Throttle: обновляем только если позиция изменилась значительно (>1px)
+      if (Math.abs(newX - lastX) < 1 && Math.abs(newY - lastY) < 1) return;
       lastX = newX;
       lastY = newY;
       
@@ -99,7 +101,7 @@ export const AppWindow = memo(function AppWindow({
       // Прямая манипуляция DOM без state - используем requestAnimationFrame
       rafId = requestAnimationFrame(() => {
         if (windowRef.current && dragging.current) {
-          windowRef.current.style.transform = `translate(${newX}px, ${newY}px)`;
+          windowRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
           rafId = null;
         }
       });
@@ -120,6 +122,7 @@ export const AppWindow = memo(function AppWindow({
         windowRef.current.classList.remove('app-window--dragging');
         windowRef.current.style.cursor = '';
         windowRef.current.style.willChange = '';
+        windowRef.current.style.pointerEvents = '';
       }
 
       // Вычисляем финальную позицию
@@ -131,7 +134,7 @@ export const AppWindow = memo(function AppWindow({
       
       // Синхронизируем с windowRef
       if (windowRef.current) {
-        windowRef.current.style.transform = `translate(${finalX}px, ${finalY}px)`;
+        windowRef.current.style.transform = `translate3d(${finalX}px, ${finalY}px, 0)`;
       }
 
       document.removeEventListener("mousemove", onMove);
@@ -157,22 +160,30 @@ export const AppWindow = memo(function AppWindow({
     if (windowRef.current) {
       windowRef.current.classList.add('app-window--resizing');
       windowRef.current.style.willChange = 'width, height';
+      windowRef.current.style.pointerEvents = 'none';
     }
 
     let rafId = null;
+    let lastW = startSize.current.width;
+    let lastH = startSize.current.height;
     
     const onMove = (ev) => {
       if (!resizing.current) return;
-      
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
       
       const deltaX = ev.clientX - startX;
       const deltaY = ev.clientY - startY;
       const newWidth = Math.max(250, startSize.current.width + deltaX);
       const newHeight = Math.max(200, startSize.current.height + deltaY);
 
+      // Throttle: обновляем только если размер изменился значительно
+      if (Math.abs(newWidth - lastW) < 1 && Math.abs(newHeight - lastH) < 1) return;
+      lastW = newWidth;
+      lastH = newHeight;
+      
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+      
       rafId = requestAnimationFrame(() => {
         if (windowRef.current && resizing.current) {
           windowRef.current.style.width = `${newWidth}px`;
@@ -193,6 +204,7 @@ export const AppWindow = memo(function AppWindow({
       if (windowRef.current) {
         windowRef.current.classList.remove('app-window--resizing');
         windowRef.current.style.willChange = '';
+        windowRef.current.style.pointerEvents = '';
         setSize({ 
           width: parseFloat(windowRef.current.style.width) || sizeRef.current.width, 
           height: parseFloat(windowRef.current.style.height) || sizeRef.current.height 

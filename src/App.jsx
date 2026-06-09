@@ -9,8 +9,8 @@ import { BootScreen, MobileNotSupported, ContextMenu } from "@/ui";
 import { Desktop, Dock, WindowList } from "@/windows";
 import { MenuBar } from "@/features/menubar/MenuBar/MenuBar";
 // Оптимизация: ленивая загрузка обоев
-import defaultWallpaperDark from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.png";
-import defaultWallpaperLight from "@/assets/images/wallpapers/Tahoe/Tahoe Light.png";
+import defaultWallpaperDark from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.webp";
+import defaultWallpaperLight from "@/assets/images/wallpapers/Tahoe/Tahoe Light.webp";
 
 
 function AppContent() {

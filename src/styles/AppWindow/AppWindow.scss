@@ -1,0 +1,55 @@
+
+// ═══════════════════════════════════════════════════════════════════
+//  PERFORMANCE OPTIMIZATIONS — Drag & Resize
+// ═══════════════════════════════════════════════════════════════════
+
+.app-window {
+  // ✅ Аппаратное ускорение для transform
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  
+  // ✅ Оптимизация композитинга
+  &--dragging {
+    opacity: 0.98;
+    
+    * {
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+  }
+  
+  &--resizing {
+    * {
+      pointer-events: none !important;
+      cursor: default !important;
+    }
+  }
+  
+  // ✅ Плавные переходы только когда нужно
+  &:not(.app-window--dragging):not(.app-window--resizing) {
+    transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  // ✅ Оптимизация для неактивных окон
+  &--inactive {
+    .app-window__content {
+      contain: strict;
+    }
+  }
+  
+  // ✅ Минимизированные окна не рендерятся
+  &--minimized {
+    display: none;
+  }
+}
+
+// ✅ Resize handle оптимизация
+.resize-handle {
+  touch-action: none;
+  contain: strict;
+  
+  &:active {
+    cursor: se-resize;
+  }
+}

@@ -1,7 +1,47 @@
 import React, { useState } from "react";
-import { SettingsPanel, SettingsGroup, SettingsRow, ToggleSwitch } from "../SettingsPanel";
-import { SpinnerIcon, DisconnectedIcon, HeadphonesIcon, KeyboardIcon, MouseIcon } from "./../SettingsIcons";
-import bluetoothIcon from "./../../../../../assets/icons/Settings_menuSections/Network/Bluetooth.png";
+import { SettingsPanel, SettingsGroup, ToggleSwitch } from "../SettingsPanel";
+import { SpinnerIcon } from "../SettingsIcons";
+import bluetoothIcon from "../../../../../assets/icons/Settings_menuSections/Network/Bluetooth.png";
+
+// ═══════════════════════════════════════════════════════════════════
+//  Device Icons
+// ═══════════════════════════════════════════════════════════════════
+
+const HeadphonesIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z" />
+    <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+  </svg>
+);
+
+const KeyboardIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M6 16h8" />
+  </svg>
+);
+
+const MouseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="5" y="2" width="14" height="20" rx="7" />
+    <path d="M12 6v4" />
+  </svg>
+);
+
+const InfoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4M12 8h.01" />
+  </svg>
+);
+
+const HelpIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
+  </svg>
+);
 
 const DEVICE_ICONS = {
   headphones: HeadphonesIcon,
@@ -9,83 +49,94 @@ const DEVICE_ICONS = {
   mouse: MouseIcon,
 };
 
-const DeviceRow = ({ device, onToggle }) => {
+// ═══════════════════════════════════════════════════════════════════
+//  Device Row Component
+// ═══════════════════════════════════════════════════════════════════
+
+const DeviceRow = ({ device, onInfo }) => {
   const DeviceIcon = DEVICE_ICONS[device.type] || HeadphonesIcon;
   return (
     <div className="bt-device-row">
       <div className="bt-device-left">
-        <span className="bt-device-icon"><DeviceIcon /></span>
+        <span className="bt-device-icon">
+          <DeviceIcon />
+        </span>
         <div className="bt-device-info">
           <span className="bt-device-name">{device.name}</span>
-          <span className={`bt-device-status ${device.connected ? "connected" : "disconnected"}`}>
-            {device.connected ? "Connected" : "Not Connected"}
-          </span>
+          <span className="bt-device-status">{device.connected ? "Connected" : "Not Connected"}</span>
         </div>
       </div>
       <div className="bt-device-right">
-        <button className={`bt-action-btn ${device.connected ? "disconnect" : "connect"}`} onClick={() => onToggle(device.id)}>
-          {device.connected ? "Disconnect" : "Connect"}
+        <button className="bt-info-btn" onClick={() => onInfo(device)} aria-label="Info">
+          <InfoIcon />
         </button>
       </div>
     </div>
   );
 };
 
+// ═══════════════════════════════════════════════════════════════════
+//  MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+
 export const BluetoothSettings = () => {
   const [enabled, setEnabled] = useState(true);
-  const [showInMenuBar, setShowInMenuBar] = useState(true);
-  const [allowHandoff, setAllowHandoff] = useState(true);
-  const [devices, setDevices] = useState([
-    { id: 1, name: "AirPods Pro", type: "headphones", connected: true },
-    { id: 2, name: "Magic Keyboard", type: "keyboard", connected: false },
-    { id: 3, name: "Magic Mouse", type: "mouse", connected: false },
+  const [devices] = useState([
+    { id: 1, name: "AirPods Pro", type: "headphones", connected: false },
+    { id: 2, name: "UGREEN KB 3.0", type: "keyboard", connected: true },
   ]);
 
-  const toggleConnection = (id) => setDevices(prev => prev.map(d => d.id === id ? { ...d, connected: !d.connected } : d));
-
   return (
-    <div className="bluetooth-settings-wrapper">
-      <SettingsPanel title="Bluetooth" description={enabled ? `Now discoverable as "ghost's MacBook Pro"` : "Bluetooth is Off"}>
+    <SettingsPanel title="Bluetooth">
+      <div className="bluetooth-settings-wrapper">
+        {/* ── HEADER CARD ── */}
         <SettingsGroup>
-          <div className="bt-header-row">
+          <div className="bt-header-card">
             <div className="bt-header-left">
-              <div className="bt-icon-circle">
-                <img src={bluetoothIcon} alt="Bluetooth" style={{ width: "40px", height: "40px", objectFit: "contain" }} />
+              <div className="bt-icon-square">
+                <img src={bluetoothIcon} alt="Bluetooth" />
               </div>
-              <span className="bt-header-label">Bluetooth</span>
+              <div className="bt-header-text">
+                <span className="bt-header-title">Bluetooth</span>
+                <span className="bt-header-desc">
+                  This Mac is discoverable as "Mac mini" while Bluetooth Settings is open.
+                </span>
+              </div>
             </div>
             <ToggleSwitch checked={enabled} onChange={() => setEnabled(!enabled)} />
           </div>
         </SettingsGroup>
 
+        {/* ── MY DEVICES ── */}
         {enabled && (
           <>
-            <SettingsGroup label="My Devices">
-              {devices.map(device => <DeviceRow key={device.id} device={device} onToggle={toggleConnection} />)}
+            <div className="bt-section-header">My Devices</div>
+            <SettingsGroup>
+              {devices.map(device => (
+                <DeviceRow key={device.id} device={device} onInfo={(d) => console.log("Info:", d.name)} />
+              ))}
             </SettingsGroup>
 
-            <SettingsGroup label="Nearby Devices" footer="Make sure your device is in pairing mode.">
-              <div className="bt-scanning-row">
-                <div className="spinner-container"><SpinnerIcon /></div>
-                <span className="bt-scanning-text">Searching…</span>
+            {/* ── HELP BUTTON ── */}
+            <div className="bt-help-row">
+              <button className="bt-help-btn" aria-label="Help">
+                <HelpIcon />
+              </button>
+            </div>
+
+            {/* ── NEARBY DEVICES ── */}
+            <div className="bt-section-header">Nearby Devices</div>
+            <SettingsGroup>
+              <div className="bt-searching-row">
+                <div className="bt-searching-icon">
+                  <SpinnerIcon />
+                </div>
+                <span className="bt-searching-text">Searching…</span>
               </div>
             </SettingsGroup>
-
-            <SettingsGroup>
-              <SettingsRow label="Show Bluetooth in menu bar" rightControl={<ToggleSwitch checked={showInMenuBar} onChange={() => setShowInMenuBar(!showInMenuBar)} />} />
-              <SettingsRow
-                label="Allow Handoff"
-                description="Allow this Mac to automatically discover and use nearby devices for universal clipboard, iPhone calls, and more."
-                rightControl={<ToggleSwitch checked={allowHandoff} onChange={() => setAllowHandoff(!allowHandoff)} />}
-              />
-            </SettingsGroup>
-
-            <div className="bt-advanced-row">
-              <button className="bt-advanced-btn">Advanced…</button>
-            </div>
           </>
         )}
-      </SettingsPanel>
-    </div>
+      </div>
+    </SettingsPanel>
   );
 };

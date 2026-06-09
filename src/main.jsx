@@ -1,8 +1,9 @@
-import React, { Profiler } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./styles/main.scss";
 
+// ✅ Отключаем StrictMode в production для лучшей производительности
 const AppWrapper = process.env.NODE_ENV === 'production' ? App : React.StrictMode;
 
 document.addEventListener(
@@ -16,17 +17,24 @@ document.addEventListener(
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-// ✅ Profiler для мониторинга производительности в development
-const onRenderCallback = (id, phase, actualDuration) => {
-  if (process.env.NODE_ENV === 'development' && actualDuration > 16) {
-    console.warn(`⚠️ ${id} took ${actualDuration.toFixed(2)}ms (>16ms = 1 frame)`);
-  }
-};
-
-root.render(
-  <Profiler id="App" onRender={onRenderCallback}>
-    <AppWrapper>
-      <App />
-    </AppWrapper>
-  </Profiler>
-);
+// ✅ Profiler только в development
+if (process.env.NODE_ENV === 'development') {
+  const { Profiler } = React;
+  
+  const onRenderCallback = (id, phase, actualDuration) => {
+    if (actualDuration > 16) {
+      console.warn(`⚠️ ${id} took ${actualDuration.toFixed(2)}ms (>16ms = 1 frame)`);
+    }
+  };
+  
+  root.render(
+    <Profiler id="App" onRender={onRenderCallback}>
+      <AppWrapper>
+        <App />
+      </AppWrapper>
+    </Profiler>
+  );
+} else {
+  // ✅ Production рендер без Profiler
+  root.render(<AppWrapper><App /></AppWrapper>);
+}
