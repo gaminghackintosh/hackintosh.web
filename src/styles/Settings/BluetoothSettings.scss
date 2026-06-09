@@ -259,14 +259,6 @@
     color: rgba(29, 29, 31, 0.5);
   }
 
-  .bt-icon-square {
-    background: rgba(0, 122, 255, 0.08);
-
-    img {
-      filter: brightness(0) saturate(100%) invert(35%) sepia(15%) saturate(1600%) hue-rotate(190deg) brightness(95%) contrast(90%);
-    }
-  }
-
   // Section header
   .bt-section-header {
     color: rgba(29, 29, 31, 0.5);

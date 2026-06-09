@@ -154,6 +154,7 @@ $badge-red-l:       #ff3b30;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: 8px center;
+    background-size: 13px 13px;
 
     &::placeholder { color: $text-tertiary-d; }
 
@@ -336,8 +337,8 @@ $badge-red-l:       #ff3b30;
   flex-shrink: 0;
 
   img {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
   }
 
@@ -653,7 +654,17 @@ $badge-red-l:       #ff3b30;
     border-color: $search-border-l;
     color: $text-primary-l;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 8px center;
+    background-size: 13px 13px;
+    padding-left: 26px;
+    
     &::placeholder { color: rgba(29, 29, 31, 0.38); }
+    
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
   }
 
   .sidebar-apple-id {
