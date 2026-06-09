@@ -50,7 +50,7 @@
 | Spotlight search (⌘ Space) | 🔲 Planned |
 | Mission Control | 🔲 Planned |
 | Notifications Center | 🔲 Planned |
-| Calendar | 🔲 Planned |
+| Calendar | ✅ Done |
 
 ---
 
