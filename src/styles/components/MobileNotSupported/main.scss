@@ -1,0 +1,309 @@
+// ════════════════════════════════════════════════════════
+//  MobileNotSupported 
+// ════════════════════════════════════════════════════════
+@use "../../base/variables" as *;
+@use "../../base/mixins" as *;
+
+$win-w      : 92%;
+$max-win-w  : 440px;
+$titlebar-h : 40px;
+$radius     : 12px;
+$font-ui    : -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+
+// ── Задний фон: macOS-style градиент ──
+.mns-backdrop {
+  position        : fixed;
+  inset           : 0;
+  z-index         : 10000;
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  overflow        : hidden;
+  font-family     : $font-ui;
+  background      : $color-bg-body;
+  
+  // Градиент в стиле macOS Big Sur / Monterey
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    #2a4a7a 0%,
+    #1a2a4a 40%,
+    #0a0f1a 100%
+  );
+}
+
+.mns-desktop-bg {
+  position       : absolute;
+  inset          : 0;
+  backdrop-filter: blur(20px) saturate(1.4);
+  pointer-events : none;
+  opacity        : 0.5;
+}
+
+// ── Окно в стиле проекта (glass-dark) ───────────────────
+.mns-window {
+  position       : relative;
+  width          : $win-w;
+  max-width      : $max-win-w;
+  border-radius  : $radius;
+  overflow       : hidden;
+  @include glass-dark(rgba(25, 25, 28, 0.88), 40px, 0.12, true);
+  animation      : mns-open 0.4s $easing-ease-out both;
+}
+
+@keyframes mns-open {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+// ── Заголовок в стиле AppWindow ─────────────────────────
+.mns-titlebar {
+  height         : $titlebar-h;
+  display        : flex;
+  align-items    : center;
+  padding        : 0 14px;
+  background     : rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(15px);
+  border-bottom  : 1px solid $color-border-light;
+  user-select    : none;
+}
+
+.mns-titlebar-label {
+  position    : absolute;
+  left        : 50%;
+  transform   : translateX(-50%);
+  font-size   : 13px;
+  font-weight : 500;
+  color       : $color-menubar-item;
+  letter-spacing : 0.15px;
+}
+
+.mns-titlebar-spacer {
+  width       : 52px;
+  margin-left : auto;
+}
+
+// ── Traffic Lights в стиле проекта ──────────────────────
+.mns-traffic {
+  display     : flex;
+  gap         : 7px;
+  z-index     : 2;
+}
+
+.tl {
+  width            : 12px;
+  height           : 12px;
+  border-radius    : 50%;
+  position         : relative;
+  transition       : background-color 0.15s ease-out, transform 0.1s;
+  
+  &.tl-close {
+    background     : #ff5f57;
+    cursor         : pointer;
+  }
+  
+  &.tl-min {
+    background     : #ffbd2e;
+    cursor         : pointer;
+  }
+  
+  &.tl-max {
+    background     : #28c840;
+    cursor         : pointer;
+  }
+  
+  &:hover {
+    transform: scale(1.08);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── Тело окна ───────────────────────────────────────────
+.mns-body {
+  padding: 18px 24px 20px;
+}
+
+// ── Hero-секция ─────────────────────────────────────────
+.mns-hero {
+  display        : flex;
+  flex-direction : column;
+  align-items    : center;
+  text-align     : center;
+  gap            : 12px;
+  margin-bottom  : 18px;
+}
+
+.mns-app-icon {
+  width          : 60px;
+  height         : 60px;
+  border-radius  : 14px;
+  background     : rgba(255, 255, 255, 0.1);
+  border         : 1px solid $color-border-lighter;
+  box-shadow     : 0 4px 12px rgba(0, 0, 0, 0.2);
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+}
+
+.mns-app-icon-inner {
+  font-size: 30px;
+}
+
+.mns-title {
+  font-size      : 19px;
+  font-weight    : 650;
+  color          : $color-text-primary;
+  letter-spacing : -0.3px;
+  margin         : 0 0 2px 0;
+}
+
+.mns-subtitle {
+  font-size      : 11px;
+  font-weight    : 500;
+  color          : $color-text-secondary;
+  text-transform : uppercase;
+  letter-spacing : 0.6px;
+  margin         : 0 0 6px 0;
+}
+
+.mns-description {
+  font-size      : 13px;
+  line-height    : 1.5;
+  color          : $color-text-tertiary;
+  margin         : 0;
+  max-width      : 320px;
+}
+
+// ── Блок с характеристиками ──────────────────────────
+.mns-features-box {
+  background     : rgba(255, 255, 255, 0.04);
+  border-radius  : 10px;
+  border         : 1px solid $color-border-light;
+  margin-bottom  : 18px;
+  overflow       : hidden;
+}
+
+.mns-feature-row {
+  display        : flex;
+  align-items    : flex-start;  
+  gap            : 12px;
+  padding        : 10px 14px;
+  transition     : background 0.2s;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  
+  & + & { border-top: 1px solid $color-border-light; }
+}
+
+.mns-feature-icon {
+  font-size: 20px;
+  margin-top: 1px;
+}
+
+.mns-feature-text {
+  flex           : 1;
+  min-width      : 0;        
+  display        : flex;
+  flex-direction : column;
+  word-break     : break-word;   
+  overflow-wrap  : break-word;
+}
+
+.mns-feature-title {
+  font-size      : 12px;
+  font-weight    : 600;
+  color          : $color-text-primary;
+  line-height    : 1.4;
+}
+
+.mns-feature-desc {
+  font-size      : 11px;
+  color          : $color-text-secondary;
+  line-height    : 1.4;
+}
+
+// ── Кнопка в стиле проекта ──────────────────────────────
+.mns-actions {
+  margin-bottom: 12px;
+}
+
+.mns-btn {
+  position       : relative;
+  width          : 100%;
+  height         : 44px;
+  border-radius  : 12px;
+  font-family    : $font-ui;
+  font-size      : 14px;
+  font-weight    : 500;
+  cursor         : pointer;
+  border         : none;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  gap            : 8px;
+  transition     : all 0.2s $easing-ease-out;
+  padding        : 0 20px;
+  letter-spacing : -0.2px;
+  
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.mns-btn-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+// ── Primary кнопка ──────────────────────────────────────
+.mns-btn--primary {
+  background     : $color-accent;
+  color          : white;
+  box-shadow     : 0 2px 12px $color-accent-shadow;
+  border         : 0.5px solid rgba(255, 255, 255, 0.15);
+  
+  &:hover {
+    background: #0a74e6;
+    box-shadow: 0 4px 20px $color-accent-shadow;
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    background: #0066cc;
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px $color-accent-shadow;
+  }
+}
+
+// ── Success кнопка ──────────────────────────────────────
+.mns-btn--success {
+  background     : $color-wifi-success;
+  color          : white;
+  box-shadow     : 0 2px 12px rgba(52, 199, 89, 0.3);
+  border         : 0.5px solid rgba(255, 255, 255, 0.15);
+  
+  &:hover {
+    background: #2db34f;
+    box-shadow: 0 4px 20px rgba(52, 199, 89, 0.35);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    background: #1e8f3a;
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.2);
+  }
+}
+
+// ── Подвал ───────────────────────────────────────────────
+.mns-footer {
+  text-align     : center;
+  font-size      : 10px;
+  color          : $color-text-muted;
+  margin-top     : 12px;
+  letter-spacing : 0.3px;
+}

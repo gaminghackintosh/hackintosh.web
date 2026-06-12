@@ -1,0 +1,195 @@
+@use "../../base/variables" as *;
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: rgba(22, 22, 26, 0.99);
+  overflow: hidden;
+
+  /* ── Title Bar ── */
+  &-titlebar {
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    background: rgba(36, 36, 40, 0.92);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    user-select: none;
+    cursor: move;
+    position: relative;
+  }
+
+  &-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+  }
+
+  /* ── Traffic Lights ── */
+  &-traffic-lights {
+    display: flex;
+    gap: 7px;
+    z-index: 1;
+  }
+
+  &-traffic-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: filter 0.12s;
+
+    &:hover {
+      filter: brightness(0.8);
+    }
+
+    &--close {
+      background: #ff5f57;
+    }
+    &--minimize {
+      background: #ffbd2e;
+    }
+    &--zoom {
+      background: #28c840;
+    }
+  }
+
+  /* ── Body ── */
+  &-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  &-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: rgba(36, 36, 40, 0.96);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &-sidebar-header {
+    padding: 10px 14px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+  }
+
+  &-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &-list-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+
+    &.active {
+      background: rgba(255, 190, 0, 0.16);
+      border-left-color: #ffd60a;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  &-item-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 3px;
+  }
+
+  &-item-modified {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* ── Editor ── */
+  &-editor {
+    flex: 1;
+    background: rgba(22, 22, 26, 0.99);
+    border: none;
+    outline: none;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    line-height: 1.75;
+    padding: 22px 28px;
+    resize: none;
+  }
+}
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .notes {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .notes-titlebar {
+    background: rgba(245, 245, 247, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .notes-title {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .notes-sidebar {
+    background: rgba(245, 245, 247, 0.95);
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .notes-sidebar-header {
+    color: rgba(0, 0, 0, 0.35);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .notes-list-item {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+
+    &.active {
+      background: rgba(255, 190, 0, 0.2);
+      border-left-color: #ff9f0a;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .notes-item-title {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .notes-item-modified {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .notes-editor {
+    background: rgba(255, 255, 255, 0.96);
+    color: rgba(0, 0, 0, 0.85);
+  }
+}

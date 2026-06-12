@@ -1,0 +1,611 @@
+@use "../../base/variables" as *;
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: rgba(255, 255, 255, 0.98);
+  overflow: hidden;
+
+  /* ── Title Bar ── */
+  &-titlebar {
+    height: 52px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: rgba(245, 245, 247, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    user-select: none;
+    cursor: move;
+    gap: 16px;
+  }
+
+  &-traffic-lights {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &-traffic-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: filter 0.12s;
+
+    &:hover {
+      filter: brightness(0.85);
+    }
+
+    &--close {
+      background: #ff5f57;
+    }
+    &--minimize {
+      background: #ffbd2e;
+    }
+    &--zoom {
+      background: #28c840;
+    }
+  }
+
+  /* ── Toolbar ── */
+  &-toolbar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  &-toolbar-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &-view-switcher {
+    display: flex;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  &-view-btn {
+    padding: 5px 16px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+
+    &.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover:not(.active) {
+      color: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  &-search {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  &-search-icon {
+    width: 14px;
+    height: 14px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  &-search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 13px;
+    width: 140px;
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* ── Body ── */
+  &-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  &-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: rgba(245, 245, 247, 0.7);
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  &-create-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(0, 122, 255, 0.1);
+    color: #007aff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(0, 122, 255, 0.15);
+    }
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.4);
+    padding: 4px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #007aff;
+    }
+  }
+
+  &-list-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  &-list-name {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  /* ── Mini Calendar ── */
+  &-mini-wrapper {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  &-mini-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  &-mini-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  &-mini-nav {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  &-mini-day-name {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    padding: 4px 0;
+  }
+
+  &-mini-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.12s;
+    position: relative;
+
+    &:hover:not(.empty) {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    &.empty {
+      cursor: default;
+    }
+
+    &.today {
+      background: #ff3b30;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    &.selected:not(.today) {
+      background: rgba(0, 0, 0, 0.15);
+      font-weight: 600;
+    }
+  }
+
+  &-mini-day-num {
+    line-height: 1;
+  }
+
+  &-mini-dot {
+    position: absolute;
+    bottom: 2px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ff3b30;
+  }
+
+  /* ── Main Calendar ── */
+  &-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.98);
+  }
+
+  &-main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  &-main-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.9);
+    margin: 0;
+  }
+
+  &-main-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &-nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &-today-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  /* ── Weekdays Header ── */
+  &-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  &-weekday {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  &-weekday-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+  }
+
+  &-weekday-full {
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.3);
+    margin-top: 2px;
+  }
+
+  /* ── Calendar Grid ── */
+  &-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    overflow: hidden;
+  }
+
+  &-day {
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 100px;
+
+    &:nth-child(7n) {
+      border-right: none;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &.other-month {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &.other-month .calendar-day-num {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    &.today {
+      background: rgba(255, 59, 48, 0.05);
+    }
+
+    &.selected {
+      background: rgba(0, 122, 255, 0.08);
+    }
+  }
+
+  &-day-num {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.8);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+    .today & {
+      background: #ff3b30;
+      color: #fff;
+    }
+  }
+
+  &-day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &-day-event {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &-event-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #007aff;
+    flex-shrink: 0;
+  }
+
+  &-event-title {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-day-more {
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0.5);
+    padding-left: 6px;
+  }
+
+  /* ── Event Popup ── */
+  &-event-popup {
+    position: absolute;
+    top: 140px;
+    right: 24px;
+    width: 320px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    z-index: 100;
+  }
+
+  &-event-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &-popup-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  &-popup-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &-popup-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.12s;
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    &:focus {
+      border-color: #007aff;
+    }
+  }
+
+  &-popup-add {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #007aff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s;
+
+    &:hover {
+      background: #0066d6;
+    }
+  }
+}
+

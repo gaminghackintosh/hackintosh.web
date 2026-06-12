@@ -1,0 +1,588 @@
+@use "../../base/variables" as *;
+
+// ─── Root window ───────────────────────────────────────────────────
+.sf {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+// ── Фоновый оверлей (блюр + затемнение) ─────────────────────────
+.sf__bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  backdrop-filter: blur(5px) saturate(1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  background: rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+  
+  // Firefox optimization
+  transform: translateZ(0);
+}
+
+.sf__toolbar,
+.sf__body {
+  position: relative;
+  z-index: 1;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TOOLBAR — dark frosted glass (С ВКЛАДКАМИ)
+// ═══════════════════════════════════════════════════════════════════
+.sf__toolbar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  background: rgba(30, 30, 35, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: default;
+  z-index: 10;
+  
+  // Firefox optimization
+  transform: translateZ(0);
+}
+
+// Верхняя часть тулбара (огни, кнопки)
+.sf__toolbar-top {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+// Left section
+.sf__toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 100px;
+}
+
+// Traffic lights
+.sf__tl-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sf__tl {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.1s;
+    background-size: 8px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  &:hover::after { 
+    opacity: 1; 
+  }
+
+  &--close {
+    background: #ff5f57;
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3 3l4 4M7 3l-4 4' stroke='%236e0000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
+  }
+  
+  &--minimize {
+    background: #ffbd2e;
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%236e4000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
+  }
+  
+  &--zoom {
+    background: #28c840;
+    &::after { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6M5 2v6' stroke='%23004d00' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); 
+    }
+  }
+}
+
+// Icon buttons
+.sf__icon-btn {
+  width: 28px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 0.50);
+  transition: background 0.12s, color 0.12s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+// Center section
+.sf__toolbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Nav buttons
+.sf__nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+}
+
+.sf__nav-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: background 0.12s;
+
+  &:hover:not(.sf__nav-btn--disabled) {
+    background: rgba(255, 255, 255, 0.10);
+  }
+  
+  &--disabled {
+    color: rgba(255, 255, 255, 0.22);
+    cursor: default;
+  }
+}
+
+// Address bar
+.sf__address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.15s;
+  width: clamp(300px, 50%, 500px);
+
+  &:focus-within {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(10, 132, 255, 0.5);
+    box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+  }
+}
+
+.sf__address-icon {
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+  
+  &--lock { 
+    color: rgba(255, 255, 255, 0.45); 
+  }
+}
+
+.sf__address-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.90);
+  text-align: center;
+  min-width: 0;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.32);
+    text-align: center;
+  }
+  
+  &:focus::placeholder { 
+    opacity: 0; 
+  }
+  
+  &:focus { 
+    text-align: left; 
+  }
+}
+
+.sf__refresh-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.38);
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.75);
+  }
+}
+
+.sf--spin { 
+  animation: sf-spin 0.9s linear infinite; 
+}
+
+@keyframes sf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// Right section
+.sf__toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 100px;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TABS BAR (новая секция - вкладки отдельно под тулбаром)
+// ═══════════════════════════════════════════════════════════════════
+.sf__tabs-bar {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  gap: 4px;
+  overflow-x: auto;
+  background: rgba(30, 30, 35, 0.85);
+  
+  // Firefox optimization
+  transform: translateZ(0);
+}
+
+.sf__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 200px;
+  min-width: 100px;
+  color: rgba(255, 255, 255, 0.75);
+  transition: all 0.2s;
+  position: relative;
+  border: none;
+  white-space: nowrap;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
+    
+    .sf__tab-close {
+      opacity: 1;
+    }
+  }
+  
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .sf__tab-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .sf__tab-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 3px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+  }
+}
+
+// Кнопка добавления новой вкладки
+.sf__new-tab-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BODY
+// ═══════════════════════════════════════════════════════════════════
+.sf__body {
+  flex: 1;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BLOCKED PAGE
+// ═══════════════════════════════════════════════════════════════════
+.sf__blocked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+  text-align: center;
+  padding: 40px;
+  background: rgba(22, 22, 26, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  
+  // Firefox optimization
+  transform: translateZ(0);
+}
+
+.sf__blocked-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  opacity: 0.80;
+}
+
+.sf__blocked h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.90);
+  margin: 0 0 10px;
+}
+
+.sf__blocked p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.50);
+  max-width: 460px;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.sf__blocked-back {
+  background: rgba(10, 132, 255, 0.18);
+  border: 1px solid rgba(10, 132, 255, 0.35);
+  border-radius: 8px;
+  color: #5ac8fa;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { 
+    background: rgba(10, 132, 255, 0.30); 
+  }
+}
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.light-theme {
+  .sf {
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .sf__bg-overlay {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .sf__toolbar {
+    background: rgba(245, 245, 247, 0.85);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .sf__toolbar-top,
+  .sf__tabs-bar {
+    background: rgba(245, 245, 247, 0.85);
+  }
+
+  .sf__icon-btn {
+    color: rgba(0, 0, 0, 0.50);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  .sf__nav-btn {
+    color: rgba(0, 0, 0, 0.65);
+
+    &:hover:not(.sf__nav-btn--disabled) {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    
+    &--disabled {
+      color: rgba(0, 0, 0, 0.22);
+    }
+  }
+
+  .sf__address {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+
+    &:focus-within {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(10, 132, 255, 0.4);
+      box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.15);
+    }
+  }
+
+  .sf__address-icon {
+    color: rgba(0, 0, 0, 0.35);
+    
+    &--lock { 
+      color: rgba(0, 0, 0, 0.45); 
+    }
+  }
+
+  .sf__address-input {
+    color: rgba(0, 0, 0, 0.90);
+
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.32);
+    }
+  }
+
+  .sf__refresh-btn {
+    color: rgba(0, 0, 0, 0.38);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.75);
+    }
+  }
+
+  .sf__tabs-bar {
+    background: rgba(245, 245, 247, 0.85);
+  }
+
+  .sf__tab {
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.75);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.10);
+      color: rgba(0, 0, 0, 0.95);
+      
+      .sf__tab-close {
+        color: rgba(0, 0, 0, 0.6);
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.15);
+          color: rgba(0, 0, 0, 0.9);
+        }
+      }
+    }
+    
+    &.active {
+      background: rgba(0, 0, 0, 0.12);
+      color: rgba(0, 0, 0, 0.95);
+    }
+    
+    .sf__tab-close {
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .sf__new-tab-btn {
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.7);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.12);
+      color: rgba(0, 0, 0, 0.9);
+    }
+  }
+
+  .sf__body {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+
+  .sf__blocked {
+    background: rgba(245, 245, 247, 0.75);
+
+    h2 {
+      color: rgba(0, 0, 0, 0.90);
+    }
+
+    p {
+      color: rgba(0, 0, 0, 0.50);
+    }
+  }
+
+  .sf__blocked-back {
+    background: rgba(10, 132, 255, 0.12);
+    border-color: rgba(10, 132, 255, 0.3);
+    color: #0A84FF;
+
+    &:hover { 
+      background: rgba(10, 132, 255, 0.20); 
+    }
+  }
+}

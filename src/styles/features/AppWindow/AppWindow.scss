@@ -1,0 +1,45 @@
+.app-window {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  
+  // ✅ Оптимизация композитинга
+  &--dragging {
+    opacity: 0.98;
+    
+    * {
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+  }
+  
+  &--resizing {
+    * {
+      pointer-events: none !important;
+      cursor: default !important;
+    }
+  }
+
+  &:not(.app-window--dragging):not(.app-window--resizing) {
+    transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  &--inactive {
+    .app-window__content {
+      contain: strict;
+    }
+  }
+  
+  &--minimized {
+    display: none;
+  }
+}
+
+.resize-handle {
+  touch-action: none;
+  contain: strict;
+  
+  &:active {
+    cursor: se-resize;
+  }
+}

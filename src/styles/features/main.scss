@@ -1,0 +1,114 @@
+// ═══════════════════════════════════════════════════════════════════
+//  hackintosh.web — Main Stylesheet
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── 1. CORE (base styles) ─────────────────────────────────────────
+@use "../base/variables" as *;
+@use "../base/mixins" as *;
+@use "../base/theme" as *;
+
+// ─── 2. GLOBAL ─────────────────────────────────────────────────────
+@use "../base/globals";
+@use "../base/icons";
+
+// ─── 3. SYSTEM COMPONENTS ──────────────────────────────────────────
+@use "../features/AppWindow";              // Windows, MenuBar, ContextMenu
+@use "Dock";
+@use "ControlCenter";
+@use "../components/MobileNotSupported/main";
+
+// ─── 4. SYSTEM APPS ────────────────────────────────────────────────
+@use "BootScreen";
+@use "Finder";
+@use "Settings/index" as settings-index;         // Core + all settings panels
+@use "../components/AboutThisMac/ATM";
+
+// ─── 5. APPLICATIONS ───────────────────────────────────────────────
+@use "../components/NotesWindow/Notes";
+@use "../components/Musics/Music";
+@use "../components/Terminal/Terminal";
+@use "../components/Safari/index" as safari-index;                 // Safari browser
+@use "../components/Calendar/index" as calendar-index;               // Calendar app
+@use "../components/CalendarWidget/calendar_widget";
+
+// ═══════════════════════════════════════════════════════════════════
+//  BASE STYLES
+// ═══════════════════════════════════════════════════════════════════
+
+body {
+  margin: 0;
+  background: $color-bg-body;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  // Firefox optimization
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+  
+  @include dark-theme;
+}
+
+body.light-theme {
+  background: $light-color-bg-body;
+  @include light-theme;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  OPTIMIZATION
+// ═══════════════════════════════════════════════════════════════════
+
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  contain: layout style paint;
+  
+  // Firefox GPU acceleration
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+.window {
+  contain: layout style paint;
+  content-visibility: auto;
+  
+  // Firefox optimization
+  transform: translateZ(0);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCROLLBAR HIDING (except Settings)
+// ═══════════════════════════════════════════════════════════════════
+
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list) {
+  scrollbar-width: none;
+}
+
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list)::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+*:not(.settings-content):not(.settings-sidebar):not(.tabs-list) {
+  -webkit-overflow-scrolling: touch;
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}

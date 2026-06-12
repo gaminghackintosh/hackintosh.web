@@ -7,7 +7,7 @@ import { ThemeProvider, useTheme } from "@/core/providers";
 import { BootScreen, MobileNotSupported, ContextMenu } from "@/ui";
 // Layout компоненты
 import { Desktop, Dock, WindowList } from "@/windows";
-import { MenuBar } from "@/features/menubar/MenuBar/MenuBar";
+import { MenuBar } from "@/features/menubar/MenuBar";
 // Оптимизация: ленивая загрузка обоев
 import defaultWallpaperDark from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.webp";
 import defaultWallpaperLight from "@/assets/images/wallpapers/Tahoe/Tahoe Light.webp";
