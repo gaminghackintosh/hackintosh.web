@@ -14,10 +14,10 @@ $text-primary-d:    rgba(255, 255, 255, 0.92);
 $text-secondary-d:  rgba(255, 255, 255, 0.52);
 $text-tertiary-d:   rgba(255, 255, 255, 0.32);
 $divider-d:         rgba(255, 255, 255, 0.07);
-$sidebar-bg-d:      rgba(40, 40, 42, 0.97);
+$sidebar-bg-d:      rgba(40, 40, 42, 0.67);
 $sidebar-hover-d:   rgba(255, 255, 255, 0.06);
 $sidebar-active-d:  #007aff;
-$search-bg-d:       rgba(255, 255, 255, 0.07);
+$search-bg-d:       rgba(40, 40, 42, 0.5);
 $search-border-d:   rgba(255, 255, 255, 0.08);
 $content-bg-d:      rgba(20, 20, 22, 0.99);
 $card-bg-d:         rgba(255, 255, 255, 0.055);
@@ -29,7 +29,7 @@ $text-primary-l:    #1d1d1f;
 $text-secondary-l:  rgba(29, 29, 31, 0.52);
 $text-tertiary-l:   rgba(29, 29, 31, 0.35);
 $divider-l:         rgba(0, 0, 0, 0.07);
-$sidebar-bg-l:      rgba(238, 238, 243, 0.97);
+$sidebar-bg-l:      rgba(238, 238, 243, 0.67);
 $sidebar-hover-l:   rgba(0, 0, 0, 0.05);
 $sidebar-active-l:  #007aff;
 $search-bg-l:       rgba(255, 255, 255, 0.75);
@@ -714,6 +714,8 @@ $badge-red-l:       #ff3b30;
     border-color: rgba(0, 0, 0, 0.1);
     color: $text-primary-l;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
     option { background: #f5f5f7; color: $text-primary-l; }
   }
 

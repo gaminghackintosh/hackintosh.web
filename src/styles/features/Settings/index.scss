@@ -1,31 +1,12 @@
-// ═══════════════════════════════════════════════════════════════════
-//  Settings Styles Index — macOS System Settings
-// ═══════════════════════════════════════════════════════════════════
-
 // Core
 @use "Settings";
 @use "AboutPanel";
 
-// General Settings
-@use "General/GeneralSettings";
-@use "General/AppearanceSettings";
-@use "General/DesktopDockSettings";
-@use "General/LockScreenSettings";
-@use "General/LoginPasswordSettings";
-@use "General/NotificationsSettings";
-@use "General/SoundSettings";
-@use "General/DisplaysSettings";
-@use "General/FocusSettings";
-
 // Network Settings
 @use "Network/WiFiSettings";
 @use "Network/BluetoothSettings";
+@use "Network/NetworkSettings";
 
 // Users Settings
 @use "Users/UsersSettings";
 
-// Legacy (kept for compatibility)
-@use "General/AccessibilitySettings";
-@use "General/ICloudSettings";
-@use "General/PasswordsSettings";
-@use "General/PrivacySettings";

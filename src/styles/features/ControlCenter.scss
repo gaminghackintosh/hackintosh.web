@@ -1,299 +1,394 @@
-@use "../base/variables" as *;
-
 // ═══════════════════════════════════════════════════════════════════
-// macOS Sequoia Control Center
+//  CONTROL CENTER — macOS STOCK DESIGN (Sonoma/Sequoia)
+//  Версия: 2.0 (исправлено наслоение, уменьшена ширина)
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── Design Tokens ──────────────────────────────────────────────────
-$cc-width: 320px;
-$cc-padding: 12px;
-$cc-radius: 20px;
-$cc-gap: 10px;
-$card-radius: 16px;
+// ─── DIMENSIONS ────────────────────────────────────────────────────
+$cc-width: 310px;            
+$panel-radius: 18px;
+$card-radius: 14px;
+$btn-radius: 12px;
+$gap-sm: 8px;
+$gap-md: 10px;
 
-// Vibrant translucent backgrounds (Sequoia)
-$cc-bg-dark: rgba(40, 40, 42, 0.55);
-$cc-bg-light: rgba(245, 245, 247, 0.6);
+// ─── LIQUID GLASS (Dark Theme) ─────────────────────────────────────
+$glass-bg: rgba(30, 30, 35, 0.68);
+$glass-border: rgba(255, 255, 255, 0.12);
+$card-bg: rgba(255, 255, 255, 0.08);
+$card-bg-hover: rgba(255, 255, 255, 0.12);
 
-// Card fills inside CC
-$card-dark: rgba(118, 118, 128, 0.24);
-$card-light: rgba(255, 255, 255, 0.5);
-$card-hover-dark: rgba(118, 118, 128, 0.36);
-$card-hover-light: rgba(255, 255, 255, 0.7);
+// ─── LIGHT THEME ───────────────────────────────────────────────────
+$glass-bg-light: rgba(240, 240, 245, 0.75);
+$glass-border-light: rgba(0, 0, 0, 0.1);
+$card-bg-light: rgba(255, 255, 255, 0.6);
+$card-bg-hover-light: rgba(255, 255, 255, 0.8);
 
-// Borders & Shadows
-$border-dark: rgba(255, 255, 255, 0.1);
-$border-light: rgba(0, 0, 0, 0.06);
-$shadow: 0 10px 40px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
-
-// Accent
+// ─── APPLE ACCENTS ─────────────────────────────────────────────────
 $accent-blue: #007AFF;
+$accent-purple: #5E5CE6;
 
-// Text
-$text-dark: rgba(255, 255, 255, 0.92);
-$text-light: rgba(0, 0, 0, 0.88);
-$sub-dark: rgba(255, 255, 255, 0.55);
-$sub-light: rgba(0, 0, 0, 0.5);
+// ─── TEXT COLORS (Dark) ────────────────────────────────────────────
+$text-primary: rgba(255, 255, 255, 0.95);
+$text-secondary: rgba(255, 255, 255, 0.55);
+
+// ─── TEXT COLORS (Light) ───────────────────────────────────────────
+$text-primary-light: #1d1d1f;
+$text-secondary-light: rgba(0, 0, 0, 0.5);
+
+// ─── SHADOWS ───────────────────────────────────────────────────────
+$shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.05);
+$shadow-light: 0 12px 30px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(255, 255, 255, 0.3);
 
 // ═══════════════════════════════════════════════════════════════════
-// Panel
+//  MAIN PANEL
 // ═══════════════════════════════════════════════════════════════════
-.cc {
+.cc-panel {
   position: fixed;
-  top: 30px;
-  right: 8px;
+  top: 38px;
+  right: 14px;
   width: $cc-width;
-  padding: $cc-padding;
+  padding: $gap-md;
   display: flex;
   flex-direction: column;
-  gap: $cc-gap;
-  border-radius: $cc-radius;
+  gap: $gap-md;
+  border-radius: $panel-radius;
+  box-sizing: border-box;
+  z-index: 10005;
+  overflow: hidden;           // предотвращает наслоение
 
-  background: $cc-bg-dark;
+  // Liquid Glass
+  background: $glass-bg;
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-
-  border: 0.5px solid $border-dark;
+  border: 0.5px solid $glass-border;
   box-shadow: $shadow;
 
-  z-index: 10001;
-  animation: cc-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+  color: $text-primary;
+
+  animation: cc-enter 0.2s cubic-bezier(0.2, 0.9, 0.4, 1);
   transform-origin: top right;
+}
 
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: $text-dark;
-
-  @keyframes cc-pop {
-    from { opacity: 0; transform: scale(0.9) translateY(-10px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes cc-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
-// ─── Layout rows ────────────────────────────────────────────────────
-.cc__row {
+// ═══════════════════════════════════════════════════════════════════
+//  GRID (2 columns)
+// ═══════════════════════════════════════════════════════════════════
+.cc-grid-2x2 {
   display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: $cc-gap;
-  min-width: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-md;
 }
 
-.cc__tiles-col {
-  display: flex;
-  flex-direction: column;
-  gap: $cc-gap;
-  min-width: 0;
-}
-
-// ─── Generic Card ───────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+//  BASE CARD
+// ═══════════════════════════════════════════════════════════════════
 .cc-card {
-  background: $card-dark;
+  background: $card-bg;
   border-radius: $card-radius;
-  padding: 6px;
-  transition: background 0.18s ease;
-}
-
-.cc-card--connectivity {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  min-width: 0;
-}
-
-.cc-card--wide {
-  padding: 4px;
-  min-width: 0;
   overflow: hidden;
+  transition: background 0.12s;
 }
 
-.cc-card--slider {
-  padding: 10px 12px 8px;
+// ═══════════════════════════════════════════════════════════════════
+//  CONNECTIVITY CARD (Wi-Fi / Bluetooth / AirDrop)
+// ═══════════════════════════════════════════════════════════════════
+.cc-card--connectivity {
+  padding: 6px 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-.cc-card--theme {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  cursor: pointer;
-
-  &:hover { background: $card-hover-dark; }
-  &:active { transform: scale(0.99); }
-}
-
-.cc-card-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: $text-dark;
-  letter-spacing: -0.01em;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Connectivity Rows
-// ═══════════════════════════════════════════════════════════════════
 .cc-conn-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 8px;
-  border-radius: 11px;
+  padding: 5px 10px;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  width: 100%;
-  text-align: left;
-  transition: background 0.15s ease;
+  transition: background 0.12s;
 
-  &:hover { background: rgba(255, 255, 255, 0.08); }
-  &:active { transform: scale(0.985); }
+  &:hover {
+    background: $card-bg-hover;
+  }
 }
 
-.cc-conn-icon {
-  width: 30px;
-  height: 30px;
+.cc-icon-circle {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  color: $text-dark;
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #fff;
+  font-size: 13px;
 
-  &--active {
+  &.active-blue {
     background: $accent-blue;
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Image icon styling (for AirDrop, etc.)
+.cc-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  
+  // Light theme filter (опционально - можно убрать если иконка цветная)
+  .light-theme & {
+    filter: brightness(0); // Делает иконку чёрной
+    opacity: 0.8;
+  }
+  
+  // Active state - белая иконка на синем фоне
+  .active-blue & {
+    filter: brightness(0) invert(1);
+  }
+  
+  // Light theme + active - белая иконка
+  .light-theme .active-blue & {
+    filter: brightness(0) invert(1);
   }
 }
 
 .cc-conn-text {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  min-width: 0;
   flex: 1;
-  overflow: hidden;
+  min-width: 0;
 }
 
-.cc-conn-label {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: $text-dark;
+.cc-label-main {
+  font-size: 11px;
+  font-weight: 500;
   line-height: 1.25;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.cc-conn-status {
-  font-size: 10.5px;
-  color: $sub-dark;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Tiles
-// ═══════════════════════════════════════════════════════════════════
-.cc-tile {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 11px;
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-  min-width: 0;
-
-  &:hover { background: rgba(255, 255, 255, 0.12); }
-  &:active { transform: scale(0.97); }
-
-  &--active {
-    background: var(--tile-accent, #{$accent-blue});
-
-    .cc-tile-icon { color: #fff; }
-    .cc-tile-title { color: #fff; }
-    .cc-tile-subtitle { color: rgba(255, 255, 255, 0.8); }
-  }
-}
-
-.cc-tile-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.16);
-  color: $text-dark;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.18s ease;
-
-  .cc-tile--active & {
-    background: rgba(255, 255, 255, 0.25);
-  }
-}
-
-.cc-tile-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-}
-
-.cc-tile-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: $text-dark;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.cc-tile-subtitle {
+.cc-label-sub {
   font-size: 10px;
-  color: $sub-dark;
+  font-weight: 400;
+  color: $text-secondary;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Sliders (Sequoia style with knob)
+//  MUSIC WIDGET
 // ═══════════════════════════════════════════════════════════════════
-.cc-slider-block {
+.cc-music-widget {
+  background: $card-bg;
+  border-radius: $card-radius;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.cc-slider-bar {
-  position: relative;
-  height: 24px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.16);
-  overflow: hidden;
-  cursor: pointer;
+.cc-music-main-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
 
-  // Soft inset border
-  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.1);
-  
-  // Performance
-  contain: layout style;
+.cc-music-art {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cc-music-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cc-music-art-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.cc-music-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc-music-title {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-music-artist {
+  font-size: 11px;
+  color: $text-secondary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cc-music-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 2px;
+}
+
+.cc-music-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &--play {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UTILITIES ROW (Focus + Square buttons)
+// ═══════════════════════════════════════════════════════════════════
+.cc-utilities-row {
+  display: flex;
+  gap: $gap-md;
+  height: 42px;
+}
+
+.cc-utility-card--focus {
+  flex: 1;
+  background: $card-bg;
+  border: none;
+  border-radius: $btn-radius;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: $card-bg-hover;
+  }
+
+  &.active-purple {
+    background: $accent-purple;
+  }
+
+  .cc-utility-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.2;
+  }
+}
+
+.cc-utility-square {
+  width: 42px;
+  height: 42px;
+  background: $card-bg;
+  border: none;
+  border-radius: $btn-radius;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: $card-bg-hover;
+  }
+
+  &.active-opaque {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SLIDER CARDS (Display / Sound)
+// ═══════════════════════════════════════════════════════════════════
+.cc-card--slider-wrapper {
+  padding: 10px 12px;
+}
+
+.cc-slider-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+.cc-slider-header-icon {
+  opacity: 0.7;
+}
+
+.cc-slider-title {
+  flex: 1;
+  font-weight: 500;
+}
+
+.cc-slider-value {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.cc-slider-block {
+  width: 100%;
+}
+
+.cc-slider-bar {
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
 }
 
 .cc-slider-fill {
@@ -301,120 +396,183 @@ $sub-light: rgba(0, 0, 0, 0.5);
   left: 0;
   top: 0;
   height: 100%;
-  width: var(--fill, 50%);
-  background: #ffffff;
-  border-radius: 12px 0 0 12px;
+  background: #fff;
+  border-radius: 15px;
+  width: 0%;
   pointer-events: none;
-  
-  // Performance: use transform for animations
-  will-change: width;
   transition: width 0.05s linear;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
 }
 
-.cc-slider-glyph {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// Knob on the fill boundary (macOS style)
 .cc-slider-knob {
   position: absolute;
   top: 50%;
-  left: var(--fill, 50%);
   transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
+  background: #fff;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.25),
-    0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   pointer-events: none;
-  z-index: 1;
+  transition: left 0.05s linear;
+  will-change: left;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  QUICK ACTIONS GRID
+// ═══════════════════════════════════════════════════════════════════
+.cc-quick-actions-shelf {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $gap-sm;
+}
+
+.cc-quick-action {
+  background: $card-bg;
+  border: none;
+  border-radius: $btn-radius;
+  height: 44px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  // Icon inside knob
-  svg {
-    width: 11px;
-    height: 11px;
-    color: rgba(0, 0, 0, 0.6);
-  }
-  
-  // Performance
-  will-change: left;
-  transition: left 0.05s linear;
-}
+  transition: background 0.12s;
 
-.cc-slider-caption {
-  font-size: 11px;
-  color: $sub-dark;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  &:hover {
+    background: $card-bg-hover;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &--active {
+    background: $accent-blue;
+
+    &:hover {
+      background: adjust-color($accent-blue, $lightness: -5%);
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Light Theme
+//  FOOTER BUTTON
+// ═══════════════════════════════════════════════════════════════════
+.cc-footer-edit-btn {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-secondary;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background 0.12s;
+
+  &:hover {
+    background: $card-bg-hover;
+    color: $text-primary;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LIGHT THEME OVERRIDES
 // ═══════════════════════════════════════════════════════════════════
 .light-theme {
-  .cc {
-    background: $cc-bg-light;
-    border-color: $border-light;
-    color: $text-light;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  background: $glass-bg-light;
+  border-color: $glass-border-light;
+  box-shadow: $shadow-light;
+  color: $text-primary-light;
+
+  .cc-card,
+  .cc-utility-card--focus,
+  .cc-utility-square,
+  .cc-quick-action {
+    background: $card-bg-light;
+
+    &:hover {
+      background: $card-bg-hover-light;
+    }
   }
 
-  .cc-card { background: $card-light; }
-  .cc-card--theme:hover { background: $card-hover-light; }
-  .cc-card-title { color: $text-light; }
+  .cc-icon-circle {
+    background: rgba(0, 0, 0, 0.06);
+    color: #1d1d1f;
 
-  .cc-conn-item:hover { background: rgba(0, 0, 0, 0.05); }
-  .cc-conn-icon {
-    background: rgba(0, 0, 0, 0.1);
-    color: $text-light;
-    &--active { background: $accent-blue; color: #fff; }
+    &.active-blue {
+      background: $accent-blue;
+      color: #fff;
+    }
   }
-  .cc-conn-label { color: $text-light; }
-  .cc-conn-status { color: $sub-light; }
 
-  .cc-tile {
-    background: rgba(255, 255, 255, 0.65);
-    &:hover { background: rgba(255, 255, 255, 0.9); }
+  .cc-label-main,
+  .cc-music-title {
+    color: $text-primary-light;
   }
-  .cc-tile-icon {
-    background: rgba(0, 0, 0, 0.08);
-    color: $text-light;
+
+  .cc-label-sub,
+  .cc-music-artist,
+  .cc-slider-header {
+    color: $text-secondary-light;
   }
-  .cc-tile-title { color: $text-light; }
-  .cc-tile-subtitle { color: $sub-light; }
 
   .cc-slider-bar {
     background: rgba(0, 0, 0, 0.08);
-    box-shadow: inset 0 0.5px 0 rgba(0, 0, 0, 0.06);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.12);
+    }
   }
-  .cc-slider-fill { background: #fff; }
-  .cc-slider-caption { color: $sub-light; }
-  
+
+  .cc-slider-fill {
+    background: #333;
+  }
+
   .cc-slider-knob {
     background: #fff;
-    box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.2),
-      0 0 0 0.5px rgba(0, 0, 0, 0.08);
-    
-    svg { color: rgba(0, 0, 0, 0.55); }
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }
-}
 
-// ─── Responsive ─────────────────────────────────────────────────────
-@media (max-width: 360px) {
-  .cc { width: 290px; right: 6px; }
+  .cc-music-art {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .cc-music-btn {
+    color: #1d1d1f;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    &--play {
+      background: rgba(0, 0, 0, 0.08);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  .cc-utility-card--focus.active-purple {
+    background: $accent-purple;
+    color: #fff;
+  }
+
+  .cc-utility-square.active-opaque {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .cc-footer-edit-btn {
+    color: $text-secondary-light;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: $text-primary-light;
+    }
+  }
+
+  .cc-quick-action--active {
+    background: $accent-blue;
+    color: #fff;
+  }
 }

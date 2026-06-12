@@ -1,264 +1,317 @@
-.apple-about-container {
-  padding: 4px 0;
+@use "../../base/variables" as vars;
 
-  // Заголовки над группами карточек
-  .settings-group-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.4);
-    text-transform: none;
-    letter-spacing: -0.01em;
-    padding: 16px 0 6px 4px;
-  }
+// ═══════════════════════════════════════════════════════════════════
+//  ABOUT PANEL — macOS 26 (flat, authentic — matches sg-card system)
+// ═══════════════════════════════════════════════════════════════════
 
-  // ─── ВЕРХНИЙ HERO БЛОК ──────────────────────────────────────────
-  .about-hardware-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 12px 0 24px 0;
+.about-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-    .hardware-icon-canvas {
-      width: 84px;
-      height: 84px;
-      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      color: rgba(255, 255, 255, 0.95);
+// ─── HERO ─────────────────────────────────────────────────────────
+.about-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 4px 4px;
+}
 
-      .apple-hero-svg {
-        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
-      }
-    }
+.about-icon-bg {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
 
-    .hardware-title {
-      font-size: 17px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.95);
-      margin: 0 0 2px 0;
-      letter-spacing: -0.01em;
-    }
-
-    .hardware-subtitle {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.45);
-      margin: 0;
-    }
-  }
-
-  // ─── СТРОКИ СПЕЦИФИКАЦИЙ ─────────────────────────────────────────
-  .sr-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    min-height: 36px;
-
-    &:not(:last-child) {
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .sr-label {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.85);
-      font-weight: 400;
-    }
-
-    .sr-right, .sr-value {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.5);
-      font-weight: 400;
-    }
-
-    .actionable-text {
-      user-select: text;
-      cursor: text;
-    }
-  }
-
-  // ─── СТРОКА ОПЕРАЦИОННОЙ СИСТЕМЫ ──────────────────────────────────
-  .os-disclosure-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    width: 100%;
-
-    .os-meta-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    // Круглая абстрактная миниатюра обоев Sonoma (нативный стиль)
-    .os-gradient-thumbnail {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff416c, #ff4b2b, #ff8c00, #9800ff, #007aff);
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .os-text-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-
-    .os-name {
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    .os-version-build {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
-    }
-  }
-
-  // ─── БЛОК НАКОПИТЕЛЯ (STORAGE) ───────────────────────────────────
-  .about-storage-box {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-
-    .storage-info-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-
-      .disk-name {
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 400;
-      }
-      .disk-meta {
-        color: rgba(255, 255, 255, 0.45);
-      }
-    }
-
-    .storage-bar-track {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    // Системный цвет заполнения хранилища (Mac/iOS-стайл)
-    .storage-bar-fill-system {
-      height: 100%;
-      background: #007aff; 
-      border-radius: 3px;
-    }
-  }
-
-  // ─── НАДПИСИ И КОПИРАЙТЫ В ФУТЕРЕ ────────────────────────────────
-  .about-legal-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 32px;
-    padding-bottom: 16px;
-    gap: 6px;
-    width: 100%;
-
-    .legal-links-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.35);
-
-      .legal-link-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: 11px;
-        color: rgba(255, 255, 255, 0.4);
-        cursor: pointer;
-        font-family: inherit;
-
-        &:hover {
-          text-decoration: underline;
-          color: rgba(255, 255, 255, 0.6);
-        }
-      }
-
-      .legal-dot {
-        user-select: none;
-      }
-    }
-
-    .legal-copyright-text {
-      margin: 0;
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.25);
-      letter-spacing: -0.01em;
-    }
+  svg {
+    width: 30px;
+    height: 30px;
+    fill: rgba(255, 255, 255, 0.85);
   }
 }
 
+.about-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.about-title {
+  font-size: 19px;
+  font-weight: 600;
+  color: vars.$color-text-primary;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.about-subtitle {
+  font-size: 12px;
+  color: vars.$color-text-tertiary;
+  font-weight: 400;
+  margin: 0;
+}
+
+// ─── SECTION LABEL (reuses sg-label, no override needed) ──────────
+
+// ─── SPEC ROWS — reuse sr-row/sr-label/sr-value from Settings.scss
+.spec-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #007aff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.12s;
+
+  svg {
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  &:hover { opacity: 0.75; }
+  &:active { transform: scale(0.98); }
+}
+
+// ─── OS ROW ─────────────────────────────────────────────────────────
+.os-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 14px;
+}
+
+.os-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.os-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #007aff;
+  border-radius: 9px;
+
+  span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.os-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.os-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.os-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: vars.$color-text-primary;
+}
+
+.os-version {
+  font-size: 12px;
+  color: vars.$color-text-secondary;
+}
+
+.os-build {
+  font-size: 11px;
+  color: vars.$color-text-tertiary;
+}
+
+// ─── apple-btn-secondary (already defined globally — local fallback) ──
+.apple-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: background 0.1s;
+  flex-shrink: 0;
+
+  &:hover  { background: rgba(255, 255, 255, 0.12); }
+  &:active { transform: scale(0.97); }
+}
+
+// ─── STORAGE ─────────────────────────────────────────────────────────
+.storage-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.storage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.storage-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: vars.$color-text-primary;
+}
+
+.storage-capacity {
+  font-size: 11.5px;
+  color: vars.$color-text-tertiary;
+}
+
+.storage-bar {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2.5px;
+  overflow: hidden;
+}
+
+.storage-bar-fill {
+  height: 100%;
+  background: #007aff;
+  border-radius: 2.5px;
+  transition: width 0.4s vars.$easing-ease-out;
+}
+
+.storage-legend {
+  display: flex;
+  gap: 18px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: vars.$color-text-tertiary;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+
+  &.system    { background: #007aff; }
+  &.available { background: rgba(255, 255, 255, 0.15); }
+}
+
+// ─── FOOTER ──────────────────────────────────────────────────────────
+.about-footer {
+  padding: 10px 2px 2px;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: #007aff;
+  font-size: 11.5px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: inherit;
+  transition: background 0.1s;
+
+  &:hover { background: rgba(0, 122, 255, 0.1); }
+}
+
+.footer-divider {
+  width: 0.5px;
+  height: 11px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.footer-copyright {
+  font-size: 10.5px;
+  color: vars.$color-text-tertiary;
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+
+.footer-disclaimer {
+  font-size: 10px;
+  color: vars.$color-text-tertiary;
+  margin: 0;
+  opacity: 0.55;
+}
+
 // ═══════════════════════════════════════════════════════════════════
-//  LIGHT THEME ADAPTATION
+//  LIGHT THEME
 // ═══════════════════════════════════════════════════════════════════
+.light-theme {
+  .about-icon-bg {
+    background: rgb(0 0 0 / 5%);
+    border-color: rgb(0 0 0 / 22%);
 
-.light-theme .apple-about-container {
-  .settings-group-title {
-    color: rgba(0, 0, 0, 0.48);
+    svg { fill: rgba(29, 29, 31, 0.8); }
   }
 
-  .about-hardware-hero {
-    .hardware-icon-canvas {
-      color: #1d1d1f;
-      background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%);
-      .apple-hero-svg {
-        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
-      }
-    }
-    .hardware-title { color: #1d1d1f; }
-    .hardware-subtitle { color: rgba(0, 0, 0, 0.5); }
+  .about-title    { color: vars.$light-color-text-primary; }
+  .about-subtitle { color: vars.$light-color-text-tertiary; }
+
+  .os-name  { color: vars.$light-color-text-primary; }
+  .os-version,
+  .os-build { color: vars.$light-color-text-secondary; }
+
+  .storage-name { color: vars.$light-color-text-primary; }
+  .storage-capacity,
+  .legend-item   { color: vars.$light-color-text-tertiary; }
+
+  .storage-bar { background: rgba(0, 0, 0, 0.07); }
+  .legend-dot.available { background: rgba(0, 0, 0, 0.15); }
+
+  .apple-btn-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: rgba(29, 29, 31, 0.72);
+    &:hover { background: rgba(0, 0, 0, 0.08); }
   }
 
-  .sr-row {
-    &:not(:last-child) { border-bottom-color: rgba(0, 0, 0, 0.05); }
-    .sr-label { color: #1d1d1f; }
-    .sr-value { color: rgba(0, 0, 0, 0.55); }
-  }
-
-  .os-disclosure-row {
-    .os-name { color: #1d1d1f; }
-    .os-version-build { color: rgba(0, 0, 0, 0.5); }
-  }
-
-  .about-storage-box {
-    .storage-info-header {
-      .disk-name { color: #1d1d1f; }
-      .disk-meta { color: rgba(0, 0, 0, 0.5); }
-    }
-    .storage-bar-track {
-      background: rgba(0, 0, 0, 0.06);
-    }
-  }
-
-  .about-legal-footer {
-    .legal-links-row {
-      color: rgba(0, 0, 0, 0.35);
-      .legal-link-btn {
-        color: rgba(0, 0, 0, 0.45);
-        &:hover { color: #1d1d1f; }
-      }
-    }
-    .legal-copyright-text {
-      color: rgba(0, 0, 0, 0.3);
-    }
-  }
+  .footer-link:hover { background: rgba(0, 122, 255, 0.08); }
+  .footer-divider    { background: rgba(0, 0, 0, 0.1); }
+  .footer-copyright,
+  .footer-disclaimer { color: vars.$light-color-text-tertiary; }
 }

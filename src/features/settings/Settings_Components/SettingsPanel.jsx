@@ -28,19 +28,5 @@ export const SettingsGroup = ({ label, footer, children }) => {
   );
 };
 
-export const SettingsRow = ({ label, description, rightControl }) => (
-  <div className="sr-row">
-    <div className="sr-left">
-      <div className="sr-label">{label}</div>
-      {description && <div className="sr-desc">{description}</div>}
-    </div>
-    {rightControl && <div className="sr-right">{rightControl}</div>}
-  </div>
-);
-
-export const ToggleSwitch = ({ checked, onChange }) => (
-  <label className="toggle">
-    <input type="checkbox" className="toggle__input" checked={checked} onChange={onChange} />
-    <span className="toggle__track"><span className="toggle__thumb" /></span>
-  </label>
-);
+export { SettingsRow } from "./SettingsRow";
+export { ToggleSwitch } from "./ToggleSwitch";

@@ -1,58 +1,52 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import React, { useRef, useCallback, memo } from "react";
 
-export const VerticalSlider = memo(function VerticalSlider({ initialValue = 50, icon: Icon, onValueChange }) {
-  const trackRef = useRef(null);
+export const VerticalSlider = memo(function VerticalSlider({ value, onChange, min = 0, max = 100 }) {
+  const barRef = useRef(null);
   const isDragging = useRef(false);
 
-  const updateSlider = useCallback((value) => {
-    if (!trackRef.current) return;
-    const pct = Math.max(0, Math.min(100, value));
-    trackRef.current.style.setProperty('--fill', `${pct}%`);
-    onValueChange?.(pct);
-  }, [onValueChange]);
-
-  useEffect(() => {
-    updateSlider(initialValue);
-  }, [initialValue, updateSlider]);
-
-  const handlePointer = useCallback((clientX) => {
-    if (!trackRef.current) return;
-    const rect = trackRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    updateSlider((x / rect.width) * 100);
-  }, [updateSlider]);
+  const updateValue = useCallback((clientX) => {
+    if (!barRef.current) return;
+    const rect = barRef.current.getBoundingClientRect();
+    let percent = (clientX - rect.left) / rect.width;
+    percent = Math.min(1, Math.max(0, percent));
+    const newValue = min + percent * (max - min);
+    onChange?.(newValue);
+  }, [min, max, onChange]);
 
   const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
     isDragging.current = true;
-    handlePointer(e.clientX);
-    const move = (ev) => { if (isDragging.current) handlePointer(ev.clientX); };
-    const up = () => {
-      isDragging.current = false;
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
+    updateValue(e.clientX);
+
+    const handleMouseMove = (moveEvent) => {
+      if (!isDragging.current) return;
+      updateValue(moveEvent.clientX);
     };
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
-  }, [handlePointer]);
+    const handleMouseUp = () => {
+      isDragging.current = false;
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }, [updateValue]);
+
+  const percent = ((value - min) / (max - min)) * 100;
 
   return (
     <div className="cc-slider-block">
-      <div 
-        className="cc-slider-bar" 
-        ref={trackRef} 
+      <div
+        className="cc-slider-bar"
+        ref={barRef}
         onMouseDown={handleMouseDown}
         role="slider"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={initialValue}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
         tabIndex={0}
       >
-        <div className="cc-slider-fill" />
-        {Icon && (
-          <div className="cc-slider-knob">
-            <Icon size={11} />
-          </div>
-        )}
+        <div className="cc-slider-fill" style={{ width: `${percent}%` }} />
+        <div className="cc-slider-knob" style={{ left: `${percent}%` }} />
       </div>
     </div>
   );

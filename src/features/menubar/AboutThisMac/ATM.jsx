@@ -29,8 +29,8 @@ export default function AboutThisMac({ onClose }) {
             </div>
             <div className="about-mac-version">
               <span className="about-mac-os-name">macOS</span>
-              <span className="about-mac-os-version">Sonoma</span>
-              <span className="about-mac-os-build">Version 14.0.1</span>
+              <span className="about-mac-os-version">Tahoe</span>
+              <span className="about-mac-os-build">Version 26.0.1</span>
             </div>
             <div className="about-mac-disclaimer">
               <span>™ & © 1983–2026 Apple Inc.</span>

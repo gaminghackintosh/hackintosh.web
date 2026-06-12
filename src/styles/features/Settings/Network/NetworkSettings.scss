@@ -1,0 +1,52 @@
+.network-settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ─── Icon badge (квадратная цветная иконка слева от строки) ─────────
+.sr-icon-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// Выравнивание при наличии иконки
+.sr-row:has(.sr-icon-badge) {
+  align-items: center;
+  padding-left: 12px;
+}
+
+// ─── Icon badge (квадратная цветная иконка слева от строки) ─────────
+.sr-icon-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 2px;
+  color: #fff;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.sr-row:has(.sr-icon-badge) {
+  .sr-left {
+    gap: 1px;
+  }
+}
