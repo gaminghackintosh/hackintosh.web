@@ -10,15 +10,8 @@ const GITHUB_APP = {
   icon: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
 };
 
-// Базовый размер иконки в Dock
 const BASE_ICON_SIZE = 58;
 
-// Порядок приложений в Dock как в macOS:
-// 1. Системные приложения (Finder, Safari, и т.д.)
-// 2. Разделитель
-// 3. Приложения пользователя
-// 4. Разделитель  
-// 5. Корзина
 const DOCK_APPS = [
   // Системные приложения
   APPS.find(a => a.id === "finder"),
@@ -32,11 +25,8 @@ const DOCK_APPS = [
   APPS.find(a => a.id === "calculator"),
   APPS.find(a => a.id === "terminal"),
   APPS.find(a => a.id === "settings"),
-  // Разделитель перед GitHub
-  { type: "divider" },
-  // Внешние ссылки
-  GITHUB_APP,
 ];
+
 
 // Удаление пустых элементов из DOCK_APPS
 const FILTERED_DOCK_APPS = DOCK_APPS.filter(app => app && app.id !== undefined);
@@ -126,15 +116,6 @@ const DockItem = memo(function DockItem({
 // Мемоизированный разделитель
 const DockSeparator = memo(() => <div className="dock__separator" aria-hidden="true" />);
 
-// Красивый разделитель перед GitHub (эстетичная линия)
-const DockGitHubDivider = memo(function DockGitHubDivider() {
-  return (
-    <div className="dock__github-divider" aria-hidden="true">
-      <div className="dock__github-divider-line" />
-    </div>
-  );
-});
-
 // Мемоизированный tooltip
 const DockTooltip = memo(function DockTooltip({ visible, text }) {
   if (!visible) return null;
@@ -143,33 +124,45 @@ const DockTooltip = memo(function DockTooltip({ visible, text }) {
 
 export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLightTheme = false }) {
   const [hoverIndex, setHoverIndex] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(false);
   const dockRef = useRef(null);
+  const tooltipTimeout = useRef(null);
 
   // Мемоизация обработчиков
   const handleMouseEnter = useCallback((index) => {
     setHoverIndex(index);
+    // Показываем tooltip с небольшой задержкой
+    if (tooltipTimeout.current) clearTimeout(tooltipTimeout.current);
+    tooltipTimeout.current = setTimeout(() => {
+      setShowTooltip(true);
+    }, 300);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     setHoverIndex(null);
+    setShowTooltip(false);
+    if (tooltipTimeout.current) clearTimeout(tooltipTimeout.current);
+  }, []);
+
+  // Очистка таймера при размонтировании
+  React.useEffect(() => {
+    return () => {
+      if (tooltipTimeout.current) clearTimeout(tooltipTimeout.current);
+    };
   }, []);
 
   // Мемоизация рендера элементов Dock
   const dockItems = useMemo(() => {
     return FILTERED_DOCK_APPS.map((app, index) => {
-      // Пропускаем разделители при рендере (они уже обрабатываются отдельно)
       if (!app.id) return null;
       
-      const isGitHub = app.id === "github";
       const isOpen = openApps?.includes(app.id);
-      // Защита для minimizedApps
       const isMinimized = minimizedApps instanceof Set ? minimizedApps.has(app.id) : minimizedApps?.includes?.(app.id);
       
       return (
         <React.Fragment key={app.id}>
-          {/* Разделитель перед этим приложением (если это не первое) */}
           {index > 0 && FILTERED_DOCK_APPS[index - 1]?.type === "divider" && (
-            isGitHub ? <DockGitHubDivider /> : <DockSeparator />
+            <DockSeparator />
           )}
           
           <div
@@ -178,7 +171,7 @@ export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLi
             onMouseLeave={handleMouseLeave}
             style={{ contain: "layout" }}
           >
-            <DockTooltip visible={hoverIndex === index} text={app.name} />
+            <DockTooltip visible={showTooltip && hoverIndex === index} text={app.name} />
             
             <DockItem
               app={app}
@@ -191,17 +184,40 @@ export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLi
           </div>
         </React.Fragment>
       );
-    }).filter(Boolean); // Убираем null
+    }).filter(Boolean);
   }, [openApps, minimizedApps, hoverIndex, onOpen, isLightTheme]);
 
   return (
-    <div 
-      ref={dockRef}
-      className="dock"
-      onMouseLeave={handleMouseLeave}
-      style={{ contain: "layout paint" }}
-    >
-      {dockItems}
+    <div className="dock-container">
+      <div 
+        ref={dockRef}
+        className="dock"
+        onMouseLeave={handleMouseLeave}
+        style={{ contain: "layout paint" }}
+      >
+        {dockItems}
+      </div>
+      
+      {/* Отдельный мини-Dock для GitHub */}
+      <div className="dock dock--github">
+        <div
+          className="dock__item-wrapper"
+          onMouseEnter={() => handleMouseEnter('github')}
+          onMouseLeave={handleMouseLeave}
+          style={{ contain: "layout" }}
+        >
+          <DockTooltip visible={showTooltip && hoverIndex === 'github'} text={GITHUB_APP.name} />
+          
+          <DockItem
+            app={GITHUB_APP}
+            isHovered={hoverIndex === 'github'}
+            onOpen={onOpen}
+            isOpen={false}
+            isMinimized={false}
+            isLightTheme={isLightTheme}
+          />
+        </div>
+      </div>
     </div>
   );
 }

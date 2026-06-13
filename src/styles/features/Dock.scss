@@ -10,14 +10,27 @@ $dock-bg: rgba(255, 255, 255, 0.2);
 $dock-border: rgba(255, 255, 255, 0.25);
 $dock-shadow: 0 15px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 
+// Расстояние между основным Dock и GitHub Dock
+$github-dock-gap: 16px;
+
 // Плавная кривая анимации как в macOS
 $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
 
-.dock {
+// Контейнер для обоих Dock
+.dock-container {
   position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $github-dock-gap;
+  z-index: 9000;
+}
+
+.dock {
+  position: relative;
   display: flex;
   align-items: center;
   gap: $dock-gap;
@@ -28,20 +41,31 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
   border-radius: $dock-radius;
   box-shadow: $dock-shadow;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  z-index: 9000;
-
+  
   // Анимация появления
   animation: dock-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   
   @keyframes dock-appear {
     from {
       opacity: 0;
-      transform: translateX(-50%) translateY(30px) scale(0.9);
+      transform: translateY(30px) scale(0.9);
     }
     to {
       opacity: 1;
-      transform: translateX(-50%) translateY(0) scale(1);
+      transform: translateY(0) scale(1);
     }
+  }
+
+  // GitHub Dock - отдельный маленький док
+  &--github {
+    padding: $dock-padding-y 9px;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 12px 30px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    
+    animation: dock-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
   }
 
   &__item-wrapper {
@@ -59,13 +83,10 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
     position: relative;
     cursor: pointer;
     transform-origin: center center;
-    // Плавная анимация scale эффекта
     transition: transform 0.2s $magnification-timing;
     will-change: transform;
-    // Оптимизация производительности
     contain: layout style paint;
     
-    // Standard scale animation on hover
     &--hovered {
       transform: scale(1.15);
       z-index: 100;
@@ -81,7 +102,6 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
     pointer-events: none;
     z-index: 10000;
     
-    // Стиль tooltip как в macOS Sequoia
     background: rgba(35, 35, 40, 0.85);
     backdrop-filter: blur(20px) saturate(150%);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
@@ -194,54 +214,14 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
     align-self: center;
     flex-shrink: 0;
   }
-
-  // Красивый разделитель перед GitHub
-  &__github-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 8px;
-    position: relative;
-
-    &-line {
-      width: 2px;
-      height: 44px;
-      background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(255, 255, 255, 0.5) 20%,
-        rgba(255, 255, 255, 0.5) 80%,
-        transparent 100%
-      );
-      border-radius: 3px;
-      box-shadow: 
-        0 0 8px rgba(255, 255, 255, 0.3),
-        0 0 16px rgba(255, 255, 255, 0.15);
-      position: relative;
-      
-      // Тонкое свечение
-      &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 4px;
-        height: 50px;
-        background: radial-gradient(
-          ellipse at center,
-          rgba(255, 255, 255, 0.25) 0%,
-          transparent 70%
-        );
-        border-radius: 50%;
-        pointer-events: none;
-      }
-    }
-  }
 }
-    
+
 // Адаптация для разных размеров экрана
 @media (max-width: 768px) {
+  .dock-container {
+    gap: 12px;
+  }
+  
   .dock {
     bottom: 6px;
     padding: 7px 9px;
@@ -263,6 +243,11 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
   .dock {
     background: rgba(40, 40, 45, 0.65);
     border-color: rgba(255, 255, 255, 0.12);
+    
+    &--github {
+      background: rgba(40, 40, 45, 0.55);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
   }
 }
 
@@ -277,6 +262,14 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
       0 15px 40px rgba(0, 0, 0, 0.15),
       0 0 0 1px rgba(255, 255, 255, 0.3) inset;
     
+    &--github {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    }
+    
     .dock__separator {
       background: linear-gradient(
         to bottom,
@@ -285,27 +278,6 @@ $magnification-timing: cubic-bezier(0.2, 0, 0, 1);
         rgba(0, 0, 0, 0.2) 85%,
         transparent 100%
       );
-    }
-    
-    .dock__github-divider-line {
-      background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(0, 0, 0, 0.3) 20%,
-        rgba(0, 0, 0, 0.3) 80%,
-        transparent 100%
-      );
-      box-shadow: 
-        0 0 8px rgba(0, 0, 0, 0.15),
-        0 0 16px rgba(0, 0, 0, 0.08);
-      
-      &::before {
-        background: radial-gradient(
-          ellipse at center,
-          rgba(0, 0, 0, 0.15) 0%,
-          transparent 70%
-        );
-      }
     }
     
     .dock__tooltip {
