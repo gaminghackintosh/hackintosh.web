@@ -1,5 +1,4 @@
 import { memo } from "react";
-import airdropIcon from "./../../../assets/icons/menuBar/ControlCenter/Airdrop.png";
 
 // ═══════════════════════════════════════════════════════════════════
 //  CONSTANTS
@@ -38,16 +37,22 @@ export const MENU_OPTIONS = Object.freeze({
 // ═══════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════
-//  AIRDROP ICON (Image)
+//  AIRDROP ICON (SVG)
 // ═══════════════════════════════════════════════════════════════════
 
-export const AirDropIcon = memo(({ size = 14, className = "" }) => (
-  <img 
-    src={airdropIcon} 
-    alt="AirDrop" 
-    className={`cc-icon-img ${className}`}
-    style={{ width: size, height: size }}
-  />
+export const AirDropIcon = memo(({ size = 18, className = "" }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    width={size} 
+    height={size} 
+    className={className}
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="2"/>
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity="0.3"/>
+    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" opacity="0.5"/>
+  </svg>
 ));
 
 export const StageManagerIcon = memo(({ size = 15 }) => (

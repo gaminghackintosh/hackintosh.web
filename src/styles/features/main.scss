@@ -12,23 +12,24 @@
 @use "../base/icons";
 
 // ─── 3. SYSTEM COMPONENTS ──────────────────────────────────────────
-@use "../features/AppWindow";              // Windows, MenuBar, ContextMenu
-@use "Dock";
-@use "ControlCenter";
+@use "../features/AppWindow";           
+@use "./Dock";
+@use "./ControlCenter/ControlCenter";
+@use "./ControlCenter/Sliders";
 @use "../components/MobileNotSupported/main";
 
 // ─── 4. SYSTEM APPS ────────────────────────────────────────────────
 @use "BootScreen";
 @use "Finder";
-@use "Settings/index" as settings-index;         // Core + all settings panels
+@use "Settings/index" as settings-index;         
 @use "../components/AboutThisMac/ATM";
 
 // ─── 5. APPLICATIONS ───────────────────────────────────────────────
 @use "../components/NotesWindow/Notes";
 @use "../components/Musics/Music";
 @use "../components/Terminal/Terminal";
-@use "../components/Safari/index" as safari-index;                 // Safari browser
-@use "../components/Calendar/index" as calendar-index;               // Calendar app
+@use "../components/Safari/index" as safari-index;                 
+@use "../components/Calendar/index" as calendar-index;              
 @use "../components/CalendarWidget/calendar_widget";
 
 // ═══════════════════════════════════════════════════════════════════

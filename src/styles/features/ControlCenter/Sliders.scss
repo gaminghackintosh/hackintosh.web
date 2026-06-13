@@ -1,0 +1,81 @@
+// ─── TEXT COLORS (Dark) ────────────────────────────────────────────
+$text-primary: rgba(255, 255, 255, 0.95);
+$text-secondary: rgba(255, 255, 255, 0.55);
+
+// ─── TEXT COLORS (Light) ───────────────────────────────────────────
+$text-primary-light: #1d1d1f;
+$text-secondary-light: rgba(0, 0, 0, 0.5);
+
+// ─── SHADOWS ───────────────────────────────────────────────────────
+$shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.05);
+$shadow-light: 0 12px 30px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  SLIDER CARDS (Display / Sound)
+// ═══════════════════════════════════════════════════════════════════
+.cc-card--slider-wrapper {
+  padding: 10px 12px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cc-slider-header {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-primary-light;
+}
+
+.cc-slider-title {
+  flex: 1;
+}
+
+.cc-slider-block {
+  width: 100%;
+}
+
+.cc-slider-bar {
+  width: 100%;
+  height: 24px; // Правильная толщина капсулы macOS
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  &:active {
+    transform: scale(0.98); // Мягкий эффект нажатия
+  }
+}
+
+.cc-slider-track-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  color: rgba(255, 255, 255, 0.5); // Цвет иконки на пустом треке
+}
+
+.cc-slider-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden; // Ключевой момент для обрезки инвертированной иконки
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.cc-slider-icon-fill {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1d1d1f; // Цвет иконки внутри белого заполнения
+}

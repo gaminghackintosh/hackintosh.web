@@ -5,5 +5,5 @@
     "files.exclude": {
         "**/node_modules": true
     },
-    "workbench.colorTheme": "Monokai Pro"
+    "workbench.colorTheme": "GitHub Dark"
 }
