@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, memo, useCallback } from "react";
 import { resolveAssetUrl } from "@/assets/resolveIcon";
 
 
-export function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "", isLightTheme = false, style, imgStyle, className }) {
+export const AssetIcon = memo(function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "", isLightTheme = false, style, imgStyle, className }) {
   const [broken, setBroken] = useState(false);
 
   // Выбираем путь к иконке в зависимости от темы
   const iconPath = isLightTheme && pathLight ? pathLight : path;
   const url = resolveAssetUrl(iconPath);
+
+  const handleError = useCallback(() => {
+    setBroken(true);
+  }, []);
 
   if (!url || broken) {
     return (
@@ -45,7 +49,7 @@ export function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "",
         src={url}
         alt={alt}
         draggable={false}
-        onError={() => setBroken(true)}
+        onError={handleError}
         style={{
           width: "100%",
           height: "100%",
@@ -59,4 +63,4 @@ export function AssetIcon({ path, pathLight, fallback = "", size = 24, alt = "",
       />
     </span>
   );
-}
+});

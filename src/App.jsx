@@ -12,7 +12,6 @@ import { MenuBar } from "@/features/menubar/MenuBar";
 import defaultWallpaperDark from "@/assets/images/wallpapers/Tahoe/Tahoe Dark.webp";
 import defaultWallpaperLight from "@/assets/images/wallpapers/Tahoe/Tahoe Light.webp";
 
-
 function AppContent() {
   const windowManager = useWindowManager();
   const { isLightTheme } = useTheme();
@@ -38,7 +37,14 @@ function AppContent() {
       { label: "New Folder", action: () => console.log("New Folder") },
       { type: "divider" },
       { label: "Get Info", action: () => console.log("Get Info") },
-      { label: "Change Wallpaper...", action: () => windowManager.openApp("settings", "Settings") },
+      { 
+        label: "Change Wallpaper...", 
+        action: () => {
+          if (windowManager.openApp) {
+            windowManager.openApp("settings", "Settings");
+          }
+        } 
+      },
       { label: "Edit Widgets...", action: () => console.log("Edit Widgets") },
       { type: "divider" },
       { label: "Use Stacks", action: () => console.log("Use Stacks") },
@@ -48,7 +54,7 @@ function AppContent() {
       { type: "divider" },
       { label: "Show View Options", action: () => console.log("Show View Options") },
     ]);
-  }, [openContextMenu, windowManager.openApp]);
+  }, [openContextMenu, windowManager]);
 
   return (
     <Desktop wallpaper={wallpaper.value} onContextMenu={handleDesktopContextMenu}>
@@ -88,9 +94,11 @@ function AppInner() {
   const isMobile = useMobileCheck();
   const [bootComplete, setBootComplete] = useState(false);
   
+  // Показываем boot screen сразу, не ждем инициализацию
   if (!bootComplete) return <BootScreen onComplete={() => setBootComplete(true)} />;
   if (isMobile) return <MobileNotSupported />;
 
+  // Рендерим провайдеры и контент
   return (
     <ThemeProvider>
       <WindowManagerProvider>

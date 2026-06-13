@@ -2,6 +2,8 @@
  * Оптимизации производительности для React приложения
  * Отключает лишние проверки в production
  */
+import { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 
 // Отключаем React DevTools в production для производительности
 if (process.env.NODE_ENV === 'production') {

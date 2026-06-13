@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 /**
  * Хук для отслеживания мобильных устройств или узких экранов.
@@ -7,28 +7,53 @@ import { useState, useEffect } from "react";
  */
 export function useMobileCheck(breakpoint = 1024) {
   const [isMobile, setIsMobile] = useState(false);
+  const rafRef = useRef(null);
+  const lastUpdateRef = useRef(0);
+  const isMobileRef = useRef(false);
 
+  // Используем resize observer для более точного отслеживания
   useEffect(() => {
-    // Функция проверки ширины
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= breakpoint);
+      const newIsMobile = window.innerWidth <= breakpoint;
+      isMobileRef.current = newIsMobile;
+      setIsMobile(newIsMobile);
+      lastUpdateRef.current = performance.now();
     };
 
-    // Проверяем при монтировании
+    // Первичная проверка
     checkIsMobile();
 
-    // Добавляем обработчик на изменение размера окна
-    let timeout;
+    // Используем requestAnimationFrame для debounce
     const handler = () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(checkIsMobile, 100); // Дебаунс для оптимизации производительности
+      const now = performance.now();
+      const elapsed = now - lastUpdateRef.current;
+      
+      // Обновляем только если прошло более 100ms или сейчас не обновлялось
+      if (elapsed >= 100 || !lastUpdateRef.current) {
+        if (rafRef.current) {
+          cancelAnimationFrame(rafRef.current);
+        }
+        
+        rafRef.current = requestAnimationFrame(() => {
+          const finalIsMobile = window.innerWidth <= breakpoint;
+          if (isMobileRef.current !== finalIsMobile) {
+            isMobileRef.current = finalIsMobile;
+            setIsMobile(finalIsMobile);
+            lastUpdateRef.current = performance.now();
+          }
+          rafRef.current = null;
+        });
+      }
     };
 
-    window.addEventListener("resize", handler);
+    // Используем passive listener для лучшей производительности
+    window.addEventListener("resize", handler, { passive: true });
 
     return () => {
-      clearTimeout(timeout);
       window.removeEventListener("resize", handler);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
   }, [breakpoint]);
 

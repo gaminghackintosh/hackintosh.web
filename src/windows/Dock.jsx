@@ -16,6 +16,11 @@ const BASE_ICON_SIZE = 58;
 // Мемоизированный список приложений (никогда не меняется)
 const DOCK_ITEMS = [...APPS, GITHUB_APP];
 
+const DockTooltip = memo(function DockTooltip({ visible, text }) {
+  if (!visible) return null;
+  return <div className="dock__tooltip dock__tooltip--visible">{text}</div>;
+});
+
 const DockItem = memo(function DockItem({ 
   app, 
   isHovered,
@@ -35,20 +40,22 @@ const DockItem = memo(function DockItem({
     }
   }, [app.isLink, app.url, app.id, onOpen]);
   
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
+  
   return (
     <div
       ref={itemRef}
       className={`dock__item ${isHovered ? "dock__item--hovered" : ""}`}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       role="button"
       aria-label={`Launch ${app.name} app`}
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
       style={{ contain: "layout style" }}
     >
       {/* Icon */}
@@ -96,53 +103,63 @@ const DockItem = memo(function DockItem({
   );
 });
 
+// Мемоизированный разделитель
+const DockSeparator = memo(() => <div className="dock__separator" aria-hidden="true" />);
+
 export default function Dock({ onOpen, openApps, minimizedApps = new Set(), isLightTheme = false }) {
   const [hoverIndex, setHoverIndex] = useState(null);
   const dockRef = useRef(null);
 
-  // ✅ Используем напрямую: openApps — массив, minimizedApps — Set
-  // ✅ avoids unnecessary Set creation на каждый рендер
+  // Мемоизация обработчиков
+  const handleMouseEnter = useCallback((index) => {
+    setHoverIndex(index);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverIndex(null);
+  }, []);
+
+  // Мемоизация рендера элементов Dock
+  const dockItems = useMemo(() => {
+    return DOCK_ITEMS.map((app, index) => {
+      const isGitHub = app.id === "github";
+      const isOpen = openApps?.includes(app.id);
+      // Защита для minimizedApps
+      const isMinimized = minimizedApps instanceof Set ? minimizedApps.has(app.id) : minimizedApps?.includes?.(app.id);
+      
+      return (
+        <React.Fragment key={app.id}>
+          {isGitHub && <DockSeparator />}
+          <div
+            className="dock__item-wrapper"
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
+            style={{ contain: "layout" }}
+          >
+            <DockTooltip visible={hoverIndex === index} text={app.name} />
+            
+            <DockItem
+              app={app}
+              isHovered={hoverIndex === index}
+              onOpen={onOpen}
+              isOpen={isOpen}
+              isMinimized={isMinimized}
+              isLightTheme={isLightTheme}
+            />
+          </div>
+        </React.Fragment>
+      );
+    });
+  }, [openApps, minimizedApps, hoverIndex, onOpen, isLightTheme]);
 
   return (
     <div 
       ref={dockRef}
       className="dock"
-      onMouseLeave={() => setHoverIndex(null)}
+      onMouseLeave={handleMouseLeave}
       style={{ contain: "layout paint" }}
     >
-      {DOCK_ITEMS.map((app, index) => {
-        const isGitHub = app.id === "github";
-        const isOpen = openApps?.includes(app.id);  // ✅ Простая проверка для массива
-        const isMinimized = minimizedApps?.has(app.id);  // ✅ Set.has — O(1)
-        
-        return (
-          <React.Fragment key={app.id}>
-            {isGitHub && <div className="dock__separator" aria-hidden="true" />}
-            <div
-              className="dock__item-wrapper"
-              onMouseEnter={() => setHoverIndex(index)}
-              onMouseLeave={() => setHoverIndex(null)}
-              style={{ contain: "layout" }}
-            >
-              {/* Tooltip */}
-              <div 
-                className={`dock__tooltip ${hoverIndex === index ? "dock__tooltip--visible" : ""}`}
-              >
-                {app.name}
-              </div>
-              
-              <DockItem
-                app={app}
-                isHovered={hoverIndex === index}
-                onOpen={onOpen}
-                isOpen={isOpen}
-                isMinimized={isMinimized}
-                isLightTheme={isLightTheme}
-              />
-            </div>
-          </React.Fragment>
-        );
-      })}
+      {dockItems}
     </div>
   );
 }

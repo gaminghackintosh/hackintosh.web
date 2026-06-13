@@ -1,16 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo, useCallback } from 'react';
 
-export const ContextMenu = ({ x, y, items, onClose }) => {
+export const ContextMenu = memo(function ContextMenu({ x, y, items, onClose }) {
   const menuRef = useRef(null);
 
+  const handleClickOutside = useCallback((event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      onClose();
+    }
+  }, [onClose]);
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
   useEffect(() => {
@@ -22,6 +33,13 @@ export const ContextMenu = ({ x, y, items, onClose }) => {
       if (overflowsBottom) menuRef.current.style.top = `${y - rect.height}px`;
     }
   }, [x, y]);
+
+  const handleItemClick = useCallback((item, onClose) => {
+    if (!item.disabled) {
+      item.action?.();
+      onClose();
+    }
+  }, []);
 
   return (
     <div
@@ -37,12 +55,7 @@ export const ContextMenu = ({ x, y, items, onClose }) => {
           <div
             key={index}
             className={`context-menu__item ${item.disabled ? 'context-menu__item--disabled' : ''}`}
-            onClick={() => {
-              if (!item.disabled) {
-                item.action?.();
-                onClose();
-              }
-            }}
+            onClick={() => handleItemClick(item, onClose)}
           >
             <span className="context-menu__label">{item.label}</span>
             {item.shortcut && <span className="context-menu__shortcut">{item.shortcut}</span>}
@@ -56,4 +69,4 @@ export const ContextMenu = ({ x, y, items, onClose }) => {
       })}
     </div>
   );
-};
+});

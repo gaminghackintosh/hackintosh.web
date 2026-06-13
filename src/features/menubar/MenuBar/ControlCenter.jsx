@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, memo, useState } from "react";
+import React, { useRef, useEffect, memo, useState, useCallback } from "react";
 import { FiWifi, FiSun, FiMoon, FiClock, FiCamera, FiMusic, FiGrid, FiVolume2, FiHeadphones, FiPause, FiPlay, FiFastForward, FiActivity, FiRadio } from "react-icons/fi";
 import { BiBluetooth } from "react-icons/bi";
 import { WIFI_NAME, AirDropIcon, StageManagerIcon, ScreenMirroringIcon, SoundIcon, FocusIcon } from "./constants";
@@ -14,13 +14,13 @@ const MusicWidget = memo(({ track, artist, isPlaying, onToggle, coverUrl }) => {
   const [imgSrc, setImgSrc] = useState(coverUrl || defaultAlbumArt);
   const [isError, setIsError] = useState(false);
 
-  const handleError = () => {
+  const handleError = useCallback(() => {
     if (imgSrc !== defaultAlbumArt) {
       setImgSrc(defaultAlbumArt);
     } else {
       setIsError(true);
     }
-  };
+  }, [imgSrc]);
 
   return (
     <div className="cc-music-widget">
@@ -32,6 +32,7 @@ const MusicWidget = memo(({ track, artist, isPlaying, onToggle, coverUrl }) => {
               alt="Album Art"
               className="cc-music-art-img"
               onError={handleError}
+              loading="lazy"
             />
           ) : (
             <div className="cc-music-art-placeholder">
@@ -66,6 +67,38 @@ const QuickAction = memo(({ icon: Icon, label, active, onClick }) => (
   </button>
 ));
 
+// Мемоизированные компоненты для быстрых действий
+const ConnectivityItem = memo(({ icon: Icon, label, subLabel, active, activeColor, onClick }) => (
+  <div className="cc-conn-item" onClick={onClick}>
+    <div className={`cc-icon-circle ${active ? activeColor : ""}`}>
+      <Icon size={14} />
+    </div>
+    <div className="cc-conn-text">
+      <span className="cc-label-main">{label}</span>
+      <span className="cc-label-sub">{subLabel}</span>
+    </div>
+  </div>
+));
+
+const FocusRow = memo(({ icon: Icon, label, active, activeColor, onClick }) => (
+  <button className={`cc-focus-row ${active ? activeColor : ""}`} onClick={onClick}>
+    <div className="cc-icon-circle">
+      <Icon size={15} />
+    </div>
+    <span className="cc-label-main">{label}</span>
+  </button>
+));
+
+const UtilitySquare = memo(({ icon: Icon, label, active, activeColor, onClick }) => (
+  <button
+    className={`cc-utility-square ${active ? activeColor : ""}`}
+    onClick={onClick}
+  >
+    <Icon size={18} />
+    <span className="cc-utility-label">{label}</span>
+  </button>
+));
+
 export const ControlCenter = memo(function ControlCenter({
   wifi, setWifi,
   bluetooth, setBluetooth,
@@ -81,13 +114,23 @@ export const ControlCenter = memo(function ControlCenter({
   const ccRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
 
+  // Мемоизация обработчиков
+  const handleOutsideClick = useCallback((e) => {
+    if (ccRef.current && !ccRef.current.contains(e.target)) onClose();
+  }, [onClose]);
+
+  const handleWifiToggle = useCallback(() => setWifi(w => !w), [setWifi]);
+  const handleBluetoothToggle = useCallback(() => setBluetooth(b => !b), [setBluetooth]);
+  const handleAirdropToggle = useCallback(() => setAirdrop(a => !a), [setAirdrop]);
+  const handleFocusToggle = useCallback(() => setFocus(f => !f), [setFocus]);
+  const handleStageManagerToggle = useCallback(() => setStageManager(s => !s), [setStageManager]);
+  const handleScreenMirrorToggle = useCallback(() => setScreenMirror(s => !s), [setScreenMirror]);
+  const handlePlayToggle = useCallback(() => setIsPlaying(p => !p), []);
+
   useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (ccRef.current && !ccRef.current.contains(e.target)) onClose();
-    };
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [onClose]);
+  }, [handleOutsideClick]);
 
   return (
     <div ref={ccRef} className={`cc-panel ${isLightTheme ? "" : "dark-theme"}`}>
@@ -104,58 +147,56 @@ export const ControlCenter = memo(function ControlCenter({
       <div className="cc-grid-main">
 
         <div className="cc-card cc-card--connectivity">
-          <div className="cc-conn-item" onClick={() => setWifi(!wifi)}>
-            <div className={`cc-icon-circle ${wifi ? "active-blue" : ""}`}>
-              <FiWifi size={14} />
-            </div>
-            <div className="cc-conn-text">
-              <span className="cc-label-main">Wi-Fi</span>
-              <span className="cc-label-sub">{wifi ? WIFI_NAME : "Off"}</span>
-            </div>
-          </div>
-          <div className="cc-conn-item" onClick={() => setBluetooth(!bluetooth)}>
-            <div className={`cc-icon-circle ${bluetooth ? "active-blue" : ""}`}>
-              <BiBluetooth size={14} />
-            </div>
-            <div className="cc-conn-text">
-              <span className="cc-label-main">Bluetooth</span>
-              <span className="cc-label-sub">{bluetooth ? "On" : "Off"}</span>
-            </div>
-          </div>
-          <div className="cc-conn-item" onClick={() => setAirdrop(!airdrop)}>
-            <div className={`cc-icon-circle ${airdrop ? "active-blue" : ""}`}>
-              <AirDropIcon size={16} className={airdrop ? "active-blue" : ""} />
-            </div>
-            <div className="cc-conn-text">
-              <span className="cc-label-main">AirDrop</span>
-              <span className="cc-label-sub">{airdrop ? "Everyone" : "Off"}</span>
-            </div>
-          </div>
+          <ConnectivityItem
+            icon={FiWifi}
+            label="Wi-Fi"
+            subLabel={wifi ? WIFI_NAME : "Off"}
+            active={wifi}
+            activeColor="active-blue"
+            onClick={handleWifiToggle}
+          />
+          <ConnectivityItem
+            icon={BiBluetooth}
+            label="Bluetooth"
+            subLabel={bluetooth ? "On" : "Off"}
+            active={bluetooth}
+            activeColor="active-blue"
+            onClick={handleBluetoothToggle}
+          />
+          <ConnectivityItem
+            icon={AirDropIcon}
+            label="AirDrop"
+            subLabel={airdrop ? "Everyone" : "Off"}
+            active={airdrop}
+            activeColor="active-blue"
+            onClick={handleAirdropToggle}
+          />
         </div>
 
         <div className="cc-right-column">
-          <button className={`cc-focus-row ${focus ? "active-purple" : ""}`} onClick={() => setFocus(!focus)}>
-            <div className="cc-icon-circle">
-              <FocusIcon size={15} />
-            </div>
-            <span className="cc-label-main">Focus</span>
-          </button>
+          <FocusRow
+            icon={FocusIcon}
+            label="Focus"
+            active={focus}
+            activeColor="active-purple"
+            onClick={handleFocusToggle}
+          />
 
           <div className="cc-utilities-row">
-            <button
-              className={`cc-utility-square ${stageManager ? "active-opaque" : ""}`}
-              onClick={() => setStageManager(!stageManager)}
-            >
-              <StageManagerIcon size={18} />
-              <span className="cc-utility-label">Stage Manager</span>
-            </button>
-            <button
-              className={`cc-utility-square ${screenMirror ? "active-opaque" : ""}`}
-              onClick={() => setScreenMirror(!screenMirror)}
-            >
-              <ScreenMirroringIcon size={18} />
-              <span className="cc-utility-label">Screen Mirroring</span>
-            </button>
+            <UtilitySquare
+              icon={StageManagerIcon}
+              label="Stage Manager"
+              active={stageManager}
+              activeColor="active-opaque"
+              onClick={handleStageManagerToggle}
+            />
+            <UtilitySquare
+              icon={ScreenMirroringIcon}
+              label="Screen Mirroring"
+              active={screenMirror}
+              activeColor="active-opaque"
+              onClick={handleScreenMirrorToggle}
+            />
           </div>
         </div>
 

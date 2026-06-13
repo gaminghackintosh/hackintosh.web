@@ -1,112 +1,89 @@
-import { createContext, useContext, useMemo, useCallback, useState, useRef } from "react";
+import { createContext, useContext, useMemo, useCallback, useState, useRef, useReducer } from "react";
 import { APPS } from "@/core/constants/apps";
 import { INITIAL_POSITIONS } from "@/core/constants/positions";
 
 const WindowManagerContext = createContext(null);
 
-export function WindowManagerProvider({ children }) {
-  const [windows, setWindows] = useState([]);
-  const [openApps, setOpenApps] = useState([]);
-  const [activeWin, setActiveWin] = useState(null);
-  const [minimizedApps, setMinimizedApps] = useState(new Set());
-  const [windowStates, setWindowStates] = useState({});
-  
-  const zCounter = useRef(100);
-  const focusTimeoutRef = useRef(null);
+// Акции для reducer
+const WINDOW_ACTIONS = {
+  OPEN: 'OPEN',
+  CLOSE: 'CLOSE',
+  MINIMIZE: 'MINIMIZE',
+  MAXIMIZE: 'MAXIMIZE',
+  FOCUS: 'FOCUS',
+  UPDATE_POSITION: 'UPDATE_POSITION',
+  UPDATE_SIZE: 'UPDATE_SIZE',
+};
 
-  // Мемоизированный фокус без лишних обновлений
-  const focusWindow = useCallback((appId) => {
-    if (activeWin === appId) return;
-    
-    if (focusTimeoutRef.current) {
-      cancelAnimationFrame(focusTimeoutRef.current);
+// Reducer для управления состоянием окон
+function windowReducer(state, action) {
+  switch (action.type) {
+    case WINDOW_ACTIONS.OPEN: {
+      const { appId, appName, position } = action.payload;
+      const existing = state.windows.find(w => w.id === appId);
+      if (existing) {
+        const newMinimizedApps = new Set(state.minimizedApps);
+        newMinimizedApps.delete(appId);
+        return {
+          ...state,
+          activeWin: appId,
+          minimizedApps: newMinimizedApps,
+        };
+      }
+      
+      const p = position || INITIAL_POSITIONS[appId] || { x: 120, y: 80, w: 600, h: 420 };
+      const newZIndex = state.zCounter + 1;
+      
+      return {
+        ...state,
+        windows: [
+          ...state.windows,
+          {
+            id: appId,
+            title: appName || appId,
+            x: p.x,
+            y: p.y,
+            width: p.w,
+            height: p.h,
+            zIndex: newZIndex,
+          },
+        ],
+        openApps: state.openApps.includes(appId) ? state.openApps : [...state.openApps, appId],
+        activeWin: appId,
+        zCounter: newZIndex,
+      };
     }
     
-    focusTimeoutRef.current = requestAnimationFrame(() => {
-      setWindows((prev) => {
-        const target = prev.find(w => w.id === appId);
-        if (!target || target.zIndex === zCounter.current + 1) return prev;
-        
-        zCounter.current += 1;
-        return prev.map((w) => 
-          w.id === appId ? { ...w, zIndex: zCounter.current } : w
-        );
-      });
-      setActiveWin(appId);
-    });
-  }, [activeWin]);
-
-  const openApp = useCallback((appId, appName) => {
-    if (minimizedApps.has(appId)) {
-      setMinimizedApps((prev) => {
-        const s = new Set(prev);
-        s.delete(appId);
-        return s;
-      });
-      focusWindow(appId);
-      return;
+    case WINDOW_ACTIONS.CLOSE: {
+      const { appId } = action.payload;
+      const newMinimizedApps = new Set(state.minimizedApps);
+      newMinimizedApps.delete(appId);
+      
+      return {
+        ...state,
+        windows: state.windows.filter(w => w.id !== appId),
+        openApps: state.openApps.filter(id => id !== appId),
+        minimizedApps: newMinimizedApps,
+        activeWin: state.activeWin === appId ? null : state.activeWin,
+      };
     }
-
-    const existing = windows.find((w) => w.id === appId);
-    if (existing) {
-      focusWindow(appId);
-      return;
-    }
-
-    const p = INITIAL_POSITIONS[appId] || { x: 120, y: 80, w: 600, h: 420 };
     
-    setWindows((prev) => {
-      zCounter.current += 1;
-      return [
-        ...prev,
-        {
-          id: appId,
-          title: appName || appId,
-          x: p.x,
-          y: p.y,
-          width: p.w,
-          height: p.h,
-          zIndex: zCounter.current,
-        },
-      ];
-    });
-    
-    setOpenApps((prev) => {
-      if (prev.includes(appId)) return prev;
-      return [...prev, appId];
-    });
-    
-    setActiveWin(appId);
-  }, [minimizedApps, windows, focusWindow]);
-
-  const closeWindow = useCallback((appId) => {
-    setWindows((prev) => prev.filter((w) => w.id !== appId));
-    setOpenApps((prev) => prev.filter((id) => id !== appId));
-    setMinimizedApps((prev) => {
-      const s = new Set(prev);
-      s.delete(appId);
-      return s;
-    });
-    if (activeWin === appId) {
-      setActiveWin(null);
+    case WINDOW_ACTIONS.MINIMIZE: {
+      const { appId } = action.payload;
+      const newMinimizedApps = new Set(state.minimizedApps);
+      newMinimizedApps.add(appId);
+      
+      return {
+        ...state,
+        minimizedApps: newMinimizedApps,
+        activeWin: state.activeWin === appId ? null : state.activeWin,
+      };
     }
-  }, [activeWin]);
-
-  const minimizeWindow = useCallback((appId) => {
-    setMinimizedApps((prev) => {
-      const s = new Set(prev);
-      s.add(appId);
-      return s;
-    });
-    if (activeWin === appId) {
-      setActiveWin(null);
-    }
-  }, [activeWin]);
-
-  const maximizeWindow = useCallback((appId) => {
-    setWindows((prev) => {
-      const win = prev.find((w) => w.id === appId);
-      if (!win) return prev;
+    
+    case WINDOW_ACTIONS.MAXIMIZE: {
+      const { appId, windowStates } = action.payload;
+      const win = state.windows.find(w => w.id === appId);
+      if (!win) return state;
 
       const DOCK_HEIGHT = 80;
       const MENUBAR_HEIGHT = 28;
@@ -114,54 +91,197 @@ export function WindowManagerProvider({ children }) {
 
       if (isMaximized) {
         const saved = windowStates[appId];
-        if (!saved) return prev;
+        if (!saved) return state;
         
-        return prev.map((w) => 
-          w.id === appId 
-            ? { ...w, x: saved.x, y: saved.y, width: saved.w, height: saved.h } 
-            : w
-        );
+        return {
+          ...state,
+          windows: state.windows.map(w => 
+            w.id === appId 
+              ? { ...w, x: saved.x, y: saved.y, width: saved.w, height: saved.h } 
+              : w
+          ),
+        };
       } else {
-        setWindowStates((prevStates) => ({
-          ...prevStates,
+        const newWindowStates = {
+          ...windowStates,
           [appId]: { x: win.x, y: win.y, w: win.width, h: win.height },
-        }));
+        };
         
-        return prev.map((w) =>
-          w.id === appId
-            ? { 
-                ...w, 
-                x: 0, 
-                y: MENUBAR_HEIGHT, 
-                width: window.innerWidth, 
-                height: window.innerHeight - MENUBAR_HEIGHT - DOCK_HEIGHT 
-              }
-            : w
-        );
+        return {
+          ...state,
+          windowStates: newWindowStates,
+          windows: state.windows.map(w =>
+            w.id === appId
+              ? { 
+                  ...w, 
+                  x: 0, 
+                  y: MENUBAR_HEIGHT, 
+                  width: window.innerWidth, 
+                  height: window.innerHeight - MENUBAR_HEIGHT - DOCK_HEIGHT 
+                }
+              : w
+          ),
+        };
       }
+    }
+    
+    case WINDOW_ACTIONS.FOCUS: {
+      const { appId } = action.payload;
+      if (state.activeWin === appId) return state;
+      
+      const target = state.windows.find(w => w.id === appId);
+      if (!target || target.zIndex === state.zCounter + 1) return state;
+      
+      return {
+        ...state,
+        windows: state.windows.map(w => 
+          w.id === appId ? { ...w, zIndex: state.zCounter + 1 } : w
+        ),
+        activeWin: appId,
+        zCounter: state.zCounter + 1,
+      };
+    }
+    
+    case WINDOW_ACTIONS.UPDATE_POSITION: {
+      const { appId, x, y } = action.payload;
+      return {
+        ...state,
+        windows: state.windows.map(w => 
+          w.id === appId ? { ...w, x, y } : w
+        ),
+      };
+    }
+    
+    case WINDOW_ACTIONS.UPDATE_SIZE: {
+      const { appId, width, height } = action.payload;
+      return {
+        ...state,
+        windows: state.windows.map(w => 
+          w.id === appId ? { ...w, width, height } : w
+        ),
+      };
+    }
+    
+    case 'BATCH_UPDATE': {
+      const { windows } = action.payload;
+      return {
+        ...state,
+        windows,
+      };
+    }
+    
+    default:
+      return state;
+  }
+}
+
+const initialState = {
+  windows: [],
+  openApps: [],
+  activeWin: null,
+  minimizedApps: new Set(),
+  windowStates: {},
+  zCounter: 100,
+};
+
+// Ленивая инициализация initialState для производительности
+function getInitialState() {
+  return {
+    windows: [],
+    openApps: [],
+    activeWin: null,
+    minimizedApps: new Set(),
+    windowStates: {},
+    zCounter: 100,
+  };
+}
+
+export function WindowManagerProvider({ children }) {
+  const [state, dispatch] = useReducer(windowReducer, null, getInitialState);
+  const focusTimeoutRef = useRef(null);
+
+  // Мемоизированный фокус без лишних обновлений
+  const focusWindow = useCallback((appId) => {
+    if (state.activeWin === appId) return;
+    
+    if (focusTimeoutRef.current) {
+      cancelAnimationFrame(focusTimeoutRef.current);
+    }
+    
+    focusTimeoutRef.current = requestAnimationFrame(() => {
+      dispatch({ type: WINDOW_ACTIONS.FOCUS, payload: { appId } });
     });
-  }, [windowStates]);
+  }, [state.activeWin]);
+
+  const openApp = useCallback((appId, appName) => {
+    if (state.minimizedApps.has(appId)) {
+      dispatch({ type: WINDOW_ACTIONS.MINIMIZE, payload: { appId } });
+      // Удаляем из minimizedApps
+      dispatch({ 
+        type: WINDOW_ACTIONS.OPEN, 
+        payload: { appId, appName } 
+      });
+      focusWindow(appId);
+      return;
+    }
+
+    dispatch({ 
+      type: WINDOW_ACTIONS.OPEN, 
+      payload: { appId, appName } 
+    });
+    
+    if (!state.openApps.includes(appId)) {
+      // Только добавляем в openApps если еще нет
+      // Это обрабатывается внутри reducer
+    }
+    
+    focusWindow(appId);
+  }, [state.minimizedApps, state.openApps, focusWindow]);
+
+  const closeWindow = useCallback((appId) => {
+    dispatch({ type: WINDOW_ACTIONS.CLOSE, payload: { appId } });
+  }, []);
+
+  const minimizeWindow = useCallback((appId) => {
+    dispatch({ type: WINDOW_ACTIONS.MINIMIZE, payload: { appId } });
+  }, []);
+
+  const maximizeWindow = useCallback((appId) => {
+    dispatch({ 
+      type: WINDOW_ACTIONS.MAXIMIZE, 
+      payload: { appId, windowStates: state.windowStates } 
+    });
+  }, [state.windowStates]);
 
   // Стабильный value объект для контекста
   const value = useMemo(() => ({
-    windows,
-    openApps,
-    activeWin,
-    minimizedApps,
-    windowStates,
+    windows: state.windows,
+    openApps: state.openApps,
+    activeWin: state.activeWin,
+    minimizedApps: state.minimizedApps,
+    windowStates: state.windowStates,
     openApp,
     closeWindow,
     minimizeWindow,
     maximizeWindow,
     focusWindow,
-    setActiveWin,
-    setWindows,
+    setActiveWin: (id) => dispatch({ type: WINDOW_ACTIONS.FOCUS, payload: { appId: id } }),
+    setWindows: (updater) => {
+      // Поддержка для обратной совместимости
+      if (typeof updater === 'function') {
+        const newWindows = updater(state.windows);
+        dispatch({ 
+          type: 'BATCH_UPDATE', 
+          payload: { windows: newWindows } 
+        });
+      }
+    },
   }), [
-    windows,
-    openApps,
-    activeWin,
-    minimizedApps,
-    windowStates,
+    state.windows,
+    state.openApps,
+    state.activeWin,
+    state.minimizedApps,
+    state.windowStates,
     openApp,
     closeWindow,
     minimizeWindow,

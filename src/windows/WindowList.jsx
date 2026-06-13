@@ -1,7 +1,7 @@
 import { useWindowManager } from "@/core/providers";
 import { AppWindow } from './AppWindow/AppWindow';
 import { renderAppContent } from "@/utils/renderAppContent";
-import { Suspense, memo, useCallback } from 'react';
+import { Suspense, memo, useCallback, useMemo } from 'react';
 import { WindowLoading } from "@/ui";
 
 const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
@@ -19,12 +19,26 @@ const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
   if (!win) return null;
   
   const isActive = activeWin === winId;
-  const isMinimized = minimizedApps.has(winId);
+  // Защита: проверяем тип minimizedApps
+  const isMinimized = minimizedApps instanceof Set ? minimizedApps.has(winId) : minimizedApps.includes?.(winId);
   
+  // Мемоизация callback-функций
   const handleClose = useCallback(() => closeWindow(winId), [closeWindow, winId]);
   const handleMinimize = useCallback(() => minimizeWindow(winId), [minimizeWindow, winId]);
   const handleFocus = useCallback(() => focusWindow(winId), [focusWindow, winId]);
   const handleZoom = useCallback(() => maximizeWindow(winId), [maximizeWindow, winId]);
+
+  // Мемоизация рендера контента
+  const appContent = useMemo(() => (
+    <Suspense fallback={<WindowLoading />}>
+      {renderAppContent(winId, { 
+        closeWindow: handleClose, 
+        minimizeWindow: handleMinimize, 
+        maximizeWindow: handleZoom, 
+        setWallpaper 
+      })}
+    </Suspense>
+  ), [winId, handleClose, handleMinimize, handleZoom, setWallpaper]);
 
   return (
     <AppWindow
@@ -36,14 +50,7 @@ const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
       onFocus={handleFocus}
       onZoom={handleZoom}
     >
-      <Suspense fallback={<WindowLoading />}>
-        {renderAppContent(winId, { 
-          closeWindow: handleClose, 
-          minimizeWindow: handleMinimize, 
-          maximizeWindow: handleZoom, 
-          setWallpaper 
-        })}
-      </Suspense>
+      {appContent}
     </AppWindow>
   );
 }, (prev, next) => {
@@ -53,13 +60,14 @@ const WindowItem = memo(function WindowItem({ winId, setWallpaper }) {
 export const WindowList = memo(function WindowList({ setWallpaper }) {
   const { windows } = useWindowManager();
   
-  return (
-    <>
-      {windows.map(win => (
-        <WindowItem key={win.id} winId={win.id} setWallpaper={setWallpaper} />
-      ))}
-    </>
-  );
+  // Мемоизация списка окон для предотвращения лишних рендеров
+  const windowItems = useMemo(() => (
+    windows.map(win => (
+      <WindowItem key={win.id} winId={win.id} setWallpaper={setWallpaper} />
+    ))
+  ), [windows, setWallpaper]);
+
+  return <>{windowItems}</>;
 }, (prev, next) => {
   return prev.setWallpaper === next.setWallpaper;
 });
