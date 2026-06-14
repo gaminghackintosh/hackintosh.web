@@ -1,19 +1,6 @@
 @use "./variables" as vars;
 
 :root {
-  /* 
-   * System Font Stack — Cross-Platform Support
-   * Inspired by: https://www.macos-web.app/
-   * 
-   * Order of priority:
-   * 1. -apple-system     — macOS/iOS (San Francisco)
-   * 2. BlinkMacSystemFont — macOS (system font)
-   * 3. Inter             — Modern fallback (Windows/Linux)
-   * 4. Helvetica Neue    — macOS fallback
-   * 5. Helvetica         — macOS fallback
-   * 6. Arial             — Windows/Linux fallback
-   * 7. sans-serif        — Ultimate fallback
-   */
   --system-font-family: 
     -apple-system, 
     BlinkMacSystemFont,
