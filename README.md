@@ -1,8 +1,7 @@
+![macweb.dev preview](assets/img/preview.png)
 # macweb.dev 🍎
 
 > macOS, rebuilt for the modern web.
-
-![macweb.dev preview](assets/img/preview.png)
 
 A browser-native macOS desktop environment built with React.
 
