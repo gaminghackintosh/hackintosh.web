@@ -6,7 +6,7 @@ export default function AboutThisMac({ onClose }) {
   // Закрытие по клику вне окна
   const handleBackdropClick = useCallback((e) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      onClose(); 
     }
   }, [onClose]);
 
@@ -25,7 +25,7 @@ export default function AboutThisMac({ onClose }) {
         <div className="about-mac-content">
           <div className="about-mac-left">
             <div className="about-mac-icon">
-              <AssetIcon path={APP_ICONS.finder} fallback="🗂" size={80} />
+              <AssetIcon path={APP_ICONS.logotype} size={80} />
             </div>
             <div className="about-mac-version">
               <span className="about-mac-os-name">macOS</span>

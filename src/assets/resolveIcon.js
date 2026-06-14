@@ -5,6 +5,7 @@ const assetModules = import.meta.glob(
     "./icons/apps/macintosh_HD.ico",
     "./icons/finder/*.{png,svg,webp,jpg,jpeg,ico}",
     "./icons/menu/*.{png,svg,webp,jpg,jpeg,ico}",
+    "./images/logo/*.{png,svg,webp,jpg,jpeg,ico}",
   ],
   {
     eager: true,

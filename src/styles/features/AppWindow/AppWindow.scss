@@ -20,6 +20,7 @@
     }
   }
 
+  // Плавное появление/фокус
   &:not(.app-window--dragging):not(.app-window--resizing) {
     transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
   }

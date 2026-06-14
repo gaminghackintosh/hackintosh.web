@@ -23,7 +23,7 @@ export const Desktop = memo(function Desktop({
     };
     
     const handleError = () => {
-      setIsLoaded(true); // Все равно показываем контент, даже если обои не загрузились
+      setIsLoaded(true);
       img.onload = null;
       img.onerror = null;
     };
@@ -65,8 +65,8 @@ export const Desktop = memo(function Desktop({
     </div>
   );
 }, (prevProps, nextProps) => {
+  
   // Кастомная проверка для минимизации ререндеров
-  // ❗ Важно: не сравниваем onContextMenu, так как он может быть undefined при первом рендере
   return (
     prevProps.wallpaper === nextProps.wallpaper &&
     prevProps.children === nextProps.children

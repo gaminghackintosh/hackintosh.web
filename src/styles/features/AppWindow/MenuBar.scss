@@ -2,7 +2,6 @@
 @use "../../base/variables" as vars;
 
 // Переменные для MenuBar в стиле macOS Sequoia
-$menubar-height: 28px;
 $menubar-bg: rgba(0, 0, 0, 0.12);
 $menubar-border: rgba(255, 255, 255, 0.08);
 $item-hover-bg: rgba(255, 255, 255, 0.12);
@@ -21,7 +20,6 @@ $dropdown-divider: rgba(255, 255, 255, 0.06);
 .menuBar {
   position: fixed;
   inset: 0 0 auto 0;
-  height: $menubar-height;
   display: flex;
   align-items: center;
   justify-content: space-between;

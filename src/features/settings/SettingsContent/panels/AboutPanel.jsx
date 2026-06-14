@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { SettingsPanel } from "@/features/settings/Settings_Components/SettingsPanel";
+import macOS26Tahoe from "@/assets/images/logo/MacOS_Tahoe_Logo.png";
 
 const AppleLogoSVG = () => (
   <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
@@ -76,7 +77,7 @@ export const AboutPanel = memo(() => {
             <div className="os-row">
               <div className="os-row-left">
                 <div className="os-icon">
-                  <span>26</span>
+                  <img src={macOS26Tahoe} alt="macOS Tahoe" className="os-icon-img" />
                 </div>
                 <div className="os-info">
                   <div className="os-name-row">

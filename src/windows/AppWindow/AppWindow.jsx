@@ -23,12 +23,10 @@ export const AppWindow = memo(function AppWindow({
 }) {
   const [pos, setPos] = useState(() => ({ x: win.x, y: win.y }));
   
-  // Для fixed-size приложений не устанавливаем размеры
   const hasCustomSize = win.width !== undefined || win.w !== undefined || win.height !== undefined || win.h !== undefined;
   
   const [size, setSize] = useState(() => {
     if (!hasCustomSize && !allowResize) {
-      // Fixed-size приложения без явных размеров - используем null для fit-content
       return { width: null, height: null };
     }
     return { 
@@ -146,7 +144,7 @@ export const AppWindow = memo(function AppWindow({
     document.addEventListener("mouseup", onUp, { passive: true });
     e.preventDefault();
   }, [isMaximized, onFocus]);
-
+    
   const onResizeMouseDown = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();

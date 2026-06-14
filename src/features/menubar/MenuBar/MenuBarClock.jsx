@@ -33,7 +33,7 @@ export const MenuBarClock = memo(function MenuBarClock() {
   
   // Кэшируем форматированные значения
   const dateString = time.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-  const timeString = time.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true });
+  const timeString = time.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   
   return (
     <>
