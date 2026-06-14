@@ -64,7 +64,11 @@ export const NetworkSettings = () => {
   const [privateWifi, setPrivateWifi] = useState(false);
 
   return (
-    <SettingsPanel title="Network">
+    <SettingsPanel 
+      title="Network"
+      description="Manage network connections and privacy settings"
+      icon="network"
+    >
       <div className="network-settings-wrapper">
 
         {/* ── STATUS ── */}

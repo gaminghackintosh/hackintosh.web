@@ -5,7 +5,7 @@ import { SettingsSidebar } from "./SettingsContent/components";
 import { AboutPanel } from "./SettingsContent/panels/AboutPanel";
 import { WallpaperPanel } from "./SettingsContent/panels/WallpaperPanel";
 
-export const SettingsContent = memo(function SettingsContent({ currentWallpaper, onWallpaperChange }) {
+const SettingsContent = memo(function SettingsContent({ currentWallpaper, onWallpaperChange }) {
   const [activeTab, setActiveTab] = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -50,3 +50,4 @@ export const SettingsContent = memo(function SettingsContent({ currentWallpaper,
     </div>
   );
 });
+export default SettingsContent;

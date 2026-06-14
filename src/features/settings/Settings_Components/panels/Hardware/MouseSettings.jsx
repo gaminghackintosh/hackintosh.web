@@ -10,7 +10,11 @@ export const MouseSettings = () => {
   const [secondary, setSecondary]     = useState(true);
   const [acceleration, setAcceleration] = useState(true);
   return (
-    <SettingsPanel title="Mouse">
+    <SettingsPanel 
+      title="Mouse"
+      description="Adjust tracking speed, scrolling, and click options"
+      icon="mouse"
+    >
       <SettingsGroup label="Tracking">
         <SettingsRow label="Tracking Speed">
           <input type="range" min="1" max="100" value={speed} onChange={e => setSpeed(e.target.value)} className="ctrl-slider" />

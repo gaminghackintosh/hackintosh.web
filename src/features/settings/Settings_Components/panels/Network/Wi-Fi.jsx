@@ -63,7 +63,11 @@ export const WiFiSettings = () => {
   ];
 
   return (
-    <SettingsPanel title="Wi‑Fi">
+    <SettingsPanel 
+      title="Wi‑Fi"
+      description="Connect to wireless networks and manage your Wi-Fi settings"
+      icon="wifi"
+    >
       <div className="wifi-settings-wrapper">
         
         {/* ── БЛОК ТЕКУЩЕГО СТАТУСА И ВКЛЮЧЕНИЯ ── */}

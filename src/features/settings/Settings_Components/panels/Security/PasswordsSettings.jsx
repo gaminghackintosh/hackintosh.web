@@ -10,7 +10,11 @@ export const PasswordsSettings = () => {
   const [strong, setStrong]           = useState(true);
   const [monitor, setMonitor]         = useState(true);
   return (
-    <SettingsPanel title="Passwords">
+    <SettingsPanel 
+      title="Passwords"
+      description="Manage saved passwords and password security settings"
+      icon="security"
+    >
       <SettingsGroup>
         <SettingsRow label="Saved Passwords" chevron onClick={() => {}}>
           <span className="sr-badge sr-badge--gray">View All</span>

@@ -9,11 +9,13 @@
   border-radius: 20px;
   overflow: hidden;
   backface-visibility: hidden;
-  transition: none !important;
-
+  
   // GPU acceleration
   transform: translateZ(0);
   will-change: transform;
+
+  // ✅ Плавный transition для transform — как на macweb.app
+  transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
 
   &--active {
     border-color: rgba(255, 255, 255, 0.1);
@@ -40,7 +42,8 @@
   // Анимация разворачивания/сворачивания
   transition:
     opacity .28s cubic-bezier(.16,1,.3,1),
-    scale .28s cubic-bezier(.16,1,.3,1);
+    scale .28s cubic-bezier(.16,1,.3,1),
+    transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
 
   &--minimized {
     opacity: 0;
@@ -53,6 +56,11 @@
       transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  }
+  
+  // ✅ Убираем transition во время drag для мгновенной реакции
+  &--dragging {
+    transition: none !important;
   }
 }
   

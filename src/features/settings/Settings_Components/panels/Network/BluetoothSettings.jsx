@@ -91,7 +91,11 @@ export const BluetoothSettings = () => {
   ]);
 
   return (
-    <SettingsPanel title="Bluetooth">
+    <SettingsPanel 
+      title="Bluetooth"
+      description="Connect and manage Bluetooth devices like AirPods, keyboards, and mice"
+      icon="bluetooth"
+    >
       <div className="bluetooth-settings-wrapper">
         {/* ── HEADER CARD ── */}
         <SettingsGroup>

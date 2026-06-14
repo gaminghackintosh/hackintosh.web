@@ -18,7 +18,11 @@ export const PrivacySettings = () => {
   ];
 
   return (
-    <SettingsPanel title="Privacy & Security">
+    <SettingsPanel 
+      title="Privacy & Security"
+      description="Location services, analytics, and security settings"
+      icon="privacy"
+    >
       {/* Location Services */}
       <SettingsGroup label="Location Services">
         <ToggleSwitch 

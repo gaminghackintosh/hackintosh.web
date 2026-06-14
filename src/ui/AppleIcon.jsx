@@ -4,8 +4,8 @@ export default function AppleIcon() {
   return (
   <svg
     viewBox="0 0 24 24"
-    width="16"
-    height="16"
+    width="18"
+    height="18"
     style={{ display: "block" }}
     fill="currentColor"
   >

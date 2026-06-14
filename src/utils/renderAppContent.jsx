@@ -4,7 +4,7 @@ import { WindowLoading } from "@/ui";
 const FinderContent = lazy(() => import("@/features/finder/FinderContent"));
 const TerminalContent = lazy(() => import("@/features/terminal/Terminal").then(m => ({ default: m.TerminalContent })));
 const NotesContent = lazy(() => import("@/features/notes/NotesContent").then(m => ({ default: m.NotesContent })));
-const SettingsContent = lazy(() => import("@/features/settings/SettingsContent").then(m => ({ default: m.SettingsContent })));
+const SettingsContent = lazy(() => import("@/features/settings/SettingsContent"));
 const MusicContent = lazy(() => import("@/features/music/MusicContent").then(m => ({ default: m.MusicContent })));
 const SafariContent = lazy(() => import("@/features/safari/SafariContent").then(m => ({ default: m.SafariContent })));
 const CalendarContent = lazy(() => import("@/features/calendar/CalendarContent").then(m => ({ default: m.CalendarContent })));

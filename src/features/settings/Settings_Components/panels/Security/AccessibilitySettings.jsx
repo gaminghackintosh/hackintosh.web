@@ -12,7 +12,11 @@ export const AccessibilitySettings = () => {
   const [stickyKeys, setStickyKeys]       = useState(false);
 
   return (
-    <SettingsPanel title="Accessibility">
+    <SettingsPanel 
+      title="Accessibility"
+      description="Vision, motor, hearing, and other assistive features"
+      icon="accessibility"
+    >
       <SettingsGroup label="Vision">
         <ToggleSwitch label="VoiceOver"        description="Use spoken descriptions of interface elements" checked={voiceOver}     onChange={e => setVoiceOver(e.target.checked)} />
         <ToggleSwitch label="Zoom"             description="Use keyboard shortcuts or scroll gestures to zoom" checked={zoom}      onChange={e => setZoom(e.target.checked)} />

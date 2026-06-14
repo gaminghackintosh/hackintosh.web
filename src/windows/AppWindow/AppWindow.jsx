@@ -10,9 +10,8 @@ const defaultWindowContextValue = {
 
 export const WindowContext = React.createContext(defaultWindowContextValue);
 
-// ✅ Кастомное сравнение для AppWindow - неактивные окна не рендерятся когда активное меняется
+
 function appWindowShouldMemo(prevProps, nextProps) {
-  // Если это неактивное окно, рендерим только если изменилось win.x/y/zIndex
   if (!prevProps.isActive && !nextProps.isActive) {
     return (
       prevProps.win.x === nextProps.win.x &&
@@ -57,6 +56,7 @@ export const AppWindow = memo(function AppWindow({
     };
   });
   const [isMaximized, setIsMaximized] = useState(false);
+  const [prevRect, setPrevRect] = useState(null);
 
   const windowRef = useRef(null);
   const contentRef = useRef(null);
@@ -67,13 +67,22 @@ export const AppWindow = memo(function AppWindow({
 
   const posRef = useRef(pos);
   const sizeRef = useRef(size);
+  const isMaximizedRef = useRef(isMaximized);
+  const prevRectRef = useRef(prevRect);
   
-  // ✅ onFocusRef для избежания лишних зависимостей в useCallback
+  useLayoutEffect(() => {
+    isMaximizedRef.current = isMaximized;
+  }, [isMaximized]);
+
+  useLayoutEffect(() => {
+    prevRectRef.current = prevRect;
+  }, [prevRect]);
+  
   const onFocusRef = useRef(onFocus);
   useLayoutEffect(() => {
     onFocusRef.current = onFocus;
   }, [onFocus]);
-
+  
   useLayoutEffect(() => {
     if ((win.x !== posRef.current.x || win.y !== posRef.current.y) && !dragging.current) {
       setPos({ x: win.x, y: win.y });
@@ -91,6 +100,35 @@ export const AppWindow = memo(function AppWindow({
     }
   }, [win.x, win.y, win.width, win.w, win.height, win.h, hasCustomSize, resizing]);
 
+
+  const handleZoom = useCallback(() => {
+    const wasMaximized = isMaximizedRef.current;
+    
+    if (wasMaximized) {
+      // Восстанавливаем старый размер
+      const rect = prevRectRef.current;
+      if (rect) {
+        setPos({ x: rect.x, y: rect.y });
+        setSize({ width: rect.width, height: rect.height });
+      }
+      setIsMaximized(false);
+    } else {
+      // Сохраняем текущий размер и разворачиваем
+      setPrevRect({ 
+        x: posRef.current.x, 
+        y: posRef.current.y, 
+        width: sizeRef.current.width, 
+        height: sizeRef.current.height 
+      });
+      setPos({ x: 0, y: 28 }); 
+      setSize({ 
+        width: window.innerWidth, 
+        height: window.innerHeight - 28 - 80 
+      });
+      setIsMaximized(true);
+    }
+  }, []);
+
   const onTitleMouseDown = useCallback((e) => {
     if (e.button !== 0 || isMaximized) return;
     if (e.target.closest('button')) return;
@@ -104,6 +142,8 @@ export const AppWindow = memo(function AppWindow({
     if (windowRef.current) {
       windowRef.current.classList.add('app-window--dragging');
       windowRef.current.style.willChange = 'transform';
+
+      windowRef.current.style.transition = 'none';
       windowRef.current.style.pointerEvents = 'none';
     }
 
@@ -117,7 +157,6 @@ export const AppWindow = memo(function AppWindow({
       const newX = Math.max(0, Math.min(window.innerWidth - windowWidth, ev.clientX - offset.current.x));
       const newY = Math.max(28, ev.clientY - offset.current.y);
 
-      // ✅ Прямой DOM update без React state для плавности
       if (windowRef.current && dragging.current) {
         windowRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
       }
@@ -130,18 +169,20 @@ export const AppWindow = memo(function AppWindow({
       if (windowRef.current) {
         windowRef.current.classList.remove('app-window--dragging');
         windowRef.current.style.willChange = '';
+
+        windowRef.current.style.transition = '';
         windowRef.current.style.pointerEvents = '';
       }
 
       const finalX = Math.max(0, Math.min(window.innerWidth - windowWidth, ev.clientX - offset.current.x));
       const finalY = Math.max(28, ev.clientY - offset.current.y);
-      
-      // ✅ setPos только после окончания drag - для сохранения позиции
+
       setPos({ x: finalX, y: finalY });
 
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
     };
+    
 
     document.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseup", onUp, { passive: true });
@@ -161,6 +202,8 @@ export const AppWindow = memo(function AppWindow({
     if (windowRef.current) {
       windowRef.current.classList.add('app-window--resizing');
       windowRef.current.style.willChange = 'width, height';
+
+      windowRef.current.style.transition = 'none';
       windowRef.current.style.pointerEvents = 'none';
     }
 
@@ -187,6 +230,8 @@ export const AppWindow = memo(function AppWindow({
       if (windowRef.current) {
         windowRef.current.classList.remove('app-window--resizing');
         windowRef.current.style.willChange = '';
+        // ✅ Восстанавливаем transition после resize
+        windowRef.current.style.transition = '';
         windowRef.current.style.pointerEvents = '';
         setSize({ 
           width: parseFloat(windowRef.current.style.width) || sizeRef.current.width, 
@@ -205,12 +250,11 @@ export const AppWindow = memo(function AppWindow({
   const contextValue = useMemo(() => ({
     onClose,
     onMinimize,
-    onZoom,
+    onZoom: handleZoom,
     onFocus,
     onTitleMouseDown,
-  }), [onClose, onMinimize, onZoom, onFocus, onTitleMouseDown]);
+  }), [onClose, onMinimize, handleZoom, onFocus, onTitleMouseDown]);
 
-  // ✅ Мемоизируем детей чтобы они не перерисовывались при drag
   const memoizedChildren = useMemo(() => children, [children]);
 
   return (

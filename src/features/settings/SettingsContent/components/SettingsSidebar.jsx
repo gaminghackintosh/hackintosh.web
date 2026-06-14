@@ -12,11 +12,7 @@ export const SettingsSidebar = memo(({
   onTabClick,
   filteredSections 
 }) => {
-  const { onClose, onMinimize, onFocus, onZoom, onTitleMouseDown } = useContext(WindowContext);
-
-  const handleZoom = useCallback(() => {
-    onZoom?.();
-  }, [onZoom]);
+  const { onClose, onMinimize, onZoom, onTitleMouseDown } = useContext(WindowContext);
 
   const handleAppleIdClick = useCallback(() => {
     onTabClick("appleid");
@@ -25,7 +21,7 @@ export const SettingsSidebar = memo(({
   return (
     <div className="settings-sidebar">
       <div className="sidebar-drag-handle" onMouseDown={(e) => { if (e.target.closest('button, input')) return; onTitleMouseDown(e); }}>
-        <TrafficLights onClose={onClose} onMinimize={onMinimize} onZoom={handleZoom} />
+        <TrafficLights onClose={onClose} onMinimize={onMinimize} onZoom={onZoom} />
       </div>
 
       <SearchBar value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />

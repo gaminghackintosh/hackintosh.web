@@ -1,31 +1,30 @@
 import React, { useState } from "react";
-import { SettingsPanel } from "../../SettingsPanel";
-import { SettingsGroup } from "../../SettingsPanel";
-import { SettingsRow } from "../../SettingsPanel";
-import { ToggleSwitch } from "../../SettingsPanel";
+import { SettingsPanel, SettingsGroup, SettingsRow } from "../../SettingsPanel";
 
 export const DisplaysSettings = () => {
-  const [resolution, setResolution]   = useState("Default");
-  const [refresh, setRefresh]         = useState("60 Hz");
-  const [nightShift, setNightShift]   = useState(false);
-  const [trueTone, setTrueTone]       = useState(true);
+  const [brightness, setBrightness] = useState(75);
+  const [resolution, setResolution] = useState("default");
+
   return (
-    <SettingsPanel title="Displays">
-      <SettingsGroup label="Built-in Display">
+    <SettingsPanel title="Displays" icon="display">
+      <SettingsGroup label="Settings">
+        <SettingsRow label="Brightness">
+          <input type="range" className="ctrl-range" min="0" max="100" value={brightness} onChange={e => setBrightness(e.target.value)} />
+        </SettingsRow>
         <SettingsRow label="Resolution">
           <select className="ctrl-select" value={resolution} onChange={e => setResolution(e.target.value)}>
-            <option>Default</option><option>1920 × 1080</option><option>2560 × 1440</option><option>3840 × 2160</option>
+            <option value="default">Default</option>
+            <option value="scaled">Scaled</option>
+            <option value="low">Low Resolution</option>
           </select>
         </SettingsRow>
         <SettingsRow label="Refresh Rate">
-          <select className="ctrl-select" value={refresh} onChange={e => setRefresh(e.target.value)}>
-            <option>60 Hz</option><option>120 Hz</option>
+          <select className="ctrl-select">
+            <option>60Hz</option>
+            <option>120Hz</option>
+            <option>144Hz</option>
           </select>
         </SettingsRow>
-      </SettingsGroup>
-      <SettingsGroup label="Colour">
-        <ToggleSwitch label="True Tone"    description="Automatically adapt the display to ambient light" checked={trueTone}   onChange={e => setTrueTone(e.target.checked)} />
-        <ToggleSwitch label="Night Shift"  description="Shift display colors warmer after sunset"         checked={nightShift} onChange={e => setNightShift(e.target.checked)} />
       </SettingsGroup>
     </SettingsPanel>
   );

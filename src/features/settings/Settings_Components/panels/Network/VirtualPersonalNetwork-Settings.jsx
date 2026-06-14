@@ -7,7 +7,7 @@ import { ToggleSwitch } from "../../SettingsPanel";
 export const VPNSettings = () => {
   const [vpn, setVpn] = useState(false);
   return (
-    <SettingsPanel title="VPN">
+    <SettingsPanel title="VPN" icon="vpn">
       <SettingsGroup>
         <ToggleSwitch label="VPN" description={vpn ? "Connected" : "Disconnected"} checked={vpn} onChange={e => setVpn(e.target.checked)} />
       </SettingsGroup>

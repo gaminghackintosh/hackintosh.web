@@ -38,7 +38,7 @@ export const AboutPanel = memo(() => {
   };
 
   return (
-    <SettingsPanel title="About">
+    <SettingsPanel title="About" hideHeader>
       <div className="about-panel">
 
         {/* ── Hero ── */}

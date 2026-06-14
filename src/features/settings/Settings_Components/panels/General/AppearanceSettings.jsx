@@ -23,7 +23,11 @@ export const AppearanceSettings = () => {
   const [showScrollbars, setShowScrollbars] = useState("automatic");
 
   return (
-    <SettingsPanel title="Appearance">
+    <SettingsPanel 
+      title="Appearance"
+      description="Customize your Mac's visual style and accent color"
+      icon="appearance"
+    >
       {/* Appearance mode */}
       <SettingsGroup label="Appearance">
         <SettingsRow label="Mode">

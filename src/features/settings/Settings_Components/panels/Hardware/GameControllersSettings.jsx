@@ -9,7 +9,11 @@ export const GameControllersSettings = () => {
   const [vibration, setVib]     = useState(true);
   const [notifs, setNotifs]     = useState(true);
   return (
-    <SettingsPanel title="Game Controllers">
+    <SettingsPanel 
+      title="Game Controllers"
+      description="Configure connected game controllers and settings"
+      icon="trackpad"
+    >
       <SettingsGroup label="Connected Controllers">
         <SettingsRow label="No controllers detected" value="—" />
       </SettingsGroup>

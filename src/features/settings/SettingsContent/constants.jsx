@@ -33,14 +33,18 @@ import { SettingsPanel } from "@/features/settings/Settings_Components/SettingsP
 import {
   AccessibilitySettings, AppearanceSettings, BluetoothSettings, ControlCenterSettings,
   DesktopDockSettings, DisplaysSettings, EnergySaverSettings, FocusSettings,
-  GameCenterSettings, GameControllersSettings, GeneralSettings, InternetAccountsSettings,
-  LockScreenSettings, LoginPasswordSettings, MouseSettings, NetworkSettings,
-  NotificationsSettings, PasswordsSettings, PrivacySettings, SoundSettings,
-  UsersSettings, VPNSettings, WiFiSettings,
+  GameCenterSettings, GameControllersSettings, GeneralSettings,
+  LockscreenSettings as LockScreenSettings, LoginpasswordSettings as LoginPasswordSettings,
+  MouseSettings, NetworkSettings, NotificationsSettings, PasswordsSettings,
+  PrivacySettings, SoundSettings, UsersgroupsSettings as UsersSettings,
+  VPNSettings, WiFiSettings, ScreenSaverSettings, WallpaperSettings,
+  SiriSettings, KeyboardSettings, PrintersSettings,
+  InternetAccountsSettings, WalletSettings,
 } from "@/features/settings/Settings_Components/panels";
 
-const UnimplementedPanel = memo(({ title }) => (
-  <SettingsPanel title={title}>
+// ✅ UnimplementedPanel для заглушек
+const UnimplementedPanel = memo(({ title, icon }) => (
+  <SettingsPanel title={title} icon={icon}>
     <div className="unimplemented-placeholder">
       <div className="unimplemented-icon">🚧</div>
       <h3>{title}</h3>
@@ -54,31 +58,38 @@ export const PANELS = {
   bluetooth: BluetoothSettings,
   network: NetworkSettings,
   vpn: VPNSettings,
+
   notifications: NotificationsSettings,
   sound: SoundSettings,
   focus: FocusSettings,
+  screentime: () => <UnimplementedPanel title="Screen Time" icon="storage" />,
+
   general: GeneralSettings,
   appearance: AppearanceSettings,
   accessibility: AccessibilitySettings,
   controlcenter: ControlCenterSettings,
+  siri: SiriSettings,
   privacy: PrivacySettings,
+
   desktopdock: DesktopDockSettings,
   displays: DisplaysSettings,
+  wallpaper: WallpaperSettings,
+  screensaver: ScreenSaverSettings,
   energysaver: EnergySaverSettings,
+
   lockscreen: LockScreenSettings,
   loginpassword: LoginPasswordSettings,
+  usersgroups: UsersSettings,
+
   passwords: PasswordsSettings,
   internetaccounts: InternetAccountsSettings,
   gamecenter: GameCenterSettings,
+  wallet: WalletSettings,
+
+  keyboard: KeyboardSettings,
   mouse: MouseSettings,
   gamecontrollers: GameControllersSettings,
-  usersgroups: UsersSettings,
-  screentime: () => <UnimplementedPanel title="Screen Time" />,
-  siri: () => <UnimplementedPanel title="Siri & Spotlight" />,
-  wallet: () => <UnimplementedPanel title="Wallet & Apple Pay" />,
-  keyboard: () => <UnimplementedPanel title="Keyboard" />,
-  printersscanners: () => <UnimplementedPanel title="Printers & Scanners" />,
-  screensaver: () => <UnimplementedPanel title="Screen Saver" />,
+  printersscanners: PrintersSettings
 };
 
 export const MENU_SECTIONS = [
