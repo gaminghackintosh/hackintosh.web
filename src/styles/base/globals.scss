@@ -48,26 +48,21 @@ body {
   user-select: none;
 }
 
-/* Fix for Windows — enable text selection where needed */
 input, textarea, [contenteditable] {
   -webkit-user-select: text;
   user-select: text;
 }
 
-/* Ensure fonts render correctly on all platforms */
 * {
   font-family: var(--system-font-family);
 }
-
 code, pre, [class*="terminal"], [class*="code"], [class*="Terminal"] {
   font-family: var(--monospace-font-family);
 }
 
-/* Utility class for inline style override */
 .system-font {
   font-family: var(--system-font-family) !important;
 }
-
 .monospace-font {
   font-family: var(--monospace-font-family) !important;
 }
