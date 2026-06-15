@@ -9,7 +9,7 @@ export const SiriSettings = () => {
     <SettingsPanel 
       title="Siri & Spotlight"
       description="Ask Siri to open apps, find files, send messages, and more. Use Spotlight to search the web and your Mac."
-      icon="notifications"
+      icon="siri"
     >
       <SettingsGroup label="Siri">
         <ToggleSwitch

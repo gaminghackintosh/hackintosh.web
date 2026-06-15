@@ -13,7 +13,7 @@ export const PasswordsSettings = () => {
     <SettingsPanel 
       title="Passwords"
       description="Manage saved passwords and password security settings"
-      icon="security"
+      icon="passwords"
     >
       <SettingsGroup>
         <SettingsRow label="Saved Passwords" chevron onClick={() => {}}>

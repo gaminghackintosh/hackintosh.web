@@ -9,7 +9,7 @@ export const ScreenSaverSettings = () => {
     <SettingsPanel 
       title="Screen Saver"
       description="Choose a screen saver and when to activate it."
-      icon="datetime"
+      icon="screensaver"
     >
       <SettingsGroup label="Screen Saver">
         <SettingsRow label="Screen Saver">

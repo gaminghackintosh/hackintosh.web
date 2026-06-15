@@ -2,7 +2,7 @@ import React from "react";
 import { SettingsPanel, SettingsGroup, ToggleSwitch } from "../../SettingsPanel";
 
 export const ScreentimeSettings = () => (
-  <SettingsPanel title="Screen Time" icon="storage">
+  <SettingsPanel title="Screen Time" icon="screentime">
     <SettingsGroup label="Screen Time">
       <ToggleSwitch label="Enable Screen Time" checked={false} onChange={() => {}} />
       <div className="settings-info" style={{ padding: '20px', textAlign: 'center', color: '#666' }}>

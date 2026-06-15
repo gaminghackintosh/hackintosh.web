@@ -62,7 +62,7 @@ export const PANELS = {
   notifications: NotificationsSettings,
   sound: SoundSettings,
   focus: FocusSettings,
-  screentime: () => <UnimplementedPanel title="Screen Time" icon="storage" />,
+  screentime: () => <UnimplementedPanel title="Screen Time" icon="screentime" />,
 
   general: GeneralSettings,
   appearance: AppearanceSettings,

@@ -8,7 +8,7 @@ export const WallpaperSettings = () => {
     <SettingsPanel 
       title="Wallpaper"
       description="Customize the appearance of your desktop with different wallpapers and colors."
-      icon="display"
+      icon="wallpaper"
     >
       <SettingsGroup label="Choose a wallpaper">
         <div className="wallpaper-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', padding: '10px' }}>
